@@ -1,0 +1,55 @@
+name: Maven Build
+
+on:
+  workflow_call:
+    secrets:
+      nexus_host_url:
+        required: true
+      nexus_username:
+        required: true
+      nexus_password:
+        required: true
+      sonar_host_url:
+        required: true
+      sonar_token:
+        required: true
+
+jobs:
+  maven_build:
+    name: Maven Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: maven-settings-xml-action
+        uses: whelk-io/maven-settings-xml-action@v20
+        with:
+          repositories: '[{ "id": "litteranexus", "url": "${{ secrets.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
+          plugin_repositories: '[{ "id": "litteranexus", "url": "${{ secrets.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
+          servers: '[{ "id": "litteranexus", "username": "${{ secrets.nexus_username }}", "password": "${{ secrets.nexus_password }}" }]'
+          active_profiles: '[ "github" ]'
+          output_file: /home/runner/.m2/settings.xml
+
+      - name: Maven Build and Sonar
+        env:
+          SONAR_TOKEN: ${{ secrets.sonar_token }}
+          SONAR_HOST_URL: ${{ secrets.sonar_host_url }}
+        run: |
+          ./mvnw clean install sonar:sonar
