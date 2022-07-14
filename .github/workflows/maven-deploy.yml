@@ -1,4 +1,4 @@
-name: Maven Build
+name: Maven Deploy
 
 on:
   workflow_call:
@@ -9,21 +9,12 @@ on:
         required: true
       nexus_password:
         required: true
-      sonar_host_url:
-        required: true
-      sonar_token:
-        required: true
-      is_release: # this is treated as a string since booleans have issues
-        required: true
-
-    outputs:
       version:
-        description: "The version of the artifact being created"
-        value: ${{ jobs.get-version.outputs.VERSION }}
+        required: true
 
 jobs:
-  maven_build:
-    name: Maven Build
+  maven_deploy:
+    name: Maven Deploy
     runs-on: ubuntu-latest
 
     steps:
@@ -54,27 +45,27 @@ jobs:
           active_profiles: '[ "github" ]'
           output_file: /home/runner/.m2/settings.xml
 
-      - name: Maven Build and Sonar
-        env:
-          SONAR_TOKEN: ${{ secrets.sonar_token }}
-          SONAR_HOST_URL: ${{ secrets.sonar_host_url }}
+      - name: Maven SNAPSHOT
         run: |
-          ./mvnw clean install sonar:sonar
-
-      - name: Get version
-        id: get-version
-        run: |
-          VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
-
-          if [ "${{ secrets.is_release }}" == "true" ]; then
-                  VERSION=$(echo $VERSION | cut -d- -f1)
-          fi
-
-          echo "::set-output name=VERSION::$VERSION"
+          ./mvnw -DskipTests=true clean deploy
       
       - name: Cache github pages
         id: cache-github-pages
         uses: actions/cache@v3
         with:
           path: target/docs
-          key: ${{ runner.os }}-${{ steps.get-version.outputs.VERSION }}-github-pages
+          key: ${{ runner.os }}-${{ secrets.version }}-github-pages
+
+      - name: Deploy to Github Pages
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        with:
+          branch: gh-pages
+          target-folder: ${{ secrets.version }}
+          folder: target/docs
+
+      - name: Cache Dockerfile
+        id: cache-dockerfile
+        uses: actions/cache@v3
+        with:
+          path: Dockerfile
+          key: ${{ runner.os }}-${{ secrets.version }}-dockerfile
