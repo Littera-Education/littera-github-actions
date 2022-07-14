@@ -2,18 +2,23 @@ name: Maven Build
 
 on:
   workflow_call:
-    secrets:
+    inputs:
       nexus_host_url:
         required: true
+        type: string
+      sonar_host_url:
+        required: true
+        type: string
+      is_release: # this is treated as a string since booleans have issues
+        required: true
+        type: string
+
+    secrets:
       nexus_username:
         required: true
       nexus_password:
         required: true
-      sonar_host_url:
-        required: true
       sonar_token:
-        required: true
-      is_release: # this is treated as a string since booleans have issues
         required: true
 
     outputs:
@@ -51,8 +56,8 @@ jobs:
       - name: Maven Settings XML File
         uses: whelk-io/maven-settings-xml-action@v20
         with:
-          repositories: '[{ "id": "litteranexus", "url": "${{ secrets.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
-          plugin_repositories: '[{ "id": "litteranexus", "url": "${{ secrets.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
+          repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
+          plugin_repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
           servers: '[{ "id": "litteranexus", "username": "${{ secrets.nexus_username }}", "password": "${{ secrets.nexus_password }}" }]'
           active_profiles: '[ "github" ]'
           output_file: /home/runner/.m2/settings.xml
@@ -60,7 +65,7 @@ jobs:
       - name: Maven Build and Sonar
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
-          SONAR_HOST_URL: ${{ secrets.sonar_host_url }}
+          SONAR_HOST_URL: ${{ inputs.sonar_host_url }}
         run: |
           ./mvnw clean install sonar:sonar
 
@@ -69,7 +74,7 @@ jobs:
         run: |
           VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
 
-          if [ "${{ secrets.is_release }}" == "true" ]; then
+          if [ "${{ inputs.is_release }}" == "true" ]; then
                   VERSION=$(echo $VERSION | cut -d- -f1)
           fi
 

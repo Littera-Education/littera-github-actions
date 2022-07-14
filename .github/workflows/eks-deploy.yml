@@ -2,18 +2,24 @@ name: Deploy Docker image to EKS
 
 on:
   workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      env:
+        required: true
+        type: string
+      cluster_env:
+        required: true
+        type: string
+      service_name:
+        required: true
+        type: string
+
     secrets:
       repo_token:
         required: true
-      version:
-        required: true
       aws_account_id:
-        required: true
-      env:
-        required: true
-      cluster_env:
-        required: true
-      service_name:
         required: true
 
 
@@ -46,8 +52,8 @@ jobs:
           mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
           curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
           sudo mv /tmp/eksctl /usr/local/bin
-          aws eks --region us-east-1 update-kubeconfig --name ${{ secrets.cluster_env }}-cluster
+          aws eks --region us-east-1 update-kubeconfig --name ${{ inputs.cluster_env }}-cluster
 
-          sed -i "s/${{ secrets.service_name }}:${{ secrets.env }}/${{ secrets.service_name }}:${{ secrets.version }}/g" config/${{ secrets.service_name }}/eks/eks-${{ secrets.env }}-deployment.yaml
-          kubectl apply -f config/${{ secrets.service_name }}/eks/eks-${{ secrets.env }}-deployment.yaml
-          kubectl rollout restart deployment ${{ secrets.service_name }} -n littera-services-${{ secrets.env }}
+          sed -i "s/${{ inputs.service_name }}:${{ inputs.env }}/${{ inputs.service_name }}:${{ inputs.version }}/g" config/${{ inputs.service_name }}/eks/eks-${{ inputs.env }}-deployment.yaml
+          kubectl apply -f config/${{ inputs.service_name }}/eks/eks-${{ inputs.env }}-deployment.yaml
+          kubectl rollout restart deployment ${{ inputs.service_name }} -n littera-services-${{ inputs.env }}

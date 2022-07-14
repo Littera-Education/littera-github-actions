@@ -2,14 +2,18 @@ name: Maven Deploy
 
 on:
   workflow_call:
-    secrets:
+    inputs:
       nexus_host_url:
         required: true
+        type: string
+      version:
+        required: true
+        type: string
+
+    secrets:
       nexus_username:
         required: true
       nexus_password:
-        required: true
-      version:
         required: true
 
 jobs:
@@ -39,8 +43,8 @@ jobs:
       - name: Maven Settings XML File
         uses: whelk-io/maven-settings-xml-action@v20
         with:
-          repositories: '[{ "id": "litteranexus", "url": "${{ secrets.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
-          plugin_repositories: '[{ "id": "litteranexus", "url": "${{ secrets.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
+          repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
+          plugin_repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
           servers: '[{ "id": "litteranexus", "username": "${{ secrets.nexus_username }}", "password": "${{ secrets.nexus_password }}" }]'
           active_profiles: '[ "github" ]'
           output_file: /home/runner/.m2/settings.xml
@@ -54,13 +58,13 @@ jobs:
         uses: actions/cache@v3
         with:
           path: target/docs
-          key: ${{ runner.os }}-${{ secrets.version }}-github-pages
+          key: ${{ runner.os }}-${{ inputs.version }}-github-pages
 
       - name: Deploy to Github Pages
         uses: JamesIves/github-pages-deploy-action@v4.3.3
         with:
           branch: gh-pages
-          target-folder: ${{ secrets.version }}
+          target-folder: ${{ inputs.version }}
           folder: target/docs
 
       - name: Cache Dockerfile
@@ -68,4 +72,4 @@ jobs:
         uses: actions/cache@v3
         with:
           path: Dockerfile
-          key: ${{ runner.os }}-${{ secrets.version }}-dockerfile
+          key: ${{ runner.os }}-${{ inputs.version }}-dockerfile
