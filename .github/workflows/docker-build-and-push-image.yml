@@ -18,13 +18,14 @@ on:
       service_name:
         required: true
         type: string
+      version:
+        required: true
+        type: string
 
     secrets:
       nexus_username:
         required: true
       nexus_password:
-        required: true
-      version:
         required: true
       aws_account_id:
         required: true
