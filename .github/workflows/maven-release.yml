@@ -1,0 +1,103 @@
+name: Maven Release
+
+on:
+  workflow_call:
+    inputs:
+      nexus_host_url:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      version_increment_type:
+        required: true
+        description: "What part of the version to increment: major, minor, or patch"
+        type: string
+
+    secrets:
+      nexus_username:
+        required: true
+      nexus_password:
+        required: true
+      github_ssh_key:
+        required: true
+
+jobs:
+  maven_release:
+    name: Maven Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Maven Settings XML File
+        uses: whelk-io/maven-settings-xml-action@v20
+        with:
+          repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
+          plugin_repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
+          servers: '[{ "id": "litteranexus", "username": "${{ secrets.nexus_username }}", "password": "${{ secrets.nexus_password }}" }]'
+          active_profiles: '[ "github" ]'
+          output_file: /home/runner/.m2/settings.xml
+
+      - name: Prep SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.github_ssh_key }}
+
+      - name: Maven Release Patch
+        if: ${{ inputs.version_increment_type }} == 'patch'
+        run: |
+          git config --global user.name 'Littera GitHub'
+          git config --global user.email 'littera-github@litteraeducation.com'
+          ./mvnw --batch-mode build-helper:parse-version release:prepare -DscmCommentPrefix="[skip ci][maven-release-plugin] " -DdevelopmentVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT -DreleaseVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} -Darguments='-Dmaven.test.skip=true' release:perform
+
+      - name: Maven Release Minor
+        if: ${{ inputs.version_increment_type }} == 'minor'
+        run: |
+          git config --global user.name 'Littera GitHub'
+          git config --global user.email 'littera-github@litteraeducation.com'
+          ./mvnw --batch-mode build-helper:parse-version release:prepare -DscmCommentPrefix="[skip ci][maven-release-plugin] " -DdevelopmentVersion=\${parsedVersion.majorVersion}.\${parsedVersion.nextMinorVersion}.\${parsedVersion.incrementalVersion}-SNAPSHOT -DreleaseVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} -Darguments='-Dmaven.test.skip=true' release:perform
+
+      - name: Maven Release Major
+        if: ${{ inputs.version_increment_type }} == 'major'
+        run: |
+          git config --global user.name 'Littera GitHub'
+          git config --global user.email 'littera-github@litteraeducation.com'
+          ./mvnw --batch-mode build-helper:parse-version release:prepare -DscmCommentPrefix="[skip ci][maven-release-plugin] " -DdevelopmentVersion=\${parsedVersion.nextMajorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion}-SNAPSHOT -DreleaseVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} -Darguments='-Dmaven.test.skip=true' release:perform
+
+      - name: Cache github pages
+        id: cache-github-pages
+        uses: actions/cache@v3
+        with:
+          path: target/docs
+          key: ${{ runner.os }}-${{ inputs.version }}-github-pages
+
+      - name: Deploy to Github Pages
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        with:
+          branch: gh-pages
+          target-folder: ${{ inputs.version }}
+          folder: target/docs
+
+      - name: Cache Dockerfile
+        id: cache-dockerfile
+        uses: actions/cache@v3
+        with:
+          path: Dockerfile
+          key: ${{ runner.os }}-${{ inputs.version }}-dockerfile
