@@ -36,7 +36,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: maven-settings-xml-action
+      - name: Maven Settings XML File
         uses: whelk-io/maven-settings-xml-action@v20
         with:
           repositories: '[{ "id": "litteranexus", "url": "${{ secrets.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
