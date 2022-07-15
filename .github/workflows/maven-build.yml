@@ -62,13 +62,6 @@ jobs:
           active_profiles: '[ "github" ]'
           output_file: /home/runner/.m2/settings.xml
 
-      - name: Maven Build and Sonar
-        env:
-          SONAR_TOKEN: ${{ secrets.sonar_token }}
-          SONAR_HOST_URL: ${{ inputs.sonar_host_url }}
-        run: |
-          ./mvnw clean install sonar:sonar
-
       - name: Get version
         id: get-version
         run: |
@@ -84,6 +77,13 @@ jobs:
           fi
 
           echo "::set-output name=VERSION::$VERSION"
+
+      - name: Maven Build and Sonar
+        env:
+          SONAR_TOKEN: ${{ secrets.sonar_token }}
+          SONAR_HOST_URL: ${{ inputs.sonar_host_url }}
+        run: |
+          ./mvnw clean install sonar:sonar
       
       - name: Cache github pages
         id: cache-github-pages
