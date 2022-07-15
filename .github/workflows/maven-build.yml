@@ -74,6 +74,11 @@ jobs:
         run: |
           VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
 
+          if [[ ! $VERSION =~ "-SNAPSHOT" ]]; then
+            echo "Current version is not a SNAPSHOT, please bump to the next SNAPSHOT to continue."
+            exit 1
+          fi
+
           if [ "${{ inputs.is_release }}" == "true" ]; then
                   VERSION=$(echo $VERSION | cut -d- -f1)
           fi
