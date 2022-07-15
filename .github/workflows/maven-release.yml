@@ -90,6 +90,7 @@ jobs:
 
       - name: Deploy to Github Pages
         uses: JamesIves/github-pages-deploy-action@v4.3.3
+        if: steps.cache-github-pages.outputs.cache-hit == true
         with:
           branch: gh-pages
           target-folder: ${{ inputs.version }}
