@@ -15,6 +15,10 @@ on:
       service_name:
         required: true
         type: string
+      k8s_config_branch:
+        type: string
+        required: false
+        default: 'develop'
 
     secrets:
       repo_token:
@@ -43,6 +47,7 @@ jobs:
         with:
           repository: Littera-Education/littera-eks-config
           token: ${{ secrets.repo_token }}
+          ref: ${{ inputs.k8s_config_branch }}
           path: config
 
       - name: Deploy to EKS
