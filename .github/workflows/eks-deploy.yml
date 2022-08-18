@@ -6,9 +6,9 @@ on:
       version:
         required: true
         type: string
-      # env:
-      #   required: true
-      #   type: string
+      env:
+        required: true
+        type: string
       cluster_env:
         required: true
         type: string
