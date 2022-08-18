@@ -59,6 +59,6 @@ jobs:
           sudo mv /tmp/eksctl /usr/local/bin
           aws eks --region us-east-1 update-kubeconfig --name ${{ inputs.cluster_env }}-cluster
 
-          sed -i "s/${{ inputs.service_name }}:${{ inputs.cluster_env }}/${{ inputs.service_name }}:${{ inputs.version }}/g" config/${{ inputs.service_name }}/eks/eks-${{ inputs.env }}-deployment.yaml
+          sed -i "s/${{ inputs.service_name }}:${{ inputs.cluster_env }}/${{ inputs.service_name }}:${{ inputs.version }}/g" config/${{ inputs.service_name }}/eks/eks-${{ inputs.cluster_env }}-deployment.yaml
           kubectl apply -f config/${{ inputs.service_name }}/eks/eks-${{ inputs.cluster_env }}-deployment.yaml
           kubectl rollout restart deployment ${{ inputs.service_name }} -n littera-services-${{ inputs.cluster_env }}
