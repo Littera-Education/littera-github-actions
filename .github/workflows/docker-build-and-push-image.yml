@@ -91,9 +91,9 @@ jobs:
         run: |
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com
           docker build --build-arg PROFILE=${{ inputs.env }} -t ${{ inputs.service_name }} .
-          if [ -z "${{ inputs.suffix }}" ]; then
+          if [ -z "${{ inputs.image_suffix }}" ]; then
             docker tag ${{ inputs.service_name }}:latest ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
           else
-            docker tag ${{ inputs.service_name }}:latest ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.suffix }}
+            docker tag ${{ inputs.service_name }}:latest ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.image_suffix }}
           fi
           # docker push ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
