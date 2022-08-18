@@ -12,9 +12,9 @@ on:
       artifact_id:
         required: true
         type: string
-      env:
-        required: true
-        type: string
+      # env:
+      #   required: true
+      #   type: string
       service_name:
         required: true
         type: string
@@ -90,7 +90,8 @@ jobs:
       - name: Build, tag, and push docker image to Amazon ECR
         run: |
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com
-          docker build --build-arg PROFILE=${{ inputs.env }} -t ${{ inputs.service_name }} .
+          # docker build --build-arg PROFILE=${{ inputs.env }} -t ${{ inputs.service_name }} .
+          docker build -t ${{ inputs.service_name }} .
           if [ -z "${{ inputs.image_suffix }}" ]; then
             docker tag ${{ inputs.service_name }}:latest ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
           else
