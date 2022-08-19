@@ -12,9 +12,9 @@ on:
       artifact_id:
         required: true
         type: string
-      # env:                ******** not used in this reusable workflow ********
-      #   required: true
-      #   type: string
+      env:                # ******** not used in this reusable workflow ********
+        required: false   # Temporarily made 'require: false' to not break calling workflow
+        type: string      # Should be removed when calling workflows no longer send 'env'
       service_name:
         required: true
         type: string
@@ -61,7 +61,9 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
+      # This stanza uses the Dockerfile in develop unless var image_suffix is set
       - name: Cache Dockerfile
+        if: inputs.image_suffix == ''
         id: cache-dockerfile
         uses: actions/cache@v3
         with:
