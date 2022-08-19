@@ -1,0 +1,103 @@
+name: Build and push docker image to ECR
+
+on:
+  workflow_call:
+    inputs:
+      nexus_host_url:
+        required: true
+        type: string
+      group_id:
+        required: true
+        type: string
+      artifact_id:
+        required: true
+        type: string
+      # env:                ******** not used in this reusable workflow ********
+      #   required: true
+      #   type: string
+      service_name:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      image_suffix:
+        required: false
+        type: string
+
+    secrets:
+      nexus_username:
+        required: true
+      nexus_password:
+        required: true
+      aws_account_id:
+        required: true
+
+jobs:
+  build-docker-image:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Cache Dockerfile
+        if: inputs.image_suffix == ''
+        id: cache-dockerfile
+        uses: actions/cache@v3
+        with:
+          path: Dockerfile
+          key: ${{ runner.os }}-${{ inputs.version }}-dockerfile
+
+      - name: Maven Settings XML File
+        uses: whelk-io/maven-settings-xml-action@v20
+        with:
+          repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
+          plugin_repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
+          servers: '[{ "id": "litteranexus", "username": "${{ secrets.nexus_username }}", "password": "${{ secrets.nexus_password }}" }]'
+          active_profiles: '[ "github" ]'
+          output_file: /home/runner/.m2/settings.xml
+
+      - name: Download Artifact
+        run: |
+          ./mvnw dependency:copy -Dartifact=${{ inputs.GROUP_ID }}:${{ inputs.ARTIFACT_ID }}:${{ inputs.version }}:jar -DoutputDirectory=./target
+      
+      - name: Configure AWS Creds
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::${{ secrets.aws_account_id }}:role/github-assume-role
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com
+          # docker build --build-arg PROFILE=${{ inputs.env }} -t ${{ inputs.service_name }} .
+          docker build -t ${{ inputs.service_name }} .
+          if [ -z "${{ inputs.image_suffix }}" ]; then
+            docker tag ${{ inputs.service_name }}:latest ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
+            docker push ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
+          else
+            docker tag ${{ inputs.service_name }}:latest ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.image_suffix }}
+            docker push ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.image_suffix }}
+          fi
+          
