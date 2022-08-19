@@ -61,6 +61,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
+      # This stanza uses the Dockerfile in develop unless var image_suffix is set
       - name: Cache Dockerfile
         if: inputs.image_suffix == ''
         id: cache-dockerfile
