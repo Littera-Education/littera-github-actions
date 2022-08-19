@@ -61,12 +61,12 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      # - name: Cache Dockerfile
-      #   id: cache-dockerfile
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: Dockerfile
-      #     key: ${{ runner.os }}-${{ inputs.version }}-dockerfile
+      - name: Cache Dockerfile
+        id: cache-dockerfile
+        uses: actions/cache@v3
+        with:
+          path: Dockerfile
+          key: ${{ runner.os }}-${{ inputs.version }}-dockerfile
 
       - name: Maven Settings XML File
         uses: whelk-io/maven-settings-xml-action@v20
