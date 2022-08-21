@@ -61,7 +61,11 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      # This stanza uses the Dockerfile in develop unless var test_tag_suffix is set
+      # Here the cached Dockerfile is recalled from the cache created when
+      # mave-release.yml re-usable workflow was previously called by develop.yml
+      # upon a PR was merge into develop.
+      # When testing a docker build (test_tag_suffix != null), this cache is not-recalled
+      # and the Dockerfile in a test branch indicated in create-test-image.yml is used.
       - name: Cache Dockerfile
         if: inputs.test_tag_suffix == ''
         id: cache-dockerfile
