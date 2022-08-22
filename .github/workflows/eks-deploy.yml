@@ -54,7 +54,7 @@ jobs:
         run: |
           echo debug
           echo inputs.service_name: ${{ inputs.service_name }}
-          echo inputs.cluster_env: $ {{ inputs.cluster_env }}
+          echo inputs.cluster_env: ${{ inputs.cluster_env }}
           echo inputs.version: ${{ inputs.version }}
           echo find ${{ inputs.service_name }}:${{ inputs.cluster_env }}
           echo replace ${{ inputs.service_name }}:${{ inputs.version }}
