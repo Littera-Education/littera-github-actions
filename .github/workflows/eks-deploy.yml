@@ -19,15 +19,15 @@ on:
         type: string
         required: false
         default: 'develop'
-      NEW_RELIC_LICENSE_KEY:
-        type: string
-        required: false
 
     secrets:
       repo_token:
         required: true
       aws_account_id:
         required: true
+      NEW_RELIC_LICENSE_KEY:
+        type: string
+        required: false
 
 
 jobs:
