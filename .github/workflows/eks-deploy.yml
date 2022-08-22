@@ -19,6 +19,9 @@ on:
         type: string
         required: false
         default: 'develop'
+      NEW_RELIC_LICENSE_KEY:
+        type: string
+        required: false
 
     secrets:
       repo_token:
