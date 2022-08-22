@@ -51,7 +51,7 @@ jobs:
 
       - name: Maven SNAPSHOT
         run: |
-          ./mvnw -DskipTests=true clean deploy
+          ./mvnw -ntp -DskipTests=true clean deploy
       
       - name: Cache github pages
         id: cache-github-pages

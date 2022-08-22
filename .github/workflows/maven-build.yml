@@ -65,7 +65,7 @@ jobs:
       - name: Get version
         id: get-version
         run: |
-          VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
+          VERSION=$(./mvnw -ntp help:evaluate -Dexpression=project.version -q -DforceStdout)
 
           if [[ ! $VERSION =~ "-SNAPSHOT" ]]; then
             echo "Current version is not a SNAPSHOT, please bump to the next SNAPSHOT to continue."
@@ -83,7 +83,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
           SONAR_HOST_URL: ${{ inputs.sonar_host_url }}
         run: |
-          ./mvnw clean install sonar:sonar
+          ./mvnw -ntp clean install sonar:sonar
       
       - name: Cache github pages
         id: cache-github-pages
