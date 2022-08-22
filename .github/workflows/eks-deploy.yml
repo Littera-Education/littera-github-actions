@@ -56,6 +56,8 @@ jobs:
           echo inputs.service_name: ${{ inputs.service_name }}
           echo inputs.cluster_env: $ {{ inputs.cluster_env }}
           echo inputs.version: ${{ inputs.version }}
+          echo find ${{ inputs.service_name }}:${{ inputs.cluster_env }}
+          echo replace ${{ inputs.service_name }}:${{ inputs.version }}
 
           # install kubectl
           curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.20.4/2021-04-12/bin/darwin/amd64/kubectl
