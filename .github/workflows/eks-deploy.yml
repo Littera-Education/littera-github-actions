@@ -64,7 +64,7 @@ jobs:
 
           # replace vars in eks manifest file
           sed -i "s/${{ inputs.service_name }}:${{ inputs.env }}/${{ inputs.service_name }}:${{ inputs.version }}/g" config/${{ inputs.service_name }}/eks/eks-${{ inputs.cluster_env }}-deployment.yaml
-          sed -i "s/NEW_RELIC_LICENSE_KEY_VALUE/${{ secrets.NEW_RELIC_LICENSE_KEY }}/g" config/${{ inputs.service_name }}/eks/eks-${{ inputs.cluster_env }}-deployment.yaml
+          sed -i "s/NEW_RELIC_LICENSE_KEY_VALUE/${{ secrets.NEW_RELIC_LICENSE_KEY }}/g" config/${{ inputs.service_name }}/eks/eks-${{ inputs.env }}-deployment.yaml
           
           # Apply manifest and deploy
           kubectl apply -f config/${{ inputs.service_name }}/eks/eks-${{ inputs.cluster_env }}-deployment.yaml
