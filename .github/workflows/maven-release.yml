@@ -65,21 +65,21 @@ jobs:
         run: |
           git config --global user.name 'Littera GitHub'
           git config --global user.email 'littera-github@litteraeducation.com'
-          ./mvnw -ntp --batch-mode build-helper:parse-version release:prepare -DscmCommentPrefix="[skip ci][maven-release-plugin] " -DdevelopmentVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT -DreleaseVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} -Darguments='-Dmaven.test.skip=true' release:perform
+          ./mvnw -ntp --batch-mode build-helper:parse-version release:prepare -DscmCommentPrefix="[skip ci][maven-release-plugin] " -DdevelopmentVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT -DreleaseVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} -Darguments='-Dmaven.test.skip=true -Dmaven.javadoc.skip=true' release:perform
 
       - name: Maven Release Minor
         if: ${{ inputs.version_increment_type == 'minor' }}
         run: |
           git config --global user.name 'Littera GitHub'
           git config --global user.email 'littera-github@litteraeducation.com'
-          ./mvnw -ntp --batch-mode build-helper:parse-version release:prepare -DscmCommentPrefix="[skip ci][maven-release-plugin] " -DdevelopmentVersion=\${parsedVersion.majorVersion}.\${parsedVersion.nextMinorVersion}.0-SNAPSHOT -DreleaseVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} -Darguments='-Dmaven.test.skip=true' release:perform
+          ./mvnw -ntp --batch-mode build-helper:parse-version release:prepare -DscmCommentPrefix="[skip ci][maven-release-plugin] " -DdevelopmentVersion=\${parsedVersion.majorVersion}.\${parsedVersion.nextMinorVersion}.0-SNAPSHOT -DreleaseVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} -Darguments='-Dmaven.test.skip=true -Dmaven.javadoc.skip=true' release:perform
 
       - name: Maven Release Major
         if: ${{ inputs.version_increment_type == 'major' }}
         run: |
           git config --global user.name 'Littera GitHub'
           git config --global user.email 'littera-github@litteraeducation.com'
-          ./mvnw -ntp --batch-mode build-helper:parse-version release:prepare -DscmCommentPrefix="[skip ci][maven-release-plugin] " -DdevelopmentVersion=\${parsedVersion.nextMajorVersion}.0.0-SNAPSHOT -DreleaseVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} -Darguments='-Dmaven.test.skip=true' release:perform
+          ./mvnw -ntp --batch-mode build-helper:parse-version release:prepare -DscmCommentPrefix="[skip ci][maven-release-plugin] " -DdevelopmentVersion=\${parsedVersion.nextMajorVersion}.0.0-SNAPSHOT -DreleaseVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} -Darguments='-Dmaven.test.skip=true -Dmaven.javadoc.skip=true' release:perform
 
       - name: Cache github pages
         id: cache-github-pages
