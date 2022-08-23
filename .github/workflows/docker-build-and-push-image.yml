@@ -12,14 +12,17 @@ on:
       artifact_id:
         required: true
         type: string
-      env:
-        required: true
-        type: string
+      env:                # ******** not used in this reusable workflow ********
+        required: false   # Temporarily made 'require: false' to not break calling workflow
+        type: string      # Should be removed when calling workflows no longer send 'env'
       service_name:
         required: true
         type: string
       version:
         required: true
+        type: string
+      test_tag_suffix:
+        required: false
         type: string
 
     secrets:
@@ -58,7 +61,13 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
+      # Here the cached Dockerfile is recalled from the cache created when
+      # mave-release.yml re-usable workflow was previously called by develop.yml
+      # upon a PR was merge into develop.
+      # When testing a docker build (test_tag_suffix != null), this cache is not-recalled
+      # and the Dockerfile in a test branch indicated in create-test-image.yml is used.
       - name: Cache Dockerfile
+        if: inputs.test_tag_suffix == ''
         id: cache-dockerfile
         uses: actions/cache@v3
         with:
@@ -87,6 +96,11 @@ jobs:
       - name: Build, tag, and push docker image to Amazon ECR
         run: |
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com
-          docker build --build-arg PROFILE=${{ inputs.env }} -t ${{ inputs.service_name }} .
-          docker tag ${{ inputs.service_name }}:latest ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
-          docker push ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
+          docker build -t ${{ inputs.service_name }} .
+          if [ -z "${{ inputs.test_tag_suffix }}" ]; then
+            docker tag ${{ inputs.service_name }}:latest ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
+            docker push ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
+          else
+            docker tag ${{ inputs.service_name }}:latest ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
+            docker push ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
+          fi
