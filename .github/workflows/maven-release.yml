@@ -55,6 +55,12 @@ jobs:
           active_profiles: '[ "github" ]'
           output_file: /home/runner/.m2/settings.xml
 
+      - name: Get Project Info
+        id: get-project-info
+        run: |
+          NAME=$(./mvnw -ntp help:evaluate -Dexpression=project.name -q -DforceStdout)
+          echo "NAME=$NAME" >> $GITHUB_OUTPUT
+
       - name: Prep SSH
         uses: webfactory/ssh-agent@v0.5.4
         with:
@@ -86,11 +92,11 @@ jobs:
         uses: actions/cache@v3
         with:
           path: target/docs
-          key: ${{ runner.os }}-${{ inputs.version }}-github-pages
+          key: ${{ steps.get-project-info.outputs.NAME }}-${{ inputs.version }}-github-pages
 
       - name: Deploy to Github Pages
         uses: JamesIves/github-pages-deploy-action@v4.3.3
-        if: steps.cache-github-pages.outputs.cache-hit == true
+        if: steps.cache-github-pages.outputs.cache-hit == 'true'
         with:
           branch: gh-pages
           target-folder: ${{ inputs.version }}
