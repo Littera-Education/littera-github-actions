@@ -48,7 +48,6 @@ jobs:
           server-id: 'litteranexus'
           server-username: ${{ secrets.nexus_username }}
           server-password: ${{ secrets.nexus_password }}
-          settings-path: '/home/runner/.m2'
 
       # - name: Maven Settings XML File
       #   uses: whelk-io/maven-settings-xml-action@v20
