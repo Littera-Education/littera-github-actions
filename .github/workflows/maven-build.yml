@@ -50,11 +50,20 @@ jobs:
           server-password: ${{ secrets.nexus_password }}
           settings-path: '/home/runner/.m2'
 
+      # - name: Maven Settings XML File
+      #   uses: whelk-io/maven-settings-xml-action@v20
+      #   with:
+      #     repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
+      #     plugin_repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
+      #     servers: '[{ "id": "litteranexus", "username": "${{ secrets.nexus_username }}", "password": "${{ secrets.nexus_password }}" }]'
+      #     active_profiles: '[ "github" ]'
+      #     output_file: /home/runner/.m2/settings.xml
+
       # - name: Get Project Info
       #   id: get-project-info
       #   run: |
-      #     VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
-      #     NAME=$(./mvnw help:evaluate -Dexpression=project.name -q -DforceStdout)
+      #     VERSION=$(./mvnw -ntp help:evaluate -Dexpression=project.version -q -DforceStdout)
+      #     NAME=$(./mvnw -ntp help:evaluate -Dexpression=project.name -q -DforceStdout)
 
       #     if [[ ! $VERSION =~ "-SNAPSHOT" ]]; then
       #       echo "Current version is not a SNAPSHOT, please bump to the next SNAPSHOT to continue."
