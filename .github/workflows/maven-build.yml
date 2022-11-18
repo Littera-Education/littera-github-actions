@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      version: ${{ steps.get-version.outputs.VERSION }}
+      version: ${{ steps.get-project-info.outputs.VERSION }}
 
     steps:
       - uses: actions/checkout@v2
@@ -62,10 +62,11 @@ jobs:
           active_profiles: '[ "github" ]'
           output_file: /home/runner/.m2/settings.xml
 
-      - name: Get version
-        id: get-version
+      - name: Get Project Info
+        id: get-project-info
         run: |
           VERSION=$(./mvnw -ntp help:evaluate -Dexpression=project.version -q -DforceStdout)
+          NAME=$(./mvnw -ntp help:evaluate -Dexpression=project.name -q -DforceStdout)
 
           if [[ ! $VERSION =~ "-SNAPSHOT" ]]; then
             echo "Current version is not a SNAPSHOT, please bump to the next SNAPSHOT to continue."
@@ -76,7 +77,8 @@ jobs:
                   VERSION=$(echo $VERSION | cut -d- -f1)
           fi
 
-          echo "::set-output name=VERSION::$VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "NAME=$NAME" >> $GITHUB_OUTPUT
 
       - name: Maven Build and Sonar
         env:
@@ -90,4 +92,4 @@ jobs:
         uses: actions/cache@v3
         with:
           path: target/docs
-          key: ${{ runner.os }}-${{ steps.get-version.outputs.VERSION }}-github-pages
+          key: ${{ steps.get-project-info.outputs.NAME }}-${{ steps.get-project-info.outputs.VERSION }}-github-pages
