@@ -43,7 +43,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
@@ -54,15 +54,8 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
-      - name: Cache Maven packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
       # Here the cached Dockerfile is recalled from the cache created when
-      # mave-release.yml re-usable workflow was previously called by develop.yml
+      # maven-release.yml re-usable workflow was previously called by develop.yml
       # upon a PR was merge into develop.
       # When testing a docker build (test_tag_suffix != null), this cache is not-recalled
       # and the Dockerfile in a test branch indicated in create-test-image.yml is used.
@@ -72,10 +65,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: Dockerfile
-          key: ${{ runner.os }}-${{ inputs.version }}-dockerfile
+          key: ${{ inputs.artifact_id }}-${{ inputs.version }}-dockerfile
 
       - name: Maven Settings XML File
-        uses: whelk-io/maven-settings-xml-action@v20
+        uses: whelk-io/maven-settings-xml-action@v21
         with:
           repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
           plugin_repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
@@ -88,7 +81,7 @@ jobs:
           ./mvnw dependency:copy -Dartifact=${{ inputs.GROUP_ID }}:${{ inputs.ARTIFACT_ID }}:${{ inputs.version }}:jar -DoutputDirectory=./target
       
       - name: Configure AWS Creds
-        uses: aws-actions/configure-aws-credentials@master
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-region: us-east-1
           role-to-assume: arn:aws:iam::${{ secrets.aws_account_id }}:role/github-assume-role

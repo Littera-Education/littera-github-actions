@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
@@ -39,15 +39,8 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
-      - name: Cache Maven packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
       - name: Maven Settings XML File
-        uses: whelk-io/maven-settings-xml-action@v20
+        uses: whelk-io/maven-settings-xml-action@v21
         with:
           repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
           plugin_repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
@@ -62,7 +55,7 @@ jobs:
           echo "NAME=$NAME" >> $GITHUB_OUTPUT
 
       - name: Prep SSH
-        uses: webfactory/ssh-agent@v0.5.4
+        uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.github_ssh_key }}
 
@@ -95,7 +88,7 @@ jobs:
           key: ${{ steps.get-project-info.outputs.NAME }}-${{ inputs.version }}-github-pages
 
       - name: Deploy to Github Pages
-        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        uses: JamesIves/github-pages-deploy-action@v4.4.1
         if: steps.cache-github-pages.outputs.cache-hit == 'true'
         with:
           branch: gh-pages
@@ -107,4 +100,4 @@ jobs:
         uses: actions/cache@v3
         with:
           path: Dockerfile
-          key: ${{ runner.os }}-${{ inputs.version }}-dockerfile
+          key: ${{ steps.get-project-info.outputs.NAME }}-${{ inputs.version }}-dockerfile
