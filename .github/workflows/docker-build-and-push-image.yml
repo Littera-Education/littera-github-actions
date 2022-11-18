@@ -81,7 +81,7 @@ jobs:
           ./mvnw dependency:copy -Dartifact=${{ inputs.GROUP_ID }}:${{ inputs.ARTIFACT_ID }}:${{ inputs.version }}:jar -DoutputDirectory=./target
       
       - name: Configure AWS Creds
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-region: us-east-1
           role-to-assume: arn:aws:iam::${{ secrets.aws_account_id }}:role/github-assume-role
