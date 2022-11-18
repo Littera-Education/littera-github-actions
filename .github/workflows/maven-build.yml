@@ -45,51 +45,40 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
-          server-id: 'litteranexus'
-          server-username: ${{ secrets.nexus_username }}
-          server-password: ${{ secrets.nexus_password }}
-          settings-path: '/home/runner/.m2'
 
-      # - name: Maven Settings XML File
-      #   uses: whelk-io/maven-settings-xml-action@v20
-      #   with:
-      #     repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
-      #     plugin_repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
-      #     servers: '[{ "id": "litteranexus", "username": "${{ secrets.nexus_username }}", "password": "${{ secrets.nexus_password }}" }]'
-      #     active_profiles: '[ "github" ]'
-      #     output_file: /home/runner/.m2/settings.xml
+      - name: Maven Settings XML File
+        uses: whelk-io/maven-settings-xml-action@v21
+        with:
+          repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
+          plugin_repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
+          servers: '[{ "id": "litteranexus", "username": "${{ secrets.nexus_username }}", "password": "${{ secrets.nexus_password }}" }]'
+          active_profiles: '[ "github" ]'
+          output_file: /home/runner/.m2/settings.xml
 
-      # - name: Get Project Info
-      #   id: get-project-info
-      #   run: |
-      #     VERSION=$(./mvnw -ntp help:evaluate -Dexpression=project.version -q -DforceStdout)
-      #     NAME=$(./mvnw -ntp help:evaluate -Dexpression=project.name -q -DforceStdout)
+      - name: Get Project Info
+        id: get-project-info
+        run: |
+          VERSION=$(./mvnw -ntp help:evaluate -Dexpression=project.version -q -DforceStdout)
+          NAME=$(./mvnw -ntp help:evaluate -Dexpression=project.name -q -DforceStdout)
 
-      #     if [[ ! $VERSION =~ "-SNAPSHOT" ]]; then
-      #       echo "Current version is not a SNAPSHOT, please bump to the next SNAPSHOT to continue."
-      #       exit 1
-      #     fi
+          if [[ ! $VERSION =~ "-SNAPSHOT" ]]; then
+            echo "Current version is not a SNAPSHOT, please bump to the next SNAPSHOT to continue."
+            exit 1
+          fi
 
-      #     if [ "${{ inputs.is_release }}" == "true" ]; then
-      #             VERSION=$(echo $VERSION | cut -d- -f1)
-      #     fi
+          if [ "${{ inputs.is_release }}" == "true" ]; then
+                  VERSION=$(echo $VERSION | cut -d- -f1)
+          fi
 
-      #     echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-      #     echo "NAME=$NAME" >> $GITHUB_OUTPUT
-
-      # - name: Maven Build and Sonar
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.sonar_token }}
-      #     SONAR_HOST_URL: ${{ inputs.sonar_host_url }}
-      #   run: |
-      #     ./mvnw clean install sonar:sonar -Dsonar.qualitygate.wait=true
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "NAME=$NAME" >> $GITHUB_OUTPUT
 
       - name: Maven Build and Sonar
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
           SONAR_HOST_URL: ${{ inputs.sonar_host_url }}
         run: |
-          ./mvnw -X help:effective-settings
+          ./mvnw -ntp clean install sonar:sonar -Dsonar.qualitygate.wait=true
       
       - name: Cache github pages
         id: cache-github-pages

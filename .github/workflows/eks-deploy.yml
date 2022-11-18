@@ -39,13 +39,13 @@ jobs:
 
     steps:
       - name: Configure AWS Creds
-        uses: aws-actions/configure-aws-credentials@master
+        uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: us-east-1
           role-to-assume: arn:aws:iam::${{ secrets.aws_account_id }}:role/github-assume-role
 
       - name: Checkout EKS Config Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: Littera-Education/littera-eks-config
           token: ${{ secrets.repo_token }}
