@@ -29,7 +29,7 @@ on:
 jobs:
   maven_build:
     name: Maven Build
-    runs-on: actions-runner-linux-x64-2.300.2.tar.gz
+    runs-on: ubuntu-latest
 
     outputs:
       version: ${{ steps.get-project-info.outputs.VERSION }}
