@@ -19,7 +19,7 @@ on:
 jobs:
   maven_deploy:
     name: Maven Deploy
-    runs-on: ubuntu-latest
+    runs-on: actions-runner-linux-x64-2.300.2.tar.gz
 
     steps:
       - uses: actions/checkout@v3
