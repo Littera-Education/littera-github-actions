@@ -88,6 +88,12 @@ jobs:
           SONAR_HOST_URL: ${{ inputs.sonar_host_url }}
         run: |
           ./mvnw -ntp clean install sonar:sonar -Dsonar.qualitygate.wait=true
+
+
+      - name: Debug Failure
+        if: ${{ failure() }}
+        run: |
+          cat /var/log/syslog
       
       - name: Cache github pages
         id: cache-github-pages
