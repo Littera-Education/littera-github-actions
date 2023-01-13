@@ -29,7 +29,7 @@ on:
 jobs:
   maven_build:
     name: Maven Build
-    runs-on: actions-runner-linux-x64-2.300.2.tar.gz
+    runs-on: ubuntu-latest
 
     outputs:
       version: ${{ steps.get-project-info.outputs.VERSION }}
@@ -54,6 +54,13 @@ jobs:
           servers: '[{ "id": "litteranexus", "username": "${{ secrets.nexus_username }}", "password": "${{ secrets.nexus_password }}" }]'
           active_profiles: '[ "github" ]'
           output_file: /home/runner/.m2/settings.xml
+
+      - name: Get Docker info
+        id: get-docker-info
+        run: |
+          docker ps
+          ls -la /var/run
+          ls -la /run
 
       - name: Get Project Info
         id: get-project-info
