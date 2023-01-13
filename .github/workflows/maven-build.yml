@@ -61,6 +61,8 @@ jobs:
           docker ps
           ls -la /var/run
           ls -la /run
+          sudo chmod 666 /var/run/docker.sock
+          ls -la /run
 
       - name: Get Project Info
         id: get-project-info
