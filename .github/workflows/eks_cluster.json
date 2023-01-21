@@ -39,8 +39,8 @@
             "1": "littera-prod"
         },
         "cluster": {
-            "0": "dev_cluster",
-            "1": "littera_eks_dev1"
+            "0": "staging_cluster",
+            "1": "littera_eks_staging1"
         },
         "kubctl_download_url": {
             "0": "https://s3.us-west-2.amazonaws.com/amazon-eks/1.20.4/2021-04-12/bin/darwin/amd64/kubectl",
@@ -53,8 +53,8 @@
             "1": "littera-prod"
         },
         "cluster": {
-            "0": "dev_cluster",
-            "1": "littera_eks_dev1"
+            "0": "production_cluster",
+            "1": "littera_eks_production1"
         },
         "kubctl_download_url": {
             "0": "https://s3.us-west-2.amazonaws.com/amazon-eks/1.20.4/2021-04-12/bin/darwin/amd64/kubectl",
