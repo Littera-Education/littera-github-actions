@@ -22,21 +22,15 @@ on:
       aws_account_number:
         required: true
         type: string
+      kubctl_download_url:
+        required: true
+        type: string
 
     secrets:
       repo_token:
         required: true
       NEW_RELIC_LICENSE_KEY:
         required: false
-
-env:
-  image_version: ${{ inputs.image_version }}
-  environment: ${{ inputs.environment }}
-  cluster_name: ${{ inputs.cluster_name }}
-  service_name: ${{ inputs.service_name }}
-  eks_config_branch: ${{ inputs.eks_config_branch }}
-  aws_account_number: ${{ inputs.aws_account_number }}
-
 
 jobs:
   deploy-to-eks:
@@ -51,7 +45,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-region: us-east-1
-          role-to-assume: arn:aws:iam::${{ aws_account_number }}:role/github-assume-role
+          role-to-assume: arn:aws:iam::${{ inputs.aws_account_number }}:role/github-assume-role
 
       - name: Checkout EKS Config Repo
         uses: actions/checkout@v3
