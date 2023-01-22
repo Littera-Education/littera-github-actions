@@ -69,7 +69,7 @@ jobs:
           aws eks --region us-east-1 update-kubeconfig --name ${{ inputs.cluster_name }}
 
           # add iam role to serviceaccount annotation
-          sed -i "s/eks.amazonaws.com\/role-arn:\ .*/eks.amazonaws.com\/role-arn:\ ${{ inputs.iam_role }}/g" config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml
+          sed -i "s|eks.amazonaws.com/role-arn:\ .*|eks.amazonaws.com/role-arn:\ ${{ inputs.iam_role }}|g" config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml
 
           # edit ECR image path in eks manifest file
           sed -i "s/${{ inputs.service_name }}:${{ inputs.environment }}/${{ inputs.service_name }}:${{ inputs.image_version }}/g" config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml
