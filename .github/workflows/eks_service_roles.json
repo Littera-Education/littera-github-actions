@@ -106,5 +106,23 @@
             "0": "arn:aws:iam::022961735341:role/eksctl-production-cluster-addon-iamserviceac-Role1-V7LZPQZXTBZX",
             "1": ""
         }
+    },
+    "littera-test-spring-boot-application": {
+        "dev": {
+            "0": "arn:aws:iam::022961735341:role/eksctl-dev-cluster-addon-iamserviceaccount-l-Role1-1KUCFNTKT7C8W",
+            "1": "arn:aws:iam::022961735341:role/littera-eks-dev1-littera-tutoring-session-control-role-dev"
+        },
+        "testing": {
+            "0": "arn:aws:iam::022961735341:role/eksctl-dev-cluster-addon-iamserviceaccount-l-Role1-88FXOGV8MNIR",
+            "1": "arn:aws:iam::022961735341:role/littera-eks-dev1-littera-tutoring-session-control-role-testing"
+        },
+        "staging": {
+            "0": "arn:aws:iam::022961735341:role/eksctl-staging-cluster-addon-iamserviceaccou-Role1-E87UXD9EFGQ0",
+            "1": ""
+        },
+        "production": {
+            "0": "arn:aws:iam::022961735341:role/eksctl-production-cluster-addon-iamserviceac-Role1-V7LZPQZXTBZX",
+            "1": ""
+        }
     }
 }
