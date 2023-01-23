@@ -57,9 +57,14 @@ jobs:
 
       - name: Get Project Info
         id: get-project-info
+        outputs:
+          group_id: ${{ steps.get-project-info.outputs.GROUPID }}
+          artifact_id: ${{ steps.get-project-info.outputs.ARTIFACTID }}
         run: |
           VERSION=$(./mvnw -ntp help:evaluate -Dexpression=project.version -q -DforceStdout)
           NAME=$(./mvnw -ntp help:evaluate -Dexpression=project.name -q -DforceStdout)
+          GROUPID=$(./mvnw -ntp help:evaluate -Dexpression=project.groupId -q -DforceStdout)
+          ARTIFACTID=$(./mvnw -ntp help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
 
           if [[ ! $VERSION =~ "-SNAPSHOT" ]]; then
             echo "Current version is not a SNAPSHOT, please bump to the next SNAPSHOT to continue."
@@ -72,6 +77,8 @@ jobs:
 
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "NAME=$NAME" >> $GITHUB_OUTPUT
+          echo "GROUPID=$GROUPID" >> $GITHUB_OUTPUT
+          echo "ARTIFACTID=$ARTIFACTID" >> $GITHUB_OUTPUT
 
       - name: Maven Build and Sonar
         env:
