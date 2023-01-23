@@ -19,7 +19,7 @@ on:
         type: string
         required: false
         default: 'develop'
-      aws_account_number:
+      aws_account_id:
         required: true
         type: string
       kubctl_download_url:
@@ -48,7 +48,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-region: us-east-1
-          role-to-assume: arn:aws:iam::${{ inputs.aws_account_number }}:role/github-assume-role
+          role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/github-assume-role
 
       - name: Checkout EKS Config Repo
         uses: actions/checkout@v3
