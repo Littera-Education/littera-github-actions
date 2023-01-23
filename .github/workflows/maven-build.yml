@@ -33,6 +33,8 @@ jobs:
 
     outputs:
       version: ${{ steps.get-project-info.outputs.VERSION }}
+      group_id: ${{ steps.get-project-info.outputs.GROUPID }}
+      artifact_id: ${{ steps.get-project-info.outputs.ARTIFACTID }}
 
     steps:
       - uses: actions/checkout@v3
@@ -57,9 +59,6 @@ jobs:
 
       - name: Get Project Info
         id: get-project-info
-        outputs:
-          group_id: ${{ steps.get-project-info.outputs.GROUPID }}
-          artifact_id: ${{ steps.get-project-info.outputs.ARTIFACTID }}
         run: |
           VERSION=$(./mvnw -ntp help:evaluate -Dexpression=project.version -q -DforceStdout)
           NAME=$(./mvnw -ntp help:evaluate -Dexpression=project.name -q -DforceStdout)
