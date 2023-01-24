@@ -74,9 +74,13 @@ jobs:
                   VERSION=$(echo $VERSION | cut -d- -f1)
           fi
 
+          echo "VERSION=$VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "NAME=$NAME"
           echo "NAME=$NAME" >> $GITHUB_OUTPUT
+          echo "GROUPID=$GROUPID"
           echo "GROUPID=$GROUPID" >> $GITHUB_OUTPUT
+          echo "ARTIFACTID=$ARTIFACTID"
           echo "ARTIFACTID=$ARTIFACTID" >> $GITHUB_OUTPUT
 
       - name: Maven Build and Sonar
