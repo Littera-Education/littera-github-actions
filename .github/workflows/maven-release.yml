@@ -9,12 +9,6 @@ on:
       version:
         required: true
         type: string
-      group_id:
-        required: true
-        type: string
-      artifact_id:
-        required: true
-        type: string
       version_increment_type:
         required: true
         description: "What part of the version to increment: major, minor, or patch"
