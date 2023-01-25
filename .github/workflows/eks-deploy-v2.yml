@@ -73,7 +73,7 @@ jobs:
 
           # edit ECR image path in eks manifest file
           if [[ "${{ inputs.service_name }}" == "littera-core-api" ]]; then
-            sed -i "s/littera-core:${{ inputs.environment }}/${{ inputs.service_name }}:${{ inputs.image_version }}/g" config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml
+            sed -i "s/littera-core:${{ inputs.environment }}/littera-core:${{ inputs.image_version }}/g" config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml
           else
             sed -i "s/${{ inputs.service_name }}:${{ inputs.environment }}/${{ inputs.service_name }}:${{ inputs.image_version }}/g" config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml
           fi
