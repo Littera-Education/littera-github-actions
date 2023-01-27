@@ -93,7 +93,7 @@ jobs:
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com
 
           if [[ "${{ inputs.service_name }}" == "littera-core-api" ]]; then
-            docker build -t ${{ inputs.service_name }} .
+            docker build -t littera-core .
             if [ -z "${{ inputs.test_tag_suffix }}" ]; then
               docker tag littera-core:latest ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}
               docker push ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}
