@@ -12,9 +12,9 @@ on:
       artifact_id:
         required: true
         type: string
-      env:                # ******** not used in this reusable workflow ********
-        required: false   # Temporarily made 'require: false' to not break calling workflow
-        type: string      # Should be removed when calling workflows no longer send 'env'
+      # environment:        # ******** not used in this reusable workflow ********
+      #   required: false   # Temporarily made 'require: false' to not break calling workflow
+      #   type: string      # Should be removed when calling workflows no longer send 'env'
       service_name:
         required: true
         type: string
@@ -24,13 +24,14 @@ on:
       test_tag_suffix:
         required: false
         type: string
+      aws_account_id:
+        required: true
+        type: string
 
     secrets:
       nexus_username:
         required: true
       nexus_password:
-        required: true
-      aws_account_id:
         required: true
 
 jobs:
@@ -84,16 +85,29 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-region: us-east-1
-          role-to-assume: arn:aws:iam::${{ secrets.aws_account_id }}:role/github-assume-role
+          role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/github-assume-role
 
       - name: Build, tag, and push docker image to Amazon ECR
         run: |
-          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com
-          docker build -t ${{ inputs.service_name }} .
-          if [ -z "${{ inputs.test_tag_suffix }}" ]; then
-            docker tag ${{ inputs.service_name }}:latest ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
-            docker push ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
+
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com
+
+          if [[ "${{ inputs.service_name }}" == "littera-core-api" ]]; then
+            docker build -t littera-core .
+            if [ -z "${{ inputs.test_tag_suffix }}" ]; then
+              docker tag littera-core:latest ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}
+              docker push ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}
+            else
+              docker tag littera-core:latest ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
+              docker push ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
+            fi
           else
-            docker tag ${{ inputs.service_name }}:latest ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
-            docker push ${{ secrets.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
+            docker build -t ${{ inputs.service_name }} .
+            if [ -z "${{ inputs.test_tag_suffix }}" ]; then
+              docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
+              docker push ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
+            else
+              docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
+              docker push ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
+            fi
           fi
