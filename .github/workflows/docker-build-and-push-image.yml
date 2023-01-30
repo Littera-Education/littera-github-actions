@@ -79,7 +79,7 @@ jobs:
 
       - name: Download Artifact
         run: |
-          ./mvnw dependency:copy -Dartifact=${{ inputs.GROUP_ID }}:${{ inputs.ARTIFACT_ID }}:${{ inputs.version }}:jar -DoutputDirectory=./target
+          ./mvnw dependency:copy -Dartifact=${{ inputs.GROUP_ID }}:${{ inputs.ARTIFACT_ID }}:${{ inputs.version }}:jar -DoutputDirectory=./target -U
       
       - name: Configure AWS Creds
         uses: aws-actions/configure-aws-credentials@v1-node16
