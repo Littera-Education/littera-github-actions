@@ -81,7 +81,7 @@ jobs:
           aws eks --region us-east-1 update-kubeconfig --name ${{ inputs.cluster_name }}
 
           echo "kube version"
-          kubectl version --short
+          kubectl version
 
           echo "kubectl get pods"
           kubectl get pods -n littera-services-dev
