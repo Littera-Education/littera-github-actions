@@ -80,6 +80,9 @@ jobs:
           # set and use kube context
           aws eks --region us-east-1 update-kubeconfig --name ${{ inputs.cluster_name }}
 
+          echo "kube config"
+          cat ~/.kube/config
+
           echo "kube version"
           kubectl version || true
 
