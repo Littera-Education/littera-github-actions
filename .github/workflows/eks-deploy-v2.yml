@@ -84,7 +84,7 @@ jobs:
           kubectl version || true
 
           echo "kubectl get pods"
-          kubectl get pods -n littera-services-dev
+          kubectl get pods -n littera-services-dev || true
 
           # add iam role to serviceaccount annotation
           sed -i "s|eks.amazonaws.com/role-arn:\ .*|eks.amazonaws.com/role-arn:\ ${{ inputs.iam_role }}|g" config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml
