@@ -65,29 +65,14 @@ jobs:
           chmod +x ./kubectl
           mkdir -p $HOME/bin && mv ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
 
-          echo "HOME"
-          echo $HOME
-
-          echo "PATH"
-          echo $PATH
-
           echo "aws version:"
           aws --version
-          
-          echo "which kubectl"
-          which kubectl
 
           # set and use kube context
           aws eks --region us-east-1 update-kubeconfig --name ${{ inputs.cluster_name }}
 
-          echo "kube config"
-          cat ~/.kube/config
-
           echo "kube version"
           kubectl version || true
-
-          echo "kubectl get pods"
-          kubectl get pods -n littera-services-dev || true
 
           # add iam role to serviceaccount annotation
           sed -i "s|eks.amazonaws.com/role-arn:\ .*|eks.amazonaws.com/role-arn:\ ${{ inputs.iam_role }}|g" config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml
