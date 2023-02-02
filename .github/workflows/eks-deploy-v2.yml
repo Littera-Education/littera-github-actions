@@ -77,9 +77,6 @@ jobs:
           echo "which kubectl"
           which kubectl
 
-          echo "kubectl version pre context addition:"
-          kubectl version --short
-
           # set and use kube context
           aws eks --region us-east-1 update-kubeconfig --name ${{ inputs.cluster_name }}
 
