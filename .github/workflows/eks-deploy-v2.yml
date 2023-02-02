@@ -63,7 +63,7 @@ jobs:
           # install kubectl
           curl -o kubectl ${{ inputs.kubctl_download_url }}
           chmod +x ./kubectl
-          mkdir -p $HOME/bin && mv ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+          mkdir -p $HOME/bin && mv ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
 
           echo "HOME"
           echo $HOME
