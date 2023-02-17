@@ -90,6 +90,7 @@ jobs:
           echo "ARTIFACTID=$ARTIFACTID" >> $GITHUB_OUTPUT
 
       - name: Maven Build and Sonar
+        if: ${{ inputs.is_release == 'true' }}
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
           SONAR_HOST_URL: ${{ inputs.sonar_host_url }}
