@@ -92,6 +92,9 @@ jobs:
           if [[ "${{ inputs.service_name }}" == "littera-core-api" ]]; then
             kubectl rollout restart deployment littera-core-web -n littera-services-${{ inputs.environment }}
             kubectl rollout restart deployment littera-core-worker -n littera-services-${{ inputs.environment }}
+            kubectl rollout status deployment littera-core-web -n littera-services-${{ inputs.environment }} --timeout=${{ kubectl_timeout }}
+            kubectl rollout status deployment littera-core-worker -n littera-services-${{ inputs.environment }} --timeout=${{ kubectl_timeout }}
           else
             kubectl rollout restart deployment ${{ inputs.service_name }} -n littera-services-${{ inputs.environment }}
+            kubectl rollout status deployment ${{  inputs.service_name }} -n littera-services-${{ inputs.environment }} --timeout=${{ kubectl_timeout }}
           fi
