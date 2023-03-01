@@ -107,5 +107,6 @@ jobs:
             # echo does not necessary mean that deployment was a failure
           else
             kubectl rollout restart deployment ${{ inputs.service_name }} -n littera-services-${{ inputs.environment }}
+            echo "The timeout is ${{ github_actions_deploy_timeout }}...."
             kubectl rollout status deployment ${{  inputs.service_name }} -n littera-services-${{ inputs.environment }} --timeout=${{ github_actions_deploy_timeout }}
           fi
