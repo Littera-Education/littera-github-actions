@@ -116,4 +116,5 @@ jobs:
               echo "Timeout reached. However, deployment hasn't necessarily failed. Please reach out to devops"
             else
               echo "Deployed successfully"
+            fi
           fi
