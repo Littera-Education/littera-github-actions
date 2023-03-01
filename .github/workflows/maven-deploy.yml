@@ -18,7 +18,7 @@ on:
 
 jobs:
   maven_deploy:
-    name: Maven Deploy
+    name: Maven Deploy version ${{ inputs.version }}
     runs-on: ubuntu-latest
 
     steps:

@@ -24,7 +24,7 @@ on:
 
 jobs:
   maven_release:
-    name: Maven Release
+    name: Maven ${{ inputs.version_increment_type }} Release version ${{ inputs.version }}
     runs-on: ubuntu-latest
 
     steps:
