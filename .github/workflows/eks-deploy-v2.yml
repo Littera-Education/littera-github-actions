@@ -28,6 +28,9 @@ on:
       iam_role:
         required: true
         type: string
+      github_actions_deploy_timeout:
+        required: true
+        type: string
 
     secrets:
       repo_token:
