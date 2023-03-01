@@ -40,7 +40,7 @@ on:
 
 jobs:
   deploy-to-eks:
-    name: Deploy docker image to EKS
+    name: Deploy ${{ inputs.image_version }} to ${{ inputs.environment }}
     runs-on: ubuntu-latest
 
     permissions:

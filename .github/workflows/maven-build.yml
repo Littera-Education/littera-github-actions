@@ -12,6 +12,9 @@ on:
       is_release: # this is treated as a string since booleans have issues
         required: true
         type: string
+      skip_build:
+        type: string
+        default: false
 
     secrets:
       nexus_username:
@@ -90,6 +93,7 @@ jobs:
           echo "ARTIFACTID=$ARTIFACTID" >> $GITHUB_OUTPUT
 
       - name: Maven Build and Sonar
+        if: ${{ inputs.skip_build != 'true' }}
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
           SONAR_HOST_URL: ${{ inputs.sonar_host_url }}
