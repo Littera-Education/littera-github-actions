@@ -100,6 +100,7 @@ jobs:
             kubectl rollout status deployment ${{ inputs.service_name }} -n littera-services-${{ inputs.environment }} --timeout=${{ inputs.github_actions_deploy_timeout }} || true |
             while IFS= read -r line
             do
+              echo $line
               if [[ $line == "error: timed out waiting for the condition" ]]; then
                 echo "Timeout reached. However, deployment hasn't necessarily failed. Please reach out to devops."
               else
