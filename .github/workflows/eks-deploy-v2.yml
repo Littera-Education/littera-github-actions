@@ -97,6 +97,6 @@ jobs:
             kubectl rollout restart deployment littera-core-worker -n littera-services-${{ inputs.environment }}
           else
             kubectl rollout restart deployment ${{ inputs.service_name }} -n littera-services-${{ inputs.environment }}
-            echo "“If the action fails due to the timeout of ${{ inputs.github_actions_deploy_timeout }}; the deployment may still have succeed. Please contact devops in #team-devops-collab about this”"
+            echo "“NOTE: If the action fails due to the timeout of ${{ inputs.github_actions_deploy_timeout }}; the deployment may still have succeed. Please contact devops in #team-devops-collab about this”"
             kubectl rollout status deployment ${{ inputs.service_name }} -n littera-services-${{ inputs.environment }} --timeout=${{ inputs.github_actions_deploy_timeout }}
           fi  
