@@ -1,3 +1,6 @@
+# v4.7.0 (03/02/2023)
+* Adding functionality to see deployment status
+
 # v4.6.0 (02/28/2023)
 * Add changelog to repo
 * On `maven-deploy.yml` display version of artifact being created in job name.
