@@ -91,9 +91,7 @@ jobs:
           sed -i "s/NEW_RELIC_LICENSE_KEY_VALUE/${{ secrets.NEW_RELIC_LICENSE_KEY }}/g" config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml
           
           # apply manifest and deploy
-          echo "you are here"
           kubectl apply -f config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml
-          echo "you are here now"
           if [[ "${{ inputs.service_name }}" == "littera-core-api" ]]; then
             kubectl rollout restart deployment littera-core-web -n littera-services-${{ inputs.environment }}
             kubectl rollout restart deployment littera-core-worker -n littera-services-${{ inputs.environment }}
@@ -111,11 +109,10 @@ jobs:
             # echo this means that $timeout has been reached
             # echo does not necessary mean that deployment was a failure
           else
-            echo "you are here now now"
             kubectl rollout restart deployment ${{ inputs.service_name }} -n littera-services-${{ inputs.environment }}
             kubectl rollout status deployment ${{ inputs.service_name }} -n littera-services-${{ inputs.environment }} --timeout=${{ inputs.github_actions_deploy_timeout }}
              if [[ $status -ne 0 ]]; then
-               echo "Timeout reached. However, deployment hasn't necessarily failed. Please reach out to devops"
+               echo "Timeout reached. However, deployment hasn't necessarily failed. Please reach out to devops."
              else
                echo "Deployed successfully"
             fi
