@@ -63,11 +63,16 @@ jobs:
         with:
           args: zip -qq -r dist.zip dist
 
+      # - name: upload zip file to nexus
+      #   run: |
+      #     if [ "${{ steps.release-please.outputs.release_created }}" ]; then
+      #       curl -v -k -u ${{secrets.nexus_username}}:${{secrets.nexus_password}} --upload-file dist.zip https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/${{ inputs.version }}/dist.zip
+      #     else
+      #       version="${{ inputs.version }}-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
+      #       curl -v -k -u ${{secrets.nexus_username}}:${{secrets.nexus_password}} --upload-file dist.zip https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/$version/dist.zip
+      #     fi
+
       - name: upload zip file to nexus
         run: |
-          if [ "${{ steps.release-please.outputs.release_created }}" ]; then
-            curl -v -k -u ${{secrets.nexus_username}}:${{secrets.nexus_password}} --upload-file dist.zip https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/${{ inputs.version }}/dist.zip
-          else
-            version="${{ inputs.version }}-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
-            curl -v -k -u ${{secrets.nexus_username}}:${{secrets.nexus_password}} --upload-file dist.zip https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/$version/dist.zip
-          fi
+          version="${{ inputs.version }}-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
+          curl -v -k -u ${{secrets.nexus_username}}:${{secrets.nexus_password}} --upload-file dist.zip https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/$version/dist.zip
