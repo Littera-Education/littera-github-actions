@@ -74,5 +74,5 @@ jobs:
 
       - name: upload zip file to nexus
         run: |
-          version="${{ inputs.version }}-SNAPSHOT-$(date +'%Y-%m-%d-%H-%M-%S')"
+          version="1.6.0-SNAPSHOT-2023-03-09-16-31-22"
           curl -v -k -u ${{secrets.nexus_username}}:${{secrets.nexus_password}} --upload-file dist.zip https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/$version/dist.zip
