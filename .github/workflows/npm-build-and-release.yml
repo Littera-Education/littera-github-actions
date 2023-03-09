@@ -1,0 +1,90 @@
+name: NPM Build And Release
+
+on:
+  workflow_call:
+    inputs:
+      nexus_host_domain:
+        required: true
+        type: string
+      artifact_id:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+
+    secrets:
+      nexus_username:
+        required: true
+      nexus_password:
+        required: true
+      nexus_npm_login:
+        required: true
+      github_actions_token:
+        required: true
+
+    outputs:
+      version:
+        description: "artifact version"
+        value: ${{ jobs.maven_build.outputs.version }}
+      # group_id: 
+      #   description: "artifact group id"
+      #   value: ${{ jobs.maven_build.outputs.group_id }}
+      artifact_id: 
+        description: "artifact id"
+        value: ${{ jobs.maven_build.outputs.artifact_id }}
+
+jobs:
+  npm_build:
+    name: NPM (or Yarn) Tests
+    runs-on: ubuntu-latest
+
+    outputs:
+      version: ${{ steps.get-project-info.outputs.VERSION }}
+      # group_id: ${{ steps.get-project-info.outputs.GROUPID }}
+      artifact_id: ${{ steps.get-project-info.outputs.ARTIFACTID }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Release Please
+        id: release-please
+        uses: google-github-actions/release-please-action@v3
+        with:
+          token: ${{ secrets.github_actions_token }}
+          default-branch: ${{ github.ref_name }}
+          release-type: node
+          package-name: ${{ inputs.artifact_id }}
+
+      - name: Setup .npmrc for pulling & publishing to Nexus
+        if: ${{ steps.release-please.outputs.release_created }}
+        run: |
+          echo -e '\n' \
+          'registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n' \
+          '_auth=${{ secrets.nexus_npm_login }}\n' \
+          '//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n' \
+          'email=${{ secrets.NEXUS_USERNAME }}\n' \
+          'always-auth=true\n' \
+          >> .npmrc
+
+      - name: Install dependencies (with cache)
+        uses: bahmutov/npm-install@v1
+
+      - name: Build
+        run: npm run build
+
+      - uses: montudor/action-zip@v1
+        with:
+          args: zip -qq -r dist.zip dist
+
+      - name: upload zip file to nexus
+        if: ${{ steps.release-please.outputs.release_created }}
+        run: |
+          if [ "${{ steps.release-please.outputs.release_created }}" ]; then
+            curl -v -k -u ${{secrets.nexus_username}}:${{secrets.nexus_password}} --upload-file dist.zip https://${{ params.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/${{ inputs.version }}/dist.zip
+          else
+            version="${{ inputs.version }}-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
+            curl -v -k -u ${{secrets.nexus_username}}:${{secrets.nexus_password}} --upload-file dist.zip https://${{ params.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/${{ version }}/dist.zip
+          fi
