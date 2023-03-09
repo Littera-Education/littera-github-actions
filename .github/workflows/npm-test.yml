@@ -37,9 +37,6 @@ on:
       version:
         description: "artifact version"
         value: ${{ jobs.maven_build.outputs.version }}
-      # group_id: 
-      #   description: "artifact group id"
-      #   value: ${{ jobs.maven_build.outputs.group_id }}
       artifact_id: 
         description: "artifact id"
         value: ${{ jobs.maven_build.outputs.artifact_id }}
