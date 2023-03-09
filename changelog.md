@@ -1,5 +1,6 @@
-# v4.7.0 (03/02/2023)
+# v5.0.0 (03/02/2023)
 * Adding functionality to see deployment status
+* Originally v4.7.0. Changed to v5.0.0 because it was a breaking change.
 
 # v4.6.0 (02/28/2023)
 * Add changelog to repo
