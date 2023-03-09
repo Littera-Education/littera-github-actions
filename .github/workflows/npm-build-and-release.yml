@@ -70,5 +70,5 @@ jobs:
             curl -v -k -u ${{secrets.nexus_username}}:${{secrets.nexus_password}} --upload-file dist.zip https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/${{ inputs.version }}/dist.zip
           else
             version="${{ inputs.version }}-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
-            curl -v -k -u ${{secrets.nexus_username}}:${{secrets.nexus_password}} --upload-file dist.zip https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/${{ version }}/dist.zip
+            curl -v -k -u ${{secrets.nexus_username}}:${{secrets.nexus_password}} --upload-file dist.zip https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/$version/dist.zip
           fi
