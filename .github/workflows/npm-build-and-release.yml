@@ -74,7 +74,6 @@ jobs:
         run: |
           if [ "${{ steps.release-please.outputs.release_created }}" ]; then
             artifact_url=https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/${{ inputs.version }}/dist.zip
-            curl -v -k -u ${{secrets.nexus_username}}:${{secrets.nexus_password}} --upload-file dist.zip 
           else
             version="${{ inputs.version }}-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
             artifact_url=https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/$version/dist.zip
