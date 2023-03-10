@@ -12,6 +12,9 @@ on:
       version:
         required: true
         type: string
+      node_version:
+        type: number
+        default: 16
 
     secrets:
       nexus_username:
