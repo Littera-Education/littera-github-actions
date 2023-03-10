@@ -79,4 +79,4 @@ jobs:
             artifact_url=https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/$version/dist.zip
           fi
 
-          curl -v -k -u "${{secrets.nexus_username}}:${{secrets.nexus_password}}" --upload-file dist.zip 
+          curl -v -k -u "${{secrets.nexus_username}}:${{secrets.nexus_password}}" --upload-file dist.zip $artifact_url
