@@ -42,6 +42,11 @@ jobs:
           release-type: node
           package-name: ${{ inputs.artifact_id }}
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node_version }}
+
       - name: Setup .npmrc for pulling & publishing to Nexus
         run: |
           echo -e '\n' \
