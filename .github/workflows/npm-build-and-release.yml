@@ -31,6 +31,10 @@ jobs:
     name: NPM Build and Release
     runs-on: ubuntu-latest
 
+    outputs:
+      version: ${{ steps.upload-artifact.outputs.VERSION }}
+      artifact_url: ${{ steps.upload-artifact.outputs.ARTIFACT_URL }}
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -91,9 +95,10 @@ jobs:
           result-encoding: string
 
       - name: upload zip file to nexus
+        id: upload-artifact
         run: |
-          echo '${{join(steps.release-pr-title.outputs.*, '\n')}}'
           if [ "${{ steps.release-please.outputs.release_created }}" ]; then
+            version=inputs.version
             artifact_url=https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/${{ inputs.version }}/dist.zip
           elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" ]; then
             version="${{ steps.release-pr-title.outputs.result }}"
@@ -108,3 +113,12 @@ jobs:
           fi
 
           curl -v -k -u "${{secrets.nexus_username}}:${{secrets.nexus_password}}" --upload-file dist.zip $artifact_url
+          echo "VERSION=$version" >> $GITHUB_OUTPUT
+          echo "ARTIFACT_URL=$artifact_url" >> $GITHUB_OUTPUT
+
+      - name: Cache Dockerfile
+        id: cache-dockerfile
+        uses: actions/cache@v3
+        with:
+          path: Dockerfile
+          key: ${{ inputs.artifact_id }}-${{ steps.upload-artifact.outputs.VERSION }}-dockerfile

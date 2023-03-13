@@ -4,13 +4,13 @@ on:
   workflow_call:
     inputs:
       nexus_host_url:
-        required: true
         type: string
       group_id:
-        required: true
         type: string
       artifact_id:
         required: true
+        type: string
+      artifact_url:
         type: string
       # environment:        # ******** not used in this reusable workflow ********
       #   required: false   # Temporarily made 'require: false' to not break calling workflow
@@ -49,6 +49,7 @@ jobs:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Setup Java
+        if: inputs.group_id != ''
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
@@ -61,7 +62,7 @@ jobs:
       # When testing a docker build (test_tag_suffix != null), this cache is not-recalled
       # and the Dockerfile in a test branch indicated in create-test-image.yml is used.
       - name: Cache Dockerfile
-        if: inputs.test_tag_suffix == ''
+        if: inputs.group_id != ''
         id: cache-dockerfile
         uses: actions/cache@v3
         with:
@@ -69,6 +70,7 @@ jobs:
           key: ${{ inputs.artifact_id }}-${{ inputs.version }}-dockerfile
 
       - name: Maven Settings XML File
+        if: inputs.test_tag_suffix == '' && inputs.group_id != ''
         uses: whelk-io/maven-settings-xml-action@v21
         with:
           repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
@@ -77,9 +79,20 @@ jobs:
           active_profiles: '[ "github" ]'
           output_file: /home/runner/.m2/settings.xml
 
-      - name: Download Artifact
+      - name: Mvn Download Artifact
+        if: inputs.group_id != ''
         run: |
           ./mvnw dependency:copy -Dartifact=${{ inputs.GROUP_ID }}:${{ inputs.ARTIFACT_ID }}:${{ inputs.version }}:jar -DoutputDirectory=./target -U
+
+      - name: Curl Download Artifact
+        if: inputs.artifact_url != ''
+        run: |
+          curl -v -k -u "${{secrets.nexus_username}}:${{secrets.nexus_password}}" ${{ inputs.artifact_url }} -o dist.zip
+
+      - uses: montudor/action-zip@v1
+        if: inputs.artifact_url != ''
+        with:
+          args: unzip -qq dist.zip -d dist
       
       - name: Configure AWS Creds
         uses: aws-actions/configure-aws-credentials@v1-node16
