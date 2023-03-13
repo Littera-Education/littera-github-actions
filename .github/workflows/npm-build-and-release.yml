@@ -70,20 +70,29 @@ jobs:
         with:
           args: zip -qq -r dist.zip dist
 
-      - name: List PRs
-        uses: buildsville/list-pull-requests@v1
-        id: listprs
+      - name: Get Release PR Title
+        uses: actions/github-script@v6
+        id: release-pr-title
         with:
-          token: ${{secrets.GITHUB_TOKEN}}
-          labels: '["autorelease: pending"]'   
+          script: |
+            const prs = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            })
+            console.log(prs)
+
+            const releasepr = prs.filter(pr => pr.title.includes("chore(main): release"))
+            console.log(releasepr)
+
+            return releasepr.title
 
       - name: upload zip file to nexus
         run: |
-          echo '${{join(steps.listprs.outputs.*, '\n')}}'
+          echo '${{join(steps.release-pr-title.outputs.*, '\n')}}'
           if [ "${{ steps.release-please.outputs.release_created }}" ]; then
             artifact_url=https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/${{ inputs.version }}/dist.zip
           else
-            version=${{ steps.release-please.outputs.title }}
+            version=${{ steps.release-pr-title.outputs.title }}
             echo $version
             versionparts=versionparts=($version)
             echo ${versionparts[-1]}
