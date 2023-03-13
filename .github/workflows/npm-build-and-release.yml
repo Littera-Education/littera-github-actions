@@ -26,6 +26,14 @@ on:
       github_actions_token:
         required: true
 
+    outputs:
+      version:
+        description: "artifact version"
+        value: ${{ jobs.npm_build.outputs.version }}
+      artifact_url: 
+        description: "artifact url"
+        value: ${{ jobs.npm_build.outputs.artifact_url }}
+
 jobs:
   npm_build:
     name: NPM Build and Release
