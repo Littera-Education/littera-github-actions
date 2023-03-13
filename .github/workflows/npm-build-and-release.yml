@@ -95,13 +95,16 @@ jobs:
           echo '${{join(steps.release-pr-title.outputs.*, '\n')}}'
           if [ "${{ steps.release-please.outputs.release_created }}" ]; then
             artifact_url=https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/${{ inputs.version }}/dist.zip
-          else
+          elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" ]; then
             version="${{ steps.release-pr-title.outputs.result }}"
             echo $version
             versionparts=($version)
             echo ${versionparts[-1]}
             version="${versionparts[-1]}-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
             artifact_url=https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/$version/dist.zip
+          else
+            echo "No version detected, erroring."
+            exit 1
           fi
 
           curl -v -k -u "${{secrets.nexus_username}}:${{secrets.nexus_password}}" --upload-file dist.zip $artifact_url
