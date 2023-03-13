@@ -81,7 +81,7 @@ jobs:
             })
             console.log(prs)
 
-            const releasepr = prs.filter(pr => pr.title.includes("chore(main): release"))
+            const releasepr = prs.data.filter(pr => pr.title.includes("chore(main): release"))
             console.log(releasepr)
 
             return releasepr.title
