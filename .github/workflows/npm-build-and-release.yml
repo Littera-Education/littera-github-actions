@@ -84,7 +84,7 @@ jobs:
             const releasepr = prs.data.filter(pr => pr.title.includes("chore(main): release"))
             console.log(releasepr)
 
-            return releasepr.pop().title
+            return {title: releasepr.pop().title}
 
       - name: upload zip file to nexus
         run: |
