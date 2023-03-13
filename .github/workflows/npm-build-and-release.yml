@@ -79,12 +79,15 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
             })
-            console.log(prs)
 
             const releasepr = prs.data.filter(pr => pr.title.includes("chore(main): release"))
             console.log(releasepr)
 
-            return releasepr.pop().title
+            if(releasepr.length > 0) {
+              return releasepr.pop().title
+            }
+
+            console.log('No pending release prs found')
           result-encoding: string
 
       - name: upload zip file to nexus
