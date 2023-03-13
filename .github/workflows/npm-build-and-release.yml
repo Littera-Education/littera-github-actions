@@ -84,7 +84,8 @@ jobs:
             const releasepr = prs.data.filter(pr => pr.title.includes("chore(main): release"))
             console.log(releasepr)
 
-            return {title: releasepr.pop().title}
+            return releasepr.pop().title
+          result-encoding: string
 
       - name: upload zip file to nexus
         run: |
@@ -92,7 +93,7 @@ jobs:
           if [ "${{ steps.release-please.outputs.release_created }}" ]; then
             artifact_url=https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/${{ inputs.version }}/dist.zip
           else
-            version=${{ steps.release-pr-title.outputs.title }}
+            version=${{ steps.release-pr-title.outputs.result }}
             echo $version
             versionparts=versionparts=($version)
             echo ${versionparts[-1]}
