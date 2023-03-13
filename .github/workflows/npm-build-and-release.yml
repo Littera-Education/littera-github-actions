@@ -70,9 +70,16 @@ jobs:
         with:
           args: zip -qq -r dist.zip dist
 
+      - name: List PRs
+        uses: buildsville/list-pull-requests@v1
+        id: listprs
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+          labels: '["autorelease: pending"]'   
+
       - name: upload zip file to nexus
         run: |
-          echo '${{join(steps.release-please.outputs.*, '\n')}}'
+          echo '${{join(steps.listprs.outputs.*, '\n')}}'
           if [ "${{ steps.release-please.outputs.release_created }}" ]; then
             artifact_url=https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/${{ inputs.version }}/dist.zip
           else
