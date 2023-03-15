@@ -100,7 +100,7 @@ jobs:
           aws-region: us-east-1
           role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/github-assume-role
 
-      - name: Curl Download Artifact
+      - name: Tree
         if: inputs.artifact_url != ''
         run: |
           tree
