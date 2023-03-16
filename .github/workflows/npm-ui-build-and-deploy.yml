@@ -9,6 +9,9 @@ on:
       artifact_id:
         required: true
         type: string
+      node_version:
+        type: number
+        default: 16
 
     secrets:
       nexus_username:
@@ -46,6 +49,7 @@ jobs:
       git_tag: ${{ github.ref_name }}
       nexus_host_domain: ${{ inputs.nexus_host_domain }}
       environment: "dev"
+      node_version: ${{ inputs.node_version }}
     secrets:
       nexus_username: ${{ secrets.NEXUS_USERNAME }}
       nexus_npm_login: ${{ secrets.NEXUS_NPM_LOGIN }}
