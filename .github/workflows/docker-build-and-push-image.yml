@@ -100,11 +100,6 @@ jobs:
           aws-region: us-east-1
           role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/github-assume-role
 
-      - name: Tree
-        if: inputs.artifact_url != ''
-        run: |
-          tree
-
       - name: Build, tag, and push docker image to Amazon ECR
         run: |
 

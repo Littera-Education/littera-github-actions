@@ -6,21 +6,6 @@ on:
       nexus_host_domain:
         required: true
         type: string
-      sonar_host_url:
-        required: true
-        type: string
-      sonar_coverage_exclusions:
-        type: string
-        default: "src/main.ts,src/**/*.module.ts,src/mocks/**/*.ts"
-      sonar_sources:
-        type: string
-        default: "src"
-      sonar_test_inclusions:
-        type: string
-        default: "src/**/*.spec.ts"
-      sonar_cpd_exclusions:
-        type: string
-        default: ""
       node_version:
         type: number
         default: 16
@@ -89,17 +74,10 @@ jobs:
         uses: sonarsource/sonarqube-scan-action@v1
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
-          SONAR_HOST_URL: ${{ inputs.sonar_host_url }}
         with:
           # https://docs.sonarqube.org/latest/analysis/analysis-parameters/
           args: >
-            -Dsonar.projectKey=${{ steps.get-project-info.outputs.ARTIFACTID }}
             -Dsonar.projectVersion=${{ steps.get-project-info.outputs.VERSION }}
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.coverage.exclusions=${{ inputs.sonar_coverage_exclusions }}
-            -Dsonar.sources=${{ inputs.sonar_sources }}
-            -Dsonar.test.inclusions=${{ inputs.sonar_test_inclusions }}
-            -Dsonar.cpd.exclusions=${{ inputs.sonar_cpd_exclusions }}
 
       - name: SonarQube Quality Gate check
         # for some reason they don't have a v1 tag, so using full version
