@@ -1,0 +1,77 @@
+name: NPM (or Yarn) Tests
+
+on:
+  workflow_call:
+    inputs:
+      nexus_host_domain:
+        required: true
+        type: string
+      node_version:
+        type: number
+        default: 16
+
+    secrets:
+      nexus_username:
+        required: true
+      nexus_npm_login:
+        required: true
+      sonar_token:
+        required: true
+
+    outputs:
+      version:
+        description: "artifact version"
+        value: ${{ jobs.npm_tests.outputs.version }}
+      artifact_id: 
+        description: "artifact id"
+        value: ${{ jobs.npm_tests.outputs.artifact_id }}
+
+jobs:
+  npm_tests:
+    name: NPM (or Yarn) Tests
+    runs-on: ubuntu-latest
+
+    outputs:
+      version: ${{ steps.get-project-info.outputs.VERSION }}
+      artifact_id: ${{ steps.get-project-info.outputs.ARTIFACTID }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Setup .npmrc for pulling & publishing to Nexus
+        run: |
+          echo -e '\n' \
+          'registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n' \
+          '_auth=${{ secrets.nexus_npm_login }}\n' \
+          '//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n' \
+          'email=${{ secrets.nexus_username }}\n' \
+          'always-auth=true\n' \
+          >> .npmrc
+          
+      - name: Get Project Info
+        id: get-project-info
+        run: |
+          echo "ARTIFACTID=$(npm pkg get name | xargs echo)" >> $GITHUB_OUTPUT
+          echo "VERSION=$(npm pkg get version | xargs echo)" >> $GITHUB_OUTPUT
+
+      - name: Install dependencies (with cache)
+        uses: bahmutov/npm-install@v1
+
+      - name: Execute Unit Tests
+        run: npm run test:cov
+
+      - name: Check linting
+        run: npm run lint
+
+        # https://docs.sonarqube.org/latest/analyzing-source-code/scanners/sonarscanner/
+      - name: Run Sonar Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.sonar_token }}
+        run: npx sonarqube-scanner
