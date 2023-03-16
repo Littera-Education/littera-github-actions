@@ -70,24 +70,8 @@ jobs:
       - name: Check linting
         run: npm run lint
 
+        # https://docs.sonarqube.org/latest/analyzing-source-code/scanners/sonarscanner/
       - name: Run Sonar Analysis
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
         run: npx sonarqube-scanner
-
-      # - name: SonarQube Scan
-      #   uses: sonarsource/sonarcloud-github-action@v1.9
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.sonar_token }}
-      #   with:
-      #     # https://docs.sonarqube.org/latest/analysis/analysis-parameters/
-      #     args: >
-      #       -Dsonar.projectVersion=${{ steps.get-project-info.outputs.VERSION }}
-
-      # - name: SonarQube Quality Gate check
-      #   # for some reason they don't have a v1 tag, so using full version
-      #   uses: sonarsource/sonarqube-quality-gate-action@v1.1.0
-      #   # Force to fail step after specific time
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.sonar_token }}
