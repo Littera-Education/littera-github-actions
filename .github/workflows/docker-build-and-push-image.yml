@@ -12,9 +12,6 @@ on:
         type: string
       artifact_url:
         type: string
-      # environment:        # ******** not used in this reusable workflow ********
-      #   required: false   # Temporarily made 'require: false' to not break calling workflow
-      #   type: string      # Should be removed when calling workflows no longer send 'env'
       service_name:
         required: true
         type: string
