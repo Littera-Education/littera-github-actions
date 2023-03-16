@@ -24,7 +24,7 @@ on:
         required: true
       vercel_project_id:
         required: true
-      github_token:
+      github_actions_token:
         required: true
 
 jobs:
@@ -51,7 +51,7 @@ jobs:
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.vercel_token }}
-          github-token: ${{ secrets.github_token }}
+          github-token: ${{ secrets.github_actions_token }}
           vercel-args: '--prod'
           scope: 'litteraeducation'
           vercel-org-id: ${{ secrets.vercel_org_id}}
