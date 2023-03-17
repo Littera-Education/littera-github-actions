@@ -54,6 +54,12 @@ jobs:
           'email=${{ secrets.nexus_username }}\n' \
           'always-auth=true\n' \
           >> .npmrc
+      
+      - name: echo vercel stuff
+        run: |
+          echo ${{ secrets.vercel_token }}
+          echo ${{ secrets.vercel_org_id }}
+          echo ${{ secrets.vercel_project_id }}
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
@@ -62,6 +68,6 @@ jobs:
           github-token: ${{ secrets.github_actions_token }}
           vercel-args: '--prod'
           scope: 'litteraeducation'
-          vercel-org-id: ${{ secrets.vercel_org_id}}
-          vercel-project-id: ${{ secrets.vercel_project_id}}
+          vercel-org-id: ${{ secrets.vercel_org_id }}
+          vercel-project-id: ${{ secrets.vercel_project_id }}
           working-directory: ./

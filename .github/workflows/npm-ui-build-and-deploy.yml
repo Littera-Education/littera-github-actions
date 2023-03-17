@@ -42,7 +42,7 @@ jobs:
           release-type: node
           package-name: ${{ inputs.artifact_id }}
 
-  npm_build:
+  vercel_release:
     needs: [ npm_build_deploy ]
     uses: Littera-Education/littera-github-actions/.github/workflows/vercel-deploy.yml@task/ui-pipelines
     with:
