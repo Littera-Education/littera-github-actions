@@ -1,0 +1,59 @@
+name: NPM UI Build And Deploy
+
+on:
+  workflow_call:
+    inputs:
+      nexus_host_domain:
+        required: true
+        type: string
+      artifact_id:
+        required: true
+        type: string
+      node_version:
+        type: number
+        default: 16
+
+    secrets:
+      nexus_username:
+        required: true
+      nexus_npm_login:
+        required: true
+      github_actions_token:
+        required: true
+      vercel_token:
+        required: true
+      vercel_org_id:
+        required: true
+      vercel_project_id:
+        required: true
+
+jobs:
+  npm_build_deploy:
+    name: NPM UI Build and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Release Please
+        id: release-please
+        uses: google-github-actions/release-please-action@v3
+        with:
+          token: ${{ secrets.github_actions_token }}
+          default-branch: ${{ github.ref_name }}
+          release-type: node
+          package-name: ${{ inputs.artifact_id }}
+
+  vercel_release:
+    needs: [ npm_build_deploy ]
+    uses: Littera-Education/littera-github-actions/.github/workflows/vercel-deploy.yml@master
+    with:
+      git_tag: ${{ github.ref_name }}
+      nexus_host_domain: ${{ inputs.nexus_host_domain }}
+      environment: "dev"
+      node_version: ${{ inputs.node_version }}
+    secrets:
+      nexus_username: ${{ secrets.NEXUS_USERNAME }}
+      nexus_npm_login: ${{ secrets.NEXUS_NPM_LOGIN }}
+      vercel_token: ${{ secrets.vercel_token }}
+      vercel_org_id: ${{ secrets.vercel_org_id }}
+      vercel_project_id: ${{ secrets.vercel_project_id }}
+      github_actions_token: ${{ secrets.github_actions_token }}

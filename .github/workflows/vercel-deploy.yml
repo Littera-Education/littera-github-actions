@@ -1,0 +1,67 @@
+name: Deploy To Vercel
+
+on:
+  workflow_call:
+    inputs:
+      git_tag:
+        required: true
+        type: string
+      nexus_host_domain:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+      node_version:
+        type: number
+        default: 16
+
+    secrets:
+      nexus_username:
+        required: true
+      nexus_npm_login:
+        required: true
+      vercel_token:
+        required: true
+      vercel_org_id:
+        required: true
+      vercel_project_id:
+        required: true
+      github_actions_token:
+        required: true
+
+jobs:
+  deploy-to-vercel:
+    name: Deploy ${{ inputs.git_tag }} to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.git_tag }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Setup .npmrc for pulling & publishing to Nexus
+        run: |
+          echo -e '\n' \
+          'registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n' \
+          '_auth=${{ secrets.nexus_npm_login }}\n' \
+          '//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n' \
+          'email=${{ secrets.nexus_username }}\n' \
+          'always-auth=true\n' \
+          >> .npmrc
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.vercel_token }}
+          github-token: ${{ secrets.github_actions_token }}
+          vercel-args: '--prod'
+          scope: 'litteraeducation'
+          vercel-org-id: ${{ secrets.vercel_org_id }}
+          vercel-project-id: ${{ secrets.vercel_project_id }}
+          working-directory: ./
