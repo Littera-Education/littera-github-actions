@@ -54,20 +54,6 @@ jobs:
           'email=${{ secrets.nexus_username }}\n' \
           'always-auth=true\n' \
           >> .npmrc
-      
-      - name: echo vercel stuff
-        run: |
-          echo -e '\n' \
-          '${{ secrets.vercel_token }}\n' \
-          '${{ secrets.vercel_org_id }}\n' \
-          '${{ secrets.vercel_project_id }}\n' \
-          >> .testcreds
-
-      - name: save file
-        uses: actions/upload-artifact@v3
-        with:
-          name: test
-          path: .testcreds
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
