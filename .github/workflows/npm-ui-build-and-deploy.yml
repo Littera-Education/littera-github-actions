@@ -50,10 +50,10 @@ jobs:
       nexus_host_domain: ${{ inputs.nexus_host_domain }}
       environment: "dev"
       node_version: ${{ inputs.node_version }}
-      vercel_token: ${{ secrets.vercel_token }}
-      vercel_org_id: ${{ secrets.vercel_org_id }}
-      vercel_project_id: ${{ secrets.vercel_project_id }}
     secrets:
       nexus_username: ${{ secrets.NEXUS_USERNAME }}
       nexus_npm_login: ${{ secrets.NEXUS_NPM_LOGIN }}
+      vercel_token: ${{ secrets.vercel_token }}
+      vercel_org_id: ${{ secrets.vercel_org_id }}
+      vercel_project_id: ${{ secrets.vercel_project_id }}
       github_actions_token: ${{ secrets.github_actions_token }}

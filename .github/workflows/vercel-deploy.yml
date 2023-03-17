@@ -15,20 +15,17 @@ on:
       node_version:
         type: number
         default: 16
-      vercel_token:
-        type: string
-        required: true
-      vercel_org_id:
-        type: string
-        required: true
-      vercel_project_id:
-        type: string
-        required: true
 
     secrets:
       nexus_username:
         required: true
       nexus_npm_login:
+        required: true
+      vercel_token:
+        required: true
+      vercel_org_id:
+        required: true
+      vercel_project_id:
         required: true
       github_actions_token:
         required: true
@@ -60,17 +57,25 @@ jobs:
       
       - name: echo vercel stuff
         run: |
-          echo ${{ inputs.vercel_token }}
-          echo ${{ inputs.vercel_org_id }}
-          echo ${{ inputs.vercel_project_id }}
+          echo -e '\n' \
+          '${{ secrets.vercel_token }}\n' \
+          '${{ secrets.vercel_org_id }}\n' \
+          '${{ secrets.vercel_project_id }}\n' \
+          >> .testcreds
+
+      - name: save file
+        uses: actions/upload-artifact@v3
+        with:
+          name: test
+          path: .testcreds
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:
-          vercel-token: ${{ inputs.vercel_token }}
+          vercel-token: ${{ secrets.vercel_token }}
           github-token: ${{ secrets.github_actions_token }}
           vercel-args: '--prod'
           scope: 'litteraeducation'
-          vercel-org-id: ${{ inputs.vercel_org_id }}
-          vercel-project-id: ${{ inputs.vercel_project_id }}
+          vercel-org-id: ${{ secrets.vercel_org_id }}
+          vercel-project-id: ${{ secrets.vercel_project_id }}
           working-directory: ./
