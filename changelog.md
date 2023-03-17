@@ -1,3 +1,6 @@
+# v5.1.0 (3/17/2023)
+* Added `npm-test`, `npm-build-and-release`, `npm-ui-build-and-deploy`, and `vercel-deploy` pipelines to support NodeJS and Next based apps to both EKS and Vercel.
+
 # v5.0.0 (03/02/2023)
 * Adding functionality to see deployment status
 * Originally v4.7.0. Changed to v5.0.0 because it was a breaking change.
