@@ -44,7 +44,7 @@ jobs:
 
   vercel_release:
     needs: [ npm_build_deploy ]
-    uses: Littera-Education/littera-github-actions/.github/workflows/vercel-deploy.yml@task/ui-pipelines
+    uses: Littera-Education/littera-github-actions/.github/workflows/vercel-deploy.yml@master
     with:
       git_tag: ${{ github.ref_name }}
       nexus_host_domain: ${{ inputs.nexus_host_domain }}
