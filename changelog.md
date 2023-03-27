@@ -1,3 +1,6 @@
+# v5.1.1 (3/21/2023)
+* fixed var handling of inputs.version in npm-build-and-deploy.yml
+
 # v5.1.0 (3/17/2023)
 * Added `npm-test`, `npm-build-and-release`, `npm-ui-build-and-deploy`, and `vercel-deploy` pipelines to support NodeJS and Next based apps to both EKS and Vercel.
 
