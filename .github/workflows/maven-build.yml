@@ -6,9 +6,6 @@ on:
       nexus_host_url:
         required: true
         type: string
-      sonar_host_url:
-        required: true
-        type: string
       is_release: # this is treated as a string since booleans have issues
         required: true
         type: string
@@ -96,7 +93,6 @@ jobs:
         if: ${{ inputs.skip_build != 'true' }}
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
-          SONAR_HOST_URL: ${{ inputs.sonar_host_url }}
         run: |
           ./mvnw -ntp clean install sonar:sonar -Dsonar.qualitygate.wait=true
       
