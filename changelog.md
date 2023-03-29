@@ -1,3 +1,6 @@
+# v6.0.0 (3/29/2023)
+* switch from sonar onprem to sonarcloud
+
 # v5.1.1 (3/21/2023)
 * fixed var handling of inputs.version in npm-build-and-deploy.yml
 
