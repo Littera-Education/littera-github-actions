@@ -1,3 +1,6 @@
+# v6.1.1 (04/03/2023)
+* Typo in job name (copy/paste fail)
+
 # v6.1.0 (04/03/2023)
 * Add `serverless-deploy` to support the serverless repos
 
