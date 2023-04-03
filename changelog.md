@@ -1,3 +1,6 @@
+# v6.1.0 (04/03/2023)
+* Add `serverless-deploy` to support the serverless repos
+
 # v6.0.0 (3/29/2023)
 * switch from sonar onprem to sonarcloud (java only)
 
