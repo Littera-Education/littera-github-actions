@@ -15,13 +15,14 @@ on:
       node_version:
         type: number
         default: 16
+      aws_role_arn:
+        type: string
+        required: true
 
     secrets:
       nexus_username:
         required: true
       nexus_npm_login:
-        required: true
-      aws_role_arn:
         required: true
       github_actions_token:
         required: true
@@ -59,7 +60,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: us-east-1
-          role-to-assume: ${{ secrets.aws_role_arn }}
+          role-to-assume: ${{ inputs.aws_role_arn }}
 
       - name: Deploy jobs to ${{ inputs.environment }}
         run: npx serverless deploy --stage ${{ inputs.environment }}
