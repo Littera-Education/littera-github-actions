@@ -21,9 +21,9 @@ on:
         required: true
       nexus_npm_login:
         required: true
-      github_actions_token:
-        required: true
       aws_role_arn:
+        required: true
+      github_actions_token:
         required: true
 
 jobs:
