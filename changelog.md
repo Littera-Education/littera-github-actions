@@ -1,3 +1,6 @@
+# v6.2.0 (04/17/2023)
+* Add `pr-title-lint` pipeline to validate PR title follows conversational commits scheme. This is targeted to npm repos.
+
 # v6.1.1 (04/03/2023)
 * Typo in job name (copy/paste fail)
 * Switch `serverless-deploy` aws credentials to `v2`
