@@ -1,3 +1,6 @@
+# v6.2.1 (04/17/2023)
+* Add default configuration to `pr-title-lint` if configuration does not already exist.
+
 # v6.2.0 (04/17/2023)
 * Add `pr-title-lint` pipeline to validate PR title follows conversational commits scheme. This is targeted to npm repos.
 
