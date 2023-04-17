@@ -1,3 +1,6 @@
+# v6.2.2 (04/17/2023)
+* Only install the `@commitlint/config-conventional` in `pr-title-lint` if its not already installed.
+
 # v6.2.1 (04/17/2023)
 * Add default configuration to `pr-title-lint` if configuration does not already exist.
 

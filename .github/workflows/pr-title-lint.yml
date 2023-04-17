@@ -50,7 +50,11 @@ jobs:
               extends: [\"@commitlint/config-conventional\"],
               ignores: [(message) => /^Bumps \[.+]\(.+\) from .+ to .+\.$/m.test(message)],
             }" >> commitlint.config.js
-
+          fi
+      
+      - name: Set up dependency
+        run: |
+          if [ ! -d node_modules/@commitlint ]; then
             npm i @commitlint/config-conventional
           fi
 
