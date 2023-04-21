@@ -9,6 +9,9 @@ on:
       node_version:
         type: number
         default: 16
+      custom_npm_install_command:
+        type: string
+        default: skip
 
     secrets:
       nexus_username:
@@ -62,7 +65,14 @@ jobs:
           echo "VERSION=$(npm pkg get version | xargs echo)" >> $GITHUB_OUTPUT
 
       - name: Install dependencies (with cache)
+        if: ${{ inputs.custom_npm_install_command = 'skip' }}
         uses: bahmutov/npm-install@v1
+
+      - name: Custom Install dependencies (with cache)
+        if: ${{ inputs.custom_npm_install_command != 'skip' }}
+        uses: bahmutov/npm-install@v1
+        with:
+          install-command: ${{ params.custom_npm_install_command }}
 
       - name: Execute Unit Tests
         run: npm run test:cov

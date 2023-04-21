@@ -1,3 +1,7 @@
+# v6.3.0 (04/21/2023)
+* Allow custom npm install commands to be passed in.
+* NPM prune dev dependencies when making an artifact.
+
 # v6.2.2 (04/17/2023)
 * Only install the `@commitlint/config-conventional` in `pr-title-lint` if its not already installed.
 
