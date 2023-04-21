@@ -76,7 +76,7 @@ jobs:
           >> .npmrc
 
       - name: Install dependencies (with cache)
-        if: ${{ inputs.custom_npm_install_command = 'skip' }}
+        if: ${{ inputs.custom_npm_install_command == 'skip' }}
         uses: bahmutov/npm-install@v1
 
       - name: Custom Install dependencies (with cache)
