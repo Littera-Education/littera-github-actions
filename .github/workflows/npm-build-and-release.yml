@@ -83,7 +83,7 @@ jobs:
         if: ${{ inputs.custom_npm_install_command != 'skip' }}
         uses: bahmutov/npm-install@v1
         with:
-          install-command: ${{ params.custom_npm_install_command }}
+          install-command: ${{ inputs.custom_npm_install_command }}
 
       - name: Build
         run: npm run build
