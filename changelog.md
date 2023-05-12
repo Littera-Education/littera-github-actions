@@ -1,3 +1,6 @@
+# v6.4.0 (05/12/2023)
+* NPM pass application version to sonar during analysis so it understands what "new code" is.
+
 # v6.3.0 (04/21/2023)
 * Allow custom npm install commands to be passed in.
 * NPM prune dev dependencies when making an artifact.
