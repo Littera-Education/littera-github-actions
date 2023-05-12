@@ -84,4 +84,4 @@ jobs:
       - name: Run Sonar Analysis
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
-        run: npx sonarqube-scanner
+        run: npx sonarqube-scanner -Dsonar.projectVersion=${{ steps.get-project-info.outputs.VERSION }}
