@@ -1,3 +1,6 @@
+# v6.4.0 (05/16/2023)
+* fetch-depth set to 0 for eks-deploy-v2.yml
+
 # v6.4.0 (05/12/2023)
 * NPM pass application version to sonar during analysis so it understands what "new code" is.
 
