@@ -1,4 +1,4 @@
-# v6.4.0 (05/16/2023)
+# v6.4.1 (05/16/2023)
 * fetch-depth set to 0 for eks-deploy-v2.yml
 
 # v6.4.0 (05/12/2023)
