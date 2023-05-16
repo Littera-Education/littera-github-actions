@@ -60,6 +60,7 @@ jobs:
           token: ${{ secrets.repo_token }}
           ref: ${{ inputs.eks_config_branch }}
           path: config
+          fetch-depth: 0
 
       - name: Deploy to EKS
         run: |
