@@ -1,3 +1,6 @@
+# v6.5.0 (05/17/2023)
+* sed version into 'tags.datadoghq.com/version:'
+
 # v6.4.1 (05/16/2023)
 * fetch-depth set to 0 for eks-deploy-v2.yml
 
