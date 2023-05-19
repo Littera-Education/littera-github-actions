@@ -129,8 +129,9 @@ jobs:
             version="${versionparts[-1]}-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
             artifact_url=https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/$version/dist.zip
           else
-            echo "No version detected, erroring."
-            exit 1
+            echo "WARN: Unable to get version from release-please, defaulting to package.json"
+            version="$(npm pkg get version | xargs echo)-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
+            artifact_url=https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/$version/dist.zip
           fi
 
           curl -v -k -u "${{secrets.nexus_username}}:${{secrets.nexus_password}}" --upload-file dist.zip $artifact_url

@@ -1,3 +1,6 @@
+# v6.6.0 (05/19/2023)
+* `npm-build-and-release` default the version to the one on the `package.json` when unable to get version from release-please.
+
 # v6.5.0 (05/17/2023)
 * sed version into 'tags.datadoghq.com/version:'
 
