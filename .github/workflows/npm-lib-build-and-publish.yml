@@ -22,8 +22,6 @@ on:
     secrets:
       nexus_username:
         required: true
-      nexus_password:
-        required: true
       nexus_npm_login:
         required: true
       github_actions_token:
@@ -84,5 +82,5 @@ jobs:
         run: npm run build
 
       - name: Publish NPM workspace to Nexus
-        if: ${{ steps.release-please.outputs.release_created }}
+        if: ${{ steps.release-please.outputs.release_created == true }}
         run: npm publish --ws
