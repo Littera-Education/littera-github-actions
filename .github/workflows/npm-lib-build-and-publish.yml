@@ -82,7 +82,5 @@ jobs:
         run: npm run build
 
       - name: Publish NPM workspace to Nexus
-        run: |
-          if [ "${{ steps.release-please.outputs.release_created }}" ]; then
-            npm publish --ws
-          fi
+        if: ${{ steps.release.outputs.releases_created }}
+        run: npm publish --ws
