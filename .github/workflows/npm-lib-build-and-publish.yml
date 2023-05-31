@@ -62,11 +62,22 @@ jobs:
         with:
           node-version: ${{ inputs.node_version }}
 
-      - name: Setup .npmrc for pulling & publishing to Nexus
+      - name: Setup .npmrc for pulling & publishing to Nexus (Node <18)
+        if: ${{ inputs.node_version < 18 }}
         run: |
           echo -e '\n' \
           'registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n' \
           '_auth=${{ secrets.nexus_npm_login }}\n' \
+          '//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n' \
+          'email=${{ secrets.nexus_username }}\n' \
+          'always-auth=true\n' \
+          >> .npmrc
+
+      - name: Setup .npmrc for pulling & publishing to Nexus (Node 18)
+        if: ${{ inputs.node_version >= 18 }}
+        run: |
+          echo -e '\n' \
+          'registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n' \
           '//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n' \
           'email=${{ secrets.nexus_username }}\n' \
           'always-auth=true\n' \
