@@ -81,10 +81,9 @@ jobs:
           install-command: ${{ inputs.custom_npm_install_command }}
 
       - name: Build
+        if: ${{ steps.release-please.outputs.release_created }}
         run: npm run build
 
       - name: Publish NPM workspace to Nexus
-        run: |
-          if [ "${{ steps.release-please.outputs.release_created }}" ]; then
-            npm publish --ws
-          fi
+        if: ${{ steps.release-please.outputs.release_created }}
+        run: npm publish --ws
