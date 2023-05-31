@@ -1,0 +1,98 @@
+name: NPM Library Build And Release
+
+on:
+  workflow_call:
+    inputs:
+      nexus_host_domain:
+        required: true
+        type: string
+      artifact_id:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      node_version:
+        type: number
+        default: 18
+      custom_npm_install_command:
+        type: string
+        default: skip
+
+    secrets:
+      nexus_username:
+        required: true
+      nexus_password:
+        required: true
+      nexus_npm_login:
+        required: true
+      github_actions_token:
+        required: true
+
+    outputs:
+      version:
+        description: "artifact version"
+        value: ${{ jobs.npm_build.outputs.version }}
+      artifact_url: 
+        description: "artifact url"
+        value: ${{ jobs.npm_build.outputs.artifact_url }}
+
+jobs:
+  npm_build:
+    name: NPM Build and Release
+    runs-on: ubuntu-latest
+
+    outputs:
+      version: ${{ steps.upload-artifact.outputs.VERSION }}
+      artifact_url: ${{ steps.upload-artifact.outputs.ARTIFACT_URL }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+# https://github.com/googleapis/release-please/blob/main/docs/manifest-releaser.md#manifest
+      - name: Release Please
+        id: release-please
+        uses: google-github-actions/release-please-action@v3
+        with:
+          token: ${{ secrets.github_actions_token }}
+          default-branch: ${{ github.ref_name }}
+          release-type: node
+          package-name: ${{ inputs.artifact_id }}
+          command: manifest
+          monorepo-tags: true
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Setup .npmrc for pulling & publishing to Nexus
+        run: |
+          echo -e '\n' \
+          'registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n' \
+          '_auth=${{ secrets.nexus_npm_login }}\n' \
+          '//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n' \
+          'email=${{ secrets.nexus_username }}\n' \
+          'always-auth=true\n' \
+          >> .npmrc
+
+      - name: Install dependencies (with cache)
+        if: ${{ inputs.custom_npm_install_command == 'skip' }}
+        uses: bahmutov/npm-install@v1
+
+      - name: Custom Install dependencies (with cache)
+        if: ${{ inputs.custom_npm_install_command != 'skip' }}
+        uses: bahmutov/npm-install@v1
+        with:
+          install-command: ${{ inputs.custom_npm_install_command }}
+
+      - name: Build
+        run: npm run build
+
+      - name: Prune Dev Dependencies
+        run: npm prune --production
+
+      - name: Publish NPM workspace to Nexus
+        run: npm publish --ws
