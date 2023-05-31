@@ -29,8 +29,6 @@ on:
       github_actions_token:
         required: true
 
-    outputs:
-
 jobs:
   npm_build:
     name: NPM Library Build And Publish
