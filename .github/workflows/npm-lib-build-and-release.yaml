@@ -95,4 +95,12 @@ jobs:
         run: npm prune --production
 
       - name: Publish NPM workspace to Nexus
-        run: npm publish --ws
+        run: |
+          if [ "${{ steps.release-please.outputs.release_created }}" ]; then
+            npm publish --ws --tag latest
+          elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" ]; then
+            npm publish --ws --tag next
+          else
+            echo "WARN: Unable to get version from release-please, defaulting to package.json"
+            npm publish --ws --tag next 
+          fi
