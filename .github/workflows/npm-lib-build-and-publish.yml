@@ -14,7 +14,7 @@ on:
         type: string
       node_version:
         type: number
-        default: 18
+        default: 16
       custom_npm_install_command:
         type: string
         default: skip
@@ -60,22 +60,11 @@ jobs:
         with:
           node-version: ${{ inputs.node_version }}
 
-      - name: Setup .npmrc for pulling & publishing to Nexus (Node <18)
-        if: ${{ inputs.node_version < 18 }}
+      - name: Setup .npmrc for pulling & publishing to Nexus
         run: |
           echo -e '\n' \
           'registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n' \
           '_auth=${{ secrets.nexus_npm_login }}\n' \
-          '//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n' \
-          'email=${{ secrets.nexus_username }}\n' \
-          'always-auth=true\n' \
-          >> .npmrc
-
-      - name: Setup .npmrc for pulling & publishing to Nexus (Node 18)
-        if: ${{ inputs.node_version >= 18 }}
-        run: |
-          echo -e '\n' \
-          'registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n' \
           '//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n' \
           'email=${{ secrets.nexus_username }}\n' \
           'always-auth=true\n' \
@@ -94,16 +83,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Prune Dev Dependencies
-        run: npm prune --production
-
       - name: Publish NPM workspace to Nexus
         run: |
           if [ "${{ steps.release-please.outputs.release_created }}" ]; then
-            npm publish --ws --tag latest
-          elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" ]; then
-            npm publish --ws --tag next
-          else
-            echo "WARN: Unable to get version from release-please, defaulting to package.json"
-            npm publish --ws --tag next 
+            npm publish --ws
           fi
