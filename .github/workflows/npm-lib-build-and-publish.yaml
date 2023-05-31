@@ -1,4 +1,4 @@
-name: NPM Library Build And Release
+name: NPM Library Build And Publish
 
 on:
   workflow_call:
@@ -39,7 +39,7 @@ on:
 
 jobs:
   npm_build:
-    name: NPM Build and Release
+    name: NPM Library Build And Publish
     runs-on: ubuntu-latest
 
     outputs:
