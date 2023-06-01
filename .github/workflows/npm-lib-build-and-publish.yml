@@ -15,6 +15,9 @@ on:
       node_version:
         type: number
         default: 16
+      node_workspace:
+        type: boolean
+        default: true
       custom_npm_install_command:
         type: string
         default: skip
@@ -41,9 +44,9 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-# https://github.com/googleapis/release-please/blob/main/docs/manifest-releaser.md#manifest
-      - name: Release Please
-        id: release-please
+      - name: Release Please Workspace
+        if: ${{ inputs.node_workspace }}
+        id: release-please-workspace
         uses: google-github-actions/release-please-action@v3
         with:
           token: ${{ secrets.github_actions_token }}
@@ -52,6 +55,16 @@ jobs:
           package-name: ${{ inputs.artifact_id }}
           command: manifest
           monorepo-tags: true
+
+      - name: Release Please
+        if: ${{ !inputs.node_workspace }}
+        id: release-please
+        uses: google-github-actions/release-please-action@v3
+        with:
+          token: ${{ secrets.github_actions_token }}
+          default-branch: ${{ github.ref_name }}
+          release-type: node
+          package-name: ${{ inputs.artifact_id }}
 
       - name: Set up Node
         uses: actions/setup-node@v3
@@ -82,5 +95,9 @@ jobs:
         run: npm run build
 
       - name: Publish NPM workspace to Nexus
-        if: ${{ steps.release-please.outputs.releases_created }}
+        if: ${{ steps.release-please-workspace.outputs.releases_created }}
         run: npm publish --ws
+
+      - name: Publish NPM to Nexus
+        if: ${{ steps.release-please.outputs.release_created }}
+        run: npm publish
