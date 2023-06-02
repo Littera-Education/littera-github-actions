@@ -1,3 +1,6 @@
+# v6.7.0 (05/19/2023)
+* `npm-lib-build-and-publish` created for publishing libraries to Nexus.
+
 # v6.6.0 (05/19/2023)
 * `npm-build-and-release` default the version to the one on the `package.json` when unable to get version from release-please.
 
