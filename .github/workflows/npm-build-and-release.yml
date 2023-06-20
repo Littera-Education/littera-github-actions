@@ -69,7 +69,7 @@ jobs:
         run: |
           echo -e '\n' \
           'registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n' \
-          '_auth=${{ secrets.nexus_npm_login }}\n' \
+          '//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}\n' \
           '//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n' \
           'email=${{ secrets.nexus_username }}\n' \
           'always-auth=true\n' \
