@@ -1,4 +1,8 @@
-# v6.7.0 (05/19/2023)
+# v6.8.0 (06/23/2023)
+* logic to deploy core-web/worker or just core-web
+* waits for eks deploy to complete when deploying to both core-web and core-worker before exiting
+
+# v6.7.0 (06/02/2023)
 * `npm-lib-build-and-publish` created for publishing libraries to Nexus.
 
 # v6.6.0 (05/19/2023)
