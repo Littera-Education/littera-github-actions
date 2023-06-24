@@ -34,6 +34,7 @@ on:
       core_deployment_type:
         required: false
         type: string
+        default: ""
 
     secrets:
       repo_token:
