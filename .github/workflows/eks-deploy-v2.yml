@@ -101,14 +101,14 @@ jobs:
           # apply manifest and deploy
           kubectl apply -f config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml
 
-          echo
+          echo " "
           echo "***************************************************************************************************"
           echo 
           echo "NOTE: If the action fails due to the timeout of ${{ inputs.github_actions_deploy_timeout }},"
           echo "the deployment may still have succeeded. Please contact devops in #team-devops-collab about this"
           echo 
           echo "***************************************************************************************************"
-          echo
+          echo " "
 
 
           if [[ "${{ inputs.service_name }}" == "littera-core-api" && "${{ inputs.core_deployment_type}}" == "both" ]]; then
