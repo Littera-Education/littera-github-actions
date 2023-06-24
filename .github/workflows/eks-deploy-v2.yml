@@ -103,7 +103,7 @@ jobs:
           echo
           echo "***************************************************************************************************"
           echo 
-          echo "NOTE: If the action fails due to the timeout of ${{ inputs.github_actions_deploy_timeout }}, 
+          echo "NOTE: If the action fails due to the timeout of ${{ inputs.github_actions_deploy_timeout }},"
           echo "the deployment may still have succeeded. Please contact devops in #team-devops-collab about this"
           echo 
           echo "***************************************************************************************************"
