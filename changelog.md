@@ -1,3 +1,6 @@
+# v7.0.0 (07/17/2023)
+* Node 18 is now the default.
+
 # v6.8.0 (06/23/2023)
 * logic to deploy core-web/worker or just core-web
 * waits for eks deploy to complete when deploying to both core-web and core-worker before exiting
