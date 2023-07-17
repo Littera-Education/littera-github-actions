@@ -14,7 +14,7 @@ on:
         type: string
       node_version:
         type: number
-        default: 16
+        default: 18
       node_workspace:
         type: boolean
         default: true
