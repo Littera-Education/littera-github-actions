@@ -33,22 +33,16 @@ jobs:
           node-version: ${{ inputs.node_version }}
 
       - name: Setup .npmrc for pulling & publishing to Nexus
-        if: ${{ inputs.package_manager == 'npm' }}
         run: |
+          if [ "${{ inputs.package_manager == 'npm' }}" ]; then
+            fullRepoAuth="//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}"
+          else
+            fullRepoAuth="_auth=${{ secrets.nexus_npm_login }}"
+          fi
+
           echo -e '\n' \
           'registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n' \
           '//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}\n' \
-          '//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n' \
-          'email=${{ secrets.nexus_username }}\n' \
-          'always-auth=true\n' \
-          >> .npmrc
-
-      - name: Setup .npmrc for pulling & publishing to Nexus (yarn support)
-        if: ${{ inputs.package_manager == 'yarn' }}
-        run: |
-          echo -e '\n' \
-          'registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n' \
-          '_auth=${{ secrets.nexus_npm_login }}\n' \
           '//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n' \
           'email=${{ secrets.nexus_username }}\n' \
           'always-auth=true\n' \
