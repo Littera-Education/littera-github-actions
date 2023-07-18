@@ -54,7 +54,9 @@ jobs:
       - name: Setup .npmrc for pulling & publishing to Nexus
         run: |
           FULL_REPO_AUTH="//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}"
-
+          if [ ! "${{ inputs.package_manager }}" == "npm" ]; then
+            FULL_REPO_AUTH="_auth=${{ secrets.nexus_npm_login }}"
+          fi
           
       - name: Get Project Info
         id: get-project-info
