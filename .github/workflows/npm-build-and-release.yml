@@ -75,12 +75,12 @@ jobs:
             FULL_REPO_AUTH="_auth=${{ secrets.nexus_npm_login }}"
           fi
 
-          echo -e '\n' \
-          'registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n' \
-          '${{ FULL_REPO_AUTH }}\n' \
-          '//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n' \
-          'email=${{ secrets.nexus_username }}\n' \
-          'always-auth=true\n' \
+          echo -e "\n" \
+          "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
+          "$FULL_REPO_AUTH\n" \
+          "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
+          "email=${{ secrets.nexus_username }}\n" \
+          "always-auth=true\n" \
           >> .npmrc
 
       - name: Install dependencies (with cache)
