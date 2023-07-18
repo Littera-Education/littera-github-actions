@@ -53,7 +53,7 @@ jobs:
 
       - name: Setup .npmrc for pulling & publishing to Nexus
         run: |
-          if [ "${{ inputs.package_manager == 'npm' }}" ]; then
+          if [ "${{ inputs.package_manager }}" = "npm" ]; then
             fullRepoAuth="//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}"
           else
             fullRepoAuth="_auth=${{ secrets.nexus_npm_login }}"
