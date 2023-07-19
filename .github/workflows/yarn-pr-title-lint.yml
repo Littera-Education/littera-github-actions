@@ -54,7 +54,7 @@ jobs:
           fi
       
       - name: Set up dependency
-        run: npm i -g @commitlint/config-conventional
+        run: npm install @commitlint/config-conventional
 
       - name: Lint PR Title
         uses: JulienKode/pull-request-name-linter-action@v0.5.0
