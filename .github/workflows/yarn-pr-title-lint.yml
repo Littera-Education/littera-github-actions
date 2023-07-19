@@ -42,9 +42,6 @@ jobs:
           >> .npmrc
 
           rm yarn.lock
-          
-      - name: Install dependencies (with cache)
-        uses: bahmutov/npm-install@v1
 
       - name: Set Up Config file
         run: |
@@ -57,10 +54,7 @@ jobs:
           fi
       
       - name: Set up dependency
-        run: |
-          if [ ! -d node_modules/@commitlint ]; then
-            npm i -g @commitlint/config-conventional
-          fi
+        run: npm i -g @commitlint/config-conventional
 
       - name: Lint PR Title
         uses: JulienKode/pull-request-name-linter-action@v0.5.0
