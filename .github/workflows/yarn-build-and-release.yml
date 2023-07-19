@@ -77,7 +77,7 @@ jobs:
           "email=${{ secrets.nexus_username }}\n" \
           >> .npmrc
 
-          npm install -g yarn
+          npm install yarn --legacy-peer-deps
 
           echo -e "\n" \
           "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
@@ -97,7 +97,7 @@ jobs:
           install-command: ${{ inputs.custom_npm_install_command }}
 
       - name: Build
-        run: yarn build
+        run: ./node_modules/.bin/yarn build
 
       - uses: montudor/action-zip@v1
         with:

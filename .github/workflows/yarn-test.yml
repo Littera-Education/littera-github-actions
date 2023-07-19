@@ -65,7 +65,7 @@ jobs:
           echo "ARTIFACTID=$(npm pkg get name | xargs echo)" >> $GITHUB_OUTPUT
           echo "VERSION=$(npm pkg get version | xargs echo)" >> $GITHUB_OUTPUT
 
-          npm install -g yarn
+          npm install yarn --legacy-peer-deps
 
           echo -e "\n" \
           "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
@@ -85,10 +85,10 @@ jobs:
           install-command: ${{ inputs.custom_npm_install_command }}
 
       - name: Execute Unit Tests
-        run: yarn test:cov
+        run: ./node_modules/.bin/yarn test:cov
 
       - name: Check linting
-        run: yarn lint
+        run: ./node_modules/.bin/yarn lint
 
         # https://docs.sonarqube.org/latest/analyzing-source-code/scanners/sonarscanner/
       - name: Run Sonar Analysis
