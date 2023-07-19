@@ -1,0 +1,73 @@
+name: PR Title Lint
+
+on:
+  workflow_call:
+    inputs:
+      nexus_host_domain:
+        required: true
+        type: string
+      node_version:
+        type: number
+        default: 18
+      package_manager:
+        type: string
+        default: npm
+
+    secrets:
+      nexus_username:
+        required: true
+      nexus_npm_login:
+        required: true
+
+jobs:
+  pr_title_lint:
+    name: PR Title Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Setup .npmrc for pulling & publishing to Nexus
+        run: |
+          echo -e "\n" \
+          "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
+          "//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}" \
+          "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
+          "email=${{ secrets.nexus_username }}\n" \
+          >> .npmrc
+
+          npm install yarn --legacy-peer-deps
+
+          echo -e "\n" \
+          "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
+          "_auth=${{ secrets.nexus_npm_login }}" \
+          "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
+          "email=${{ secrets.nexus_username }}\n" \
+          > .npmrc
+          
+      - name: Install dependencies (with cache)
+        uses: bahmutov/npm-install@v1
+
+      - name: Set Up Config file
+        run: |
+          if [ ! -f commitlint.config.js ]; then
+            echo "
+            module.exports = {
+              extends: [\"@commitlint/config-conventional\"],
+              ignores: [(message) => /^Bumps \[.+]\(.+\) from .+ to .+\.$/m.test(message)],
+            }" >> commitlint.config.js
+          fi
+      
+      - name: Set up dependency
+        run: |
+          if [ ! -d node_modules/@commitlint ]; then
+            ./node_modules/.bin/yarn add @commitlint/config-conventional
+          fi
+
+      - name: Lint PR Title
+        uses: JulienKode/pull-request-name-linter-action@v0.5.0
