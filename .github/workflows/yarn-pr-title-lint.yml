@@ -40,15 +40,6 @@ jobs:
           "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
           "email=${{ secrets.nexus_username }}\n" \
           >> .npmrc
-
-          npm install yarn --legacy-peer-deps
-
-          echo -e "\n" \
-          "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
-          "_auth=${{ secrets.nexus_npm_login }}" \
-          "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
-          "email=${{ secrets.nexus_username }}\n" \
-          > .npmrc
           
       - name: Install dependencies (with cache)
         uses: bahmutov/npm-install@v1
@@ -66,7 +57,7 @@ jobs:
       - name: Set up dependency
         run: |
           if [ ! -d node_modules/@commitlint ]; then
-            ./node_modules/.bin/yarn add @commitlint/config-conventional
+            npm i -g @commitlint/config-conventional
           fi
 
       - name: Lint PR Title
