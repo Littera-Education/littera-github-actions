@@ -1,3 +1,6 @@
+# v7.2.0 (07/19/2023)
+* Separate tasks into yarn files
+
 # v7.1.0 (07/19/2023)
 * Add `package_manager` option to npm modules. Defaults to `npm` but supports `yarn` as an alternative.
 

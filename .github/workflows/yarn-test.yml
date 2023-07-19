@@ -14,7 +14,7 @@ on:
         default: skip
       package_manager:
         type: string
-        default: npm
+        default: yarn
 
     secrets:
       nexus_username:
@@ -59,6 +59,15 @@ jobs:
           "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
           "email=${{ secrets.nexus_username }}\n" \
           >> .npmrc
+
+          npm install -g yarn
+
+          echo -e "\n" \
+          "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
+          "_auth=${{ secrets.nexus_npm_login }}" \
+          "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
+          "email=${{ secrets.nexus_username }}\n" \
+          >> .npmrc
           
       - name: Get Project Info
         id: get-project-info
@@ -77,10 +86,10 @@ jobs:
           install-command: ${{ inputs.custom_npm_install_command }}
 
       - name: Execute Unit Tests
-        run: npm run test:cov
+        run: yarn test:cov
 
       - name: Check linting
-        run: npm run lint
+        run: yarn lint
 
         # https://docs.sonarqube.org/latest/analyzing-source-code/scanners/sonarscanner/
       - name: Run Sonar Analysis

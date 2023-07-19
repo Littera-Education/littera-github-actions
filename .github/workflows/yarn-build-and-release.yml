@@ -20,7 +20,7 @@ on:
         default: skip
       package_manager:
         type: string
-        default: npm
+        default: yarn
 
     secrets:
       nexus_username:
@@ -77,6 +77,15 @@ jobs:
           "email=${{ secrets.nexus_username }}\n" \
           >> .npmrc
 
+          npm install -g yarn
+
+          echo -e "\n" \
+          "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
+          "_auth=${{ secrets.nexus_npm_login }}" \
+          "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
+          "email=${{ secrets.nexus_username }}\n" \
+          >> .npmrc
+
       - name: Install dependencies (with cache)
         if: ${{ inputs.custom_npm_install_command == 'skip' }}
         uses: bahmutov/npm-install@v1
@@ -88,10 +97,7 @@ jobs:
           install-command: ${{ inputs.custom_npm_install_command }}
 
       - name: Build
-        run: npm run build
-
-      - name: Prune Dev Dependencies
-        run: npm prune --production
+        run: yarn build
 
       - uses: montudor/action-zip@v1
         with:
