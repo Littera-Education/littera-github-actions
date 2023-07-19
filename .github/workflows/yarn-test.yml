@@ -52,6 +52,7 @@ jobs:
           node-version: ${{ inputs.node_version }}
 
       - name: Setup .npmrc for pulling & publishing to Nexus
+        id: get-project-info
         run: |
           echo -e "\n" \
           "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
@@ -59,6 +60,10 @@ jobs:
           "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
           "email=${{ secrets.nexus_username }}\n" \
           >> .npmrc
+
+          # Squashed into here so npm will run with proper auth file before it gets stomped over for yarn
+          echo "ARTIFACTID=$(npm pkg get name | xargs echo)" >> $GITHUB_OUTPUT
+          echo "VERSION=$(npm pkg get version | xargs echo)" >> $GITHUB_OUTPUT
 
           npm install -g yarn
 
@@ -69,12 +74,6 @@ jobs:
           "email=${{ secrets.nexus_username }}\n" \
           > .npmrc
           
-      - name: Get Project Info
-        id: get-project-info
-        run: |
-          echo "ARTIFACTID=$(npm pkg get name | xargs echo)" >> $GITHUB_OUTPUT
-          echo "VERSION=$(npm pkg get version | xargs echo)" >> $GITHUB_OUTPUT
-
       - name: Install dependencies (with cache)
         if: ${{ inputs.custom_npm_install_command == 'skip' }}
         uses: bahmutov/npm-install@v1
