@@ -12,6 +12,9 @@ on:
       node_version:
         type: number
         default: 18
+      package_manager:
+        type: string
+        default: npm
 
     secrets:
       nexus_username:
@@ -50,6 +53,7 @@ jobs:
       nexus_host_domain: ${{ inputs.nexus_host_domain }}
       environment: "dev"
       node_version: ${{ inputs.node_version }}
+      package_manager: ${{ inputs.package_manager }}
     secrets:
       nexus_username: ${{ secrets.NEXUS_USERNAME }}
       nexus_npm_login: ${{ secrets.NEXUS_NPM_LOGIN }}
