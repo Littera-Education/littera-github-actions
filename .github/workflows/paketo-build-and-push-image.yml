@@ -1,0 +1,111 @@
+name: Build and push Docker image to ECR using Paketo
+
+on:
+  workflow_call:
+    inputs:
+      nexus_host_url:
+        type: string
+      group_id:
+        required: true
+        type: string
+      artifact_id:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      service_name:
+        required: true
+        type: string
+      aws_account_id:
+        required: true
+        type: string
+      paketo_config_branch:
+        type: string
+        required: false
+        default: 'develop'
+      environment:
+        required: true
+        type: string
+
+    secrets:
+      nexus_username:
+        required: true
+      nexus_password:
+        required: true
+      repo_token:
+        required: true
+
+jobs:
+  build-paketo-image:
+    name: Build & Push Paketo Image
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Get Paketo Manifest
+        uses: actions/checkout@v3
+        with:
+          repository: Littera-Education/littera-eks-config
+          token: ${{ secrets.repo_token }}
+          ref: ${{ inputs.paketo_config_branch }}
+          path: config
+          fetch-depth: 0
+
+      - name: Setup Paketo
+        uses: buildpacks/github-actions/setup-pack@v5.0.0
+        with:
+          pack-version: 0.29.0
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Maven Settings XML File
+        uses: whelk-io/maven-settings-xml-action@v21
+        with:
+          repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
+          plugin_repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
+          servers: '[{ "id": "litteranexus", "username": "${{ secrets.nexus_username }}", "password": "${{ secrets.nexus_password }}" }]'
+          active_profiles: '[ "github" ]'
+          output_file: /home/runner/.m2/settings.xml
+
+      - name: Mvn Download Artifact
+        run: |
+          ./mvnw dependency:copy -Dartifact=${{ inputs.group_id }}:${{ inputs.artifact_id }}:${{ inputs.version }}:jar -DoutputDirectory=./target -U
+
+      - name: Configure AWS Creds
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/github-assume-role
+
+      - name: Build image name
+        run: |
+          if [[ "${{ inputs.service_name }}" == "littera-core-api" ]]; then
+            echo "IMAGE_NAME=littera-core" >> $GITHUB_ENV
+          else
+            echo "IMAGE_NAME=${{ inputs.service_name }}" >> $GITHUB_ENV
+          fi
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        run: |
+
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com
+
+          pack build ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_NAME:${{ inputs.version }} \
+            --timestamps \
+            --descriptor config/${{ inputs.service_name }}/paketo/project-${{ inputs.environment }}.toml \
+            --path target/${{ inputs.artifact_id }}-${{ inputs.version }}.jar \
+            --tag $IMAGE_NAME:latest \
+            --publish
