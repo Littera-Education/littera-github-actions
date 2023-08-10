@@ -11,7 +11,7 @@ on:
         type: string
       skip_build:
         type: string
-        default: false
+        default: 'false'
 
     secrets:
       nexus_username:
@@ -80,6 +80,7 @@ jobs:
                   VERSION=$(echo $VERSION | cut -d- -f1)
           fi
 
+          locale charmap
           echo "VERSION=$VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "NAME=$NAME"
