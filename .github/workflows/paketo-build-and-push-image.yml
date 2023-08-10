@@ -111,5 +111,5 @@ jobs:
             --timestamps \
             --descriptor config/${{ inputs.service_name }}/paketo/project-${{ inputs.environment }}.toml \
             --path target/${{ inputs.artifact_id }}-*.jar \
-            --tag $IMAGE_NAME:latest \
+            --tag ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_NAME:latest \
             --publish
