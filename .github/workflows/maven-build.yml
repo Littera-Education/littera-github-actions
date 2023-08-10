@@ -35,7 +35,7 @@ on:
 jobs:
   maven_build:
     name: Maven Build
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     outputs:
       version: ${{ steps.get-project-info.outputs.VERSION }}

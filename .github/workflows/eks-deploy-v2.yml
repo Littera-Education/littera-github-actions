@@ -45,7 +45,7 @@ on:
 jobs:
   deploy-to-eks:
     name: Deploy ${{ inputs.image_version }} to ${{ inputs.environment }}
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     permissions:
       id-token: write

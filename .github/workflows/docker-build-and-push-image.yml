@@ -34,7 +34,7 @@ on:
 jobs:
   build-docker-image:
     name: Build & Push Docker Image
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     permissions:
       id-token: write
