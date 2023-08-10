@@ -106,6 +106,6 @@ jobs:
           pack build ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_NAME:${{ inputs.version }} \
             --timestamps \
             --descriptor config/${{ inputs.service_name }}/paketo/project-${{ inputs.environment }}.toml \
-            --path target/${{ inputs.artifact_id }}-${{ inputs.version }}.jar \
+            --path target/${{ inputs.artifact_id }}-*.jar \
             --tag $IMAGE_NAME:latest \
             --publish
