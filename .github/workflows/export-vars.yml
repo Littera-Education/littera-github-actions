@@ -1,0 +1,120 @@
+name: Export Vars
+
+on:
+  workflow_call:
+    inputs:
+      target_config:
+        description: Target Config
+        type: string
+        default: "default"
+      environment:
+        description: Environment
+        required: true
+        type: string
+      eks_config_branch:
+        description: EKS Config Branch
+        type: string
+        default: "develop"
+
+    outputs:
+      cluster_name:
+        description: EKS Cluster Name
+        value: ${{ jobs.export-vars.outputs.cluster_name }}
+      kubctl_download_url:
+        description: kubectl Download URL
+        value: ${{ jobs.export-vars.outputs.kubctl_download_url }}
+      aws_account_id:
+        description: AWS Account ID
+        value: ${{ jobs.export-vars.outputs.aws_account_id }}
+      service_name:
+        description: Service Name
+        value: ${{ jobs.export-vars.outputs.service_name }}
+      iam_role:
+        description: IAM Role
+        value: ${{ jobs.export-vars.outputs.iam_role }}
+      environment:
+        description: Environment
+        value: ${{ jobs.export-vars.outputs.environment }}
+      github_actions_deploy_timeout:
+        description: Deployt Timeout
+        value: ${{ jobs.export-vars.outputs.github_actions_deploy_timeout }}
+
+    secrets:
+      repo_token:
+        required: true
+
+jobs:
+  export-vars:
+    name: Export Vars
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    outputs:
+      cluster_name: ${{ steps.step_export_vars.outputs.cluster_name}}
+      kubctl_download_url: ${{ steps.step_export_vars.outputs.kubctl_download_url }}
+      aws_account_id: ${{ steps.step_export_vars.outputs.aws_account_id }}
+      service_name: ${{ steps.step_export_vars.outputs.service_name }}
+      iam_role: ${{ steps.step_export_vars.outputs.iam_role }}
+      environment: ${{ steps.step_export_vars.outputs.environment }}
+      github_actions_deploy_timeout: ${{ steps.step_export_vars.outputs.github_actions_deploy_timeout }}
+
+    steps:
+      - name: Checkout EKS Config
+        uses: actions/checkout@v3
+        with:
+          repository: Littera-Education/littera-eks-config
+          token: ${{ secrets.repo_token }}
+          ref: ${{ inputs.eks_config_branch }}
+          path: config
+          fetch-depth: 0
+      
+      - name: export vars
+        id: step_export_vars
+        run: |
+          ### set target_config
+          if [[ "${target_config}" == "default" ]]; then
+            target_config=$(eval "jq -r '.$environment.default'" <<< config/env/EKS_JSON.json)
+          else
+            target_config=$target_config
+          fi
+          echo "target_config=$target_config"
+
+          ### export aws_account_id
+          account_name=$(eval "jq '.$environment.aws_account.\"$target_config\"'" <<< config/env/EKS_JSON.json)
+          echo "account_name=$account_name"
+          account_number=$(eval "jq -r '.aws_accounts[] | .account_name as \$account_name | select(.account_name == $account_name) | .account_number'" <<< config/env/EKS_JSON.json)
+          echo "aws_account_id=$account_number"
+          echo "aws_account_id=$account_number" >> $GITHUB_OUTPUT
+
+          ### export EKS cluster_name
+          cluster_name=$(eval "jq -r '.$environment.cluster.\"$target_config\"'" <<< config/env/EKS_JSON.json)
+          echo "cluster_name=$cluster_name"
+          echo "cluster_name=$cluster_name" >> $GITHUB_OUTPUT
+
+          ### export kubctl_download_url
+          kubctl_download_url=$(eval "jq -r '.$environment.kubctl_download_url.\"$target_config\"'" <<< config/env/EKS_JSON.json)
+          echo "kubctl_download_url=$kubctl_download_url"
+          echo "kubctl_download_url=$kubctl_download_url" >> $GITHUB_OUTPUT
+
+          ### export service_name
+          service_name=(${repo//\// })
+          service_name=${service_name[1]}
+          echo "service_name=${service_name}"
+          echo "service_name=${service_name}" >> $GITHUB_OUTPUT
+
+          ### export iam_role
+          iam_role=$(eval "jq -r '.\"${service_name}\".$environment.\"$target_config\"'" <<< config/env/EKS_ROLES_JSON.json)
+          echo "iam_role=$iam_role"
+          echo "iam_role=$iam_role" >> $GITHUB_OUTPUT
+
+          ### export github_actions_deploy_timeout
+          github_actions_deploy_timeout=$(eval "jq -r '.\"${service_name}\".$environment.github_actions_deploy_timeout'" <<< config/env/EKS_REPO_JSON.json)
+          echo "github_actions_deploy_timeout=$github_actions_deploy_timeout"
+          echo "github_actions_deploy_timeout=$github_actions_deploy_timeout" >> $GITHUB_OUTPUT
+
+          ### export environment
+          echo "environment=$environment"
+          echo "environment=$environment" >> $GITHUB_OUTPUT
