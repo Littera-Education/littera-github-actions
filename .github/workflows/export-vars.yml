@@ -3,6 +3,9 @@ name: Export Vars
 on:
   workflow_call:
     inputs:
+      service_repo:
+        description: Service Repo
+        type: string
       target_config:
         description: Target Config
         type: string
@@ -100,7 +103,7 @@ jobs:
           echo "kubctl_download_url=$kubctl_download_url" >> $GITHUB_OUTPUT
 
           ### export service_name
-          service_name=(${repo//\// })
+          service_name=(${${{ inputs.service_repo }}//\// })
           service_name=${service_name[1]}
           echo "service_name=${service_name}"
           echo "service_name=${service_name}" >> $GITHUB_OUTPUT
