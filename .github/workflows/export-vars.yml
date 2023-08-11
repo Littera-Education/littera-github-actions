@@ -75,27 +75,27 @@ jobs:
         id: step_export_vars
         run: |
           ### set target_config
-          if [[ "${target_config}" == "default" ]]; then
-            target_config=$(eval "jq -r '.$environment.default'" <<< config/env/EKS_JSON.json)
+          if [[ "${{ inputs.target_config}}" == "default" ]]; then
+            target_config=$(eval "jq -r '.${{ inputs.environment }}.default'" <<< config/env/EKS_JSON.json)
           else
-            target_config=$target_config
+            target_config=${{ inputs.target_config }}
           fi
           echo "target_config=$target_config"
 
           ### export aws_account_id
-          account_name=$(eval "jq '.$environment.aws_account.\"$target_config\"'" <<< config/env/EKS_JSON.json)
+          account_name=$(eval "jq '.${{ inputs.environment }}.aws_account.\"$target_config\"'" <<< config/env/EKS_JSON.json)
           echo "account_name=$account_name"
           account_number=$(eval "jq -r '.aws_accounts[] | .account_name as \$account_name | select(.account_name == $account_name) | .account_number'" <<< config/env/EKS_JSON.json)
           echo "aws_account_id=$account_number"
           echo "aws_account_id=$account_number" >> $GITHUB_OUTPUT
 
           ### export EKS cluster_name
-          cluster_name=$(eval "jq -r '.$environment.cluster.\"$target_config\"'" <<< config/env/EKS_JSON.json)
+          cluster_name=$(eval "jq -r '.${{ inputs.environment }}.cluster.\"$target_config\"'" <<< config/env/EKS_JSON.json)
           echo "cluster_name=$cluster_name"
           echo "cluster_name=$cluster_name" >> $GITHUB_OUTPUT
 
           ### export kubctl_download_url
-          kubctl_download_url=$(eval "jq -r '.$environment.kubctl_download_url.\"$target_config\"'" <<< config/env/EKS_JSON.json)
+          kubctl_download_url=$(eval "jq -r '.${{ inputs.environment }}.kubctl_download_url.\"$target_config\"'" <<< config/env/EKS_JSON.json)
           echo "kubctl_download_url=$kubctl_download_url"
           echo "kubctl_download_url=$kubctl_download_url" >> $GITHUB_OUTPUT
 
@@ -106,15 +106,15 @@ jobs:
           echo "service_name=${service_name}" >> $GITHUB_OUTPUT
 
           ### export iam_role
-          iam_role=$(eval "jq -r '.\"${service_name}\".$environment.\"$target_config\"'" <<< config/env/EKS_ROLES_JSON.json)
+          iam_role=$(eval "jq -r '.\"${service_name}\".${{ inputs.environment }}.\"$target_config\"'" <<< config/env/EKS_ROLES_JSON.json)
           echo "iam_role=$iam_role"
           echo "iam_role=$iam_role" >> $GITHUB_OUTPUT
 
           ### export github_actions_deploy_timeout
-          github_actions_deploy_timeout=$(eval "jq -r '.\"${service_name}\".$environment.github_actions_deploy_timeout'" <<< config/env/EKS_REPO_JSON.json)
+          github_actions_deploy_timeout=$(eval "jq -r '.\"${service_name}\".${{ inputs.environment }}.github_actions_deploy_timeout'" <<< config/env/EKS_REPO_JSON.json)
           echo "github_actions_deploy_timeout=$github_actions_deploy_timeout"
           echo "github_actions_deploy_timeout=$github_actions_deploy_timeout" >> $GITHUB_OUTPUT
 
           ### export environment
-          echo "environment=$environment"
-          echo "environment=$environment" >> $GITHUB_OUTPUT
+          echo "environment=${{ inputs.environment }}"
+          echo "environment=${{ inputs.environment }}" >> $GITHUB_OUTPUT
