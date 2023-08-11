@@ -9,8 +9,8 @@ on:
         default: "default"
       environment:
         description: Environment
-        required: true
         type: string
+        default: "dev"
       eks_config_branch:
         description: EKS Config Branch
         type: string
