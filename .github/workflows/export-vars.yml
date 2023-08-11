@@ -103,7 +103,8 @@ jobs:
           echo "kubctl_download_url=$kubctl_download_url" >> $GITHUB_OUTPUT
 
           ### export service_name
-          service_name=(${${{ inputs.service_repo }}//\// })
+          repo="${{ inputs.service_repo }}"
+          service_name=(${repo//\// })
           service_name=${service_name[1]}
           echo "service_name=${service_name}"
           echo "service_name=${service_name}" >> $GITHUB_OUTPUT
