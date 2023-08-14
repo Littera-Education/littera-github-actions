@@ -105,7 +105,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
         run: |
-          export LANG="C.UTF-8"
+          # export LANG="C.UTF-8"
           ./mvnw -ntp clean install sonar:sonar -Dsonar.qualitygate.wait=true
       
       - name: Cache github pages
