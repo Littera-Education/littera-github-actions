@@ -1,3 +1,7 @@
+# v8.0.0 (08/16/2023)
+* Added inputs.local_runner to shared and java workflows (required=false); defaults to 'self-hosted-runner-standard'
+* Downloads software not pre-installed on the local runner for java workflows only
+
 # v7.1.0 (07/19/2023)
 * Add `package_manager` option to npm modules. Defaults to `npm` but supports `yarn` as an alternative.
 
