@@ -25,6 +25,7 @@ on:
         required: true
       local_runner:
         required: false
+        type: string
         default: "ubuntu-latest"
 
     outputs:

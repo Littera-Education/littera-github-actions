@@ -17,6 +17,7 @@ on:
         default: 18
       local_runner:
         required: false
+        type: string
         default: "ubuntu-latest"
 
     secrets:

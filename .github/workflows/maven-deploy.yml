@@ -11,6 +11,7 @@ on:
         type: string
       local_runner:
         required: false
+        type: string
         default: "self-hosted-runner-standard"
 
     secrets:

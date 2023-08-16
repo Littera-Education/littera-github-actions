@@ -41,9 +41,6 @@ on:
       github_actions_deploy_timeout:
         description: Deployt Timeout
         value: ${{ jobs.export-vars.outputs.github_actions_deploy_timeout }}
-      local_runner:
-        description: local runner to use
-        value: ${{ jobs.export-vars.outputs.local_runner }}
 
     secrets:
       repo_token:

@@ -20,6 +20,7 @@ on:
         default: npm
       local_runner:
         required: false
+        type: string
         default: "ubuntu-latest"
 
     secrets:
