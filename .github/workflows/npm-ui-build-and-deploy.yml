@@ -15,6 +15,10 @@ on:
       package_manager:
         type: string
         default: npm
+      local_runner:
+        required: false
+        type: string
+        default: "ubuntu-latest"
 
     secrets:
       nexus_username:
@@ -33,7 +37,7 @@ on:
 jobs:
   npm_build_deploy:
     name: NPM UI Build and Deploy
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.local_runner }}
 
     steps:
       - name: Release Please

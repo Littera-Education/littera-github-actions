@@ -9,6 +9,10 @@ on:
       version:
         required: true
         type: string
+      local_runner:
+        required: false
+        type: string
+        default: "self-hosted-runner-standard"
 
     secrets:
       nexus_username:
@@ -19,7 +23,7 @@ on:
 jobs:
   maven_deploy:
     name: Maven Deploy version ${{ inputs.version }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.local_runner }}
 
     steps:
       - uses: actions/checkout@v3

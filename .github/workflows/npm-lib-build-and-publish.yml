@@ -21,6 +21,10 @@ on:
       custom_npm_install_command:
         type: string
         default: skip
+      local_runner:
+        required: false
+        type: string
+        default: "ubuntu-latest"
 
     secrets:
       nexus_username:
@@ -33,7 +37,7 @@ on:
 jobs:
   npm_build:
     name: NPM Library Build And Publish
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.local_runner }}
 
     outputs:
       version: ${{ steps.upload-artifact.outputs.VERSION }}
