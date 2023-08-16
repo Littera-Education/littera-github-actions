@@ -11,7 +11,10 @@ on:
         type: string
       skip_build:
         type: string
-        default: false
+        default: 'false'
+      local_runner:
+        required: false
+        default: "self-hosted-runner-standard"
 
     secrets:
       nexus_username:
@@ -35,7 +38,7 @@ on:
 jobs:
   maven_build:
     name: Maven Build
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.local_runner }}
 
     outputs:
       version: ${{ steps.get-project-info.outputs.VERSION }}
@@ -79,7 +82,7 @@ jobs:
           if [ "${{ inputs.is_release }}" == "true" ]; then
                   VERSION=$(echo $VERSION | cut -d- -f1)
           fi
-
+          
           echo "VERSION=$VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "NAME=$NAME"

@@ -24,6 +24,9 @@ on:
       aws_account_id:
         required: true
         type: string
+      local_runner:
+        required: false
+        default: "self-hosted-runner-standard"
 
     secrets:
       nexus_username:
@@ -34,7 +37,7 @@ on:
 jobs:
   build-docker-image:
     name: Build & Push Docker Image
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.local_runner }}
 
     permissions:
       id-token: write
@@ -55,7 +58,7 @@ jobs:
 
       # Here the cached Dockerfile is recalled from the cache created when
       # maven-release.yml re-usable workflow was previously called by develop.yml
-      # upon a PR was merge into develop.
+      # upon a PR being merge into develop.
       # When testing a docker build (test_tag_suffix != null), this cache is not-recalled
       # and the Dockerfile in a test branch indicated in create-test-image.yml is used.
       - name: Cache Dockerfile
@@ -90,6 +93,22 @@ jobs:
         if: inputs.artifact_url != ''
         with:
           args: unzip -qq dist.zip -d dist
+
+      - name: Get runner arch
+        id: runner_arch
+        run: |
+          arch_value=$(uname -m)
+          if [ "$arch_value" = "x86_64" ]; then
+            echo "runner_arch=amd64" >> $GITHUB_OUTPUT
+          elif [ "$arch_value" = "aarch64" ]; then
+            echo "runner_arch=arm64" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup aws cli
+        uses: unfor19/install-aws-cli-action@v1
+        with:
+          version: 2
+          arch: ${{ steps.runner_arch.outputs.runner_arch }}
       
       - name: Configure AWS Creds
         uses: aws-actions/configure-aws-credentials@v1-node16
