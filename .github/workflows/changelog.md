@@ -1,5 +1,5 @@
 # v8.0.0 (08/16/2023)
-* Added inputs.local_runner to shared and java workflows (required=false); defaults to 'self-hosted-runner-standard'
+* Added inputs.local_runner to all (required=false); defaults to 'self-hosted-runner-standard' for java, "ubuntu-latest" for node, vercel and serverless workflows.
 * Downloads software not pre-installed on the local runner for java workflows only
 
 # v7.1.0 (07/19/2023)
