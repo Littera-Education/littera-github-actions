@@ -39,8 +39,11 @@ on:
         description: Environment
         value: ${{ jobs.export-vars.outputs.environment }}
       github_actions_deploy_timeout:
-        description: Deployt Timeout
+        description: Deploy Timeout
         value: ${{ jobs.export-vars.outputs.github_actions_deploy_timeout }}
+      local_runner:
+        description: local runner
+        value: ${{ jobs.export-vars.outputs.local_runner }}
 
     secrets:
       repo_token:
@@ -63,6 +66,7 @@ jobs:
       iam_role: ${{ steps.step_export_vars.outputs.iam_role }}
       environment: ${{ steps.step_export_vars.outputs.environment }}
       github_actions_deploy_timeout: ${{ steps.step_export_vars.outputs.github_actions_deploy_timeout }}
+      local_runner: ${{ steps.step_export_vars.outputs.local_runner }}
 
     steps:
       - name: Checkout EKS Config
