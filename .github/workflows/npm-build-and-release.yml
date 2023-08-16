@@ -21,6 +21,9 @@ on:
       package_manager:
         type: string
         default: npm
+      local_runner:
+        required: false
+        default: "ubuntu-latest"
 
     secrets:
       nexus_username:
@@ -43,7 +46,7 @@ on:
 jobs:
   npm_build:
     name: NPM Build and Release
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.local_runner }}
 
     outputs:
       version: ${{ steps.upload-artifact.outputs.VERSION }}

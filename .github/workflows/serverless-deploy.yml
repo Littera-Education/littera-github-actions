@@ -15,6 +15,9 @@ on:
       node_version:
         type: number
         default: 18
+      local_runner:
+        required: false
+        default: "ubuntu-latest"
 
     secrets:
       nexus_username:
@@ -29,7 +32,7 @@ on:
 jobs:
   serverless-deploy:
     name: Deploy ${{ inputs.git_tag }} to ${{ inputs.environment }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.local_runner }}
 
     steps:
       - uses: actions/checkout@v3

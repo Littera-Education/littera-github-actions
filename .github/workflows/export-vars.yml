@@ -41,6 +41,9 @@ on:
       github_actions_deploy_timeout:
         description: Deployt Timeout
         value: ${{ jobs.export-vars.outputs.github_actions_deploy_timeout }}
+      local_runner:
+        description: local runner to use
+        value: ${{ jobs.export-vars.outputs.local_runner }}
 
     secrets:
       repo_token:
@@ -49,7 +52,7 @@ on:
 jobs:
   export-vars:
     name: Export Vars
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-runner-standard
 
     permissions:
       id-token: write
@@ -118,6 +121,11 @@ jobs:
           github_actions_deploy_timeout=$(eval "jq -r '.\"${service_name}\".${{ inputs.environment }}.github_actions_deploy_timeout' eks-config/env/EKS_REPO_JSON.json")
           echo "github_actions_deploy_timeout=$github_actions_deploy_timeout"
           echo "github_actions_deploy_timeout=$github_actions_deploy_timeout" >> $GITHUB_OUTPUT
+
+          ### export local_runner
+          local_runner=$(eval "jq -r '.\"${service_name}\".local_runner' eks-config/env/EKS_REPO_JSON.json")
+          echo "local_runner=$local_runner"
+          echo "local_runner=$local_runner" >> $GITHUB_OUTPUT
 
           ### export environment
           echo "environment=${{ inputs.environment }}"

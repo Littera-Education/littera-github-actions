@@ -12,6 +12,9 @@ on:
       package_manager:
         type: string
         default: npm
+      local_runner:
+        required: false
+        default: "ubuntu-latest"
 
     secrets:
       nexus_username:
@@ -22,7 +25,7 @@ on:
 jobs:
   pr_title_lint:
     name: PR Title Lint
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.local_runner }}
 
     steps:
       - uses: actions/checkout@v3
