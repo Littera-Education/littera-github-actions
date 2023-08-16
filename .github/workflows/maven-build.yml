@@ -82,17 +82,6 @@ jobs:
           if [ "${{ inputs.is_release }}" == "true" ]; then
                   VERSION=$(echo $VERSION | cut -d- -f1)
           fi
-
-          
-          echo "local charmap"
-          locale charmap
-
-          echo "LANG"
-          echo $LANG
-
-          echo "LC_ALL"
-          echo $LC_ALL
-          
           
           echo "VERSION=$VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
@@ -108,7 +97,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
         run: |
-          # export LANG="C.UTF-8"
           ./mvnw -ntp clean install sonar:sonar -Dsonar.qualitygate.wait=true
       
       - name: Cache github pages
