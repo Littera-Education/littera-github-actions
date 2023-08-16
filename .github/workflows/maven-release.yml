@@ -13,6 +13,9 @@ on:
         required: true
         description: "What part of the version to increment: major, minor, or patch"
         type: string
+      local_runner:
+        required: false
+        default: "self-hosted-runner-standard"
 
     secrets:
       nexus_username:
@@ -25,7 +28,7 @@ on:
 jobs:
   maven_release:
     name: Maven ${{ inputs.version_increment_type }} Release version ${{ inputs.version }}
-    runs-on: self-hosted
+    runs-on: ${{ inputs.local_runner }}
 
     steps:
       - uses: actions/checkout@v3

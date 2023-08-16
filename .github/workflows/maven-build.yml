@@ -12,6 +12,9 @@ on:
       skip_build:
         type: string
         default: 'false'
+      local_runner:
+        required: false
+        default: "self-hosted-runner-standard"
 
     secrets:
       nexus_username:
@@ -35,7 +38,7 @@ on:
 jobs:
   maven_build:
     name: Maven Build
-    runs-on: self-hosted
+    runs-on: ${{ inputs.local_runner }}
 
     outputs:
       version: ${{ steps.get-project-info.outputs.VERSION }}
