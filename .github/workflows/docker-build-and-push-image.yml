@@ -63,7 +63,7 @@ jobs:
       # When testing a docker build with create-test-image-v2.yml (test_tag_suffix != ''), this cache is not-recalled
       # and the dockerfile being tested in a branch set in the create-test-image.yml workflow is used.
       - name: Cache Dockerfile
-        if: inputs.test_tag_suffix != ''
+        if: inputs.test_tag_suffix == ''
         id: cache-dockerfile
         uses: actions/cache@v3
         with:
