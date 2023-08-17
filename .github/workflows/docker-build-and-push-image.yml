@@ -57,13 +57,13 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
-      # Here the cached Dockerfile is recalled from the cache created when
-      # maven-release.yml re-usable workflow was previously called by develop.yml
-      # upon a PR being merge into develop.
-      # When testing a docker build (test_tag_suffix != null), this cache is not-recalled
-      # and the Dockerfile in a test branch indicated in create-test-image.yml is used.
+      # Here the cached Dockerfile is recalled from the cache created when the maven-release.yml re-usable
+      # workflow was previously called by the develop-v2.yml workflow upon a PR being merge into develop.
+      # 
+      # When testing a docker build with create-test-image-v2.yml (test_tag_suffix != ''), this cache is not-recalled
+      # and the dockerfile being tested in a branch set in the create-test-image.yml workflow is used.
       - name: Cache Dockerfile
-        if: inputs.group_id != ''
+        if: inputs.test_tag_suffix != ''
         id: cache-dockerfile
         uses: actions/cache@v3
         with:
@@ -71,7 +71,7 @@ jobs:
           key: ${{ inputs.artifact_id }}-${{ inputs.version }}-dockerfile
 
       - name: Maven Settings XML File
-        if: inputs.test_tag_suffix == '' && inputs.group_id != ''
+        if: inputs.group_id != ''
         uses: whelk-io/maven-settings-xml-action@v21
         with:
           repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
