@@ -1,4 +1,6 @@
-# v8.0.0 (08/16/2023)
+# v8.1.0 (08/16/2023)
+* Fixed create-test-image-v2.yml calling docker-build-and-push-image.yml
+
 * Added inputs.local_runner to all (required=false); defaults to 'self-hosted-runner-standard' for java, "ubuntu-latest" for node, vercel and serverless workflows.
 * Downloads software not pre-installed on the local runner for java workflows only
 
