@@ -61,7 +61,7 @@ jobs:
       # workflow was previously called by the develop-v2.yml workflow upon a PR being merge into develop.
       # 
       # When not testing a docker build with create-test-image-v2.yml, this cache is not-recalled  (test_tag_suffix == '')
-      # and the dockerfile being tested in a branch set in the create-test-image.yml workflow is used.
+      # and the dockerfile being tested is used.
       - name: Cache Dockerfile
         if: inputs.test_tag_suffix == ''
         id: cache-dockerfile
