@@ -1,3 +1,6 @@
+# v7.2.0 (08/18/2023)
+* in npm-ui-build-and-publish.yml, moving verce_release from master to v7-latest
+
 # v7.1.0 (07/19/2023)
 * Add `package_manager` option to npm modules. Defaults to `npm` but supports `yarn` as an alternative.
 
