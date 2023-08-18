@@ -1,3 +1,6 @@
+# v8.4.0 (08/18/2023)
+* core_deploy_type default is 'both'
+
 # v8.3.0 (08/18/2023)
 * Set 'self-hosted-runner-standard' for node, vercel and serverless workflows.
 
