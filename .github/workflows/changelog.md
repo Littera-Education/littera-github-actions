@@ -1,3 +1,6 @@
+# v8.3.0 (08/18/2023)
+* Set 'self-hosted-runner-standard' for node, vercel and serverless workflows.
+
 # v8.2.0 (08/16/2023)
 * Fixed npm.test. Input local_runner was mistakenly put into secrets instead of inputs
 

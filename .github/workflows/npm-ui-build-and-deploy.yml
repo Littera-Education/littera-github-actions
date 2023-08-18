@@ -18,7 +18,7 @@ on:
       local_runner:
         required: false
         type: string
-        default: "ubuntu-latest"
+        default: "self-hosted-runner-standard"
 
     secrets:
       nexus_username:
@@ -51,7 +51,7 @@ jobs:
 
   vercel_release:
     needs: [ npm_build_deploy ]
-    uses: Littera-Education/littera-github-actions/.github/workflows/vercel-deploy.yml@master
+    uses: ./.github/workflows/vercel-deploy.yml
     with:
       git_tag: ${{ github.ref_name }}
       nexus_host_domain: ${{ inputs.nexus_host_domain }}
