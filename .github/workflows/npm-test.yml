@@ -92,12 +92,6 @@ jobs:
       - name: Check linting
         run: npm run lint
 
-        # https://docs.sonarqube.org/latest/analyzing-source-code/scanners/sonarscanner/
-      # - name: Run Sonar Analysis
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.sonar_token }}
-      #   run: npx sonarqube-scanner -Dsonar.projectVersion=${{ steps.get-project-info.outputs.VERSION }}
-
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         with:
