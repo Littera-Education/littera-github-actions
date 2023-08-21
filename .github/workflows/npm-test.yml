@@ -105,3 +105,4 @@ jobs:
             -Dsonar.projectVersion=${{ steps.get-project-info.outputs.VERSION }}
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
+          SONAR_HOST_URL: 'https://sonarcloud.io'
