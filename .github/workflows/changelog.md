@@ -1,3 +1,6 @@
+# v8.4.0 (08/21/2023)
+* Install java 17 in npm-test.yml
+
 # v8.4.0 (08/18/2023)
 * core_deploy_type default is 'both'
 
