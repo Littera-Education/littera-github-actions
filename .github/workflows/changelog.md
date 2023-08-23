@@ -1,3 +1,6 @@
+# v8.6.0 (08/23/2023)
+* sonarsource/sonarqube-scan-action@v2 now implemented in npm-test.yml
+
 # v8.5.0 (08/21/2023)
 * sonarsource/sonarqube-scan-action@v2 now implemented in npm-test.yml
 
