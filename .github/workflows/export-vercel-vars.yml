@@ -42,26 +42,28 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          path: vercel-config
       
       - name: export vars
         id: step_export_vars
         run: |
           ### export local_runner
-          local_runner=$(eval "jq -r '.\"${service_name}\".local_runner' ./env/VERCEL.json")
+          local_runner=$(eval "jq -r '.\"${service_name}\".local_runner' vercel-config/env/VERCEL.json")
           echo "local_runner=$local_runner"
           echo "local_runner=$local_runner" >> $GITHUB_OUTPUT
 
           ### export testing_workflow
-          testing_workflow=$(eval "jq -r '.\"${service_name}\".testing_workflow' ./env/VERCEL.json")
+          testing_workflow=$(eval "jq -r '.\"${service_name}\".testing_workflow' vercel-config/env/VERCEL.json")
           echo "testing_workflow=$testing_workflow"
           echo "testing_workflow=$testing_workflow" >> $GITHUB_OUTPUT
 
           ### export package_manager
-          package_manager=$(eval "jq -r '.\"${service_name}\".package_manager' ./env/VERCEL.json")
+          package_manager=$(eval "jq -r '.\"${service_name}\".package_manager' vercel-config/env/VERCEL.json")
           echo "package_manager=$package_manager"
           echo "package_manager=$package_manager" >> $GITHUB_OUTPUT
 
           ### export node_version
-          node_version=$(eval "jq -r '.\"${service_name}\".node_version' ./env/VERCEL.json")
+          node_version=$(eval "jq -r '.\"${service_name}\".node_version' vercel-config/env/VERCEL.json")
           echo "node_version=$node_version"
           echo "node_version=$node_version" >> $GITHUB_OUTPUT
