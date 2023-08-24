@@ -6,6 +6,11 @@ on:
       service_repo:
         description: Service Repo
         type: string
+      vercel_config_branch:
+        description: Vercel Config Branch
+        type: string
+        default: "develop"
+
 
     outputs:
       local_runner:
@@ -29,6 +34,8 @@ jobs:
   export-vars:
     name: Export Vars
     runs-on: self-hosted-runner-standard
+    ref: ${{ inputs.eks_config_branch }}
+    fetch-depth: 0
 
     permissions:
       id-token: write
