@@ -1,0 +1,67 @@
+name: Export Vercel Vars
+
+on:
+  workflow_call:
+    inputs:
+      service_repo:
+        description: Service Repo
+        type: string
+
+    outputs:
+      local_runner:
+        description: local runner
+        value: ${{ jobs.export-vars.outputs.local_runner }}
+      testing_workflow:
+        description: workflow used for tests
+        value: ${{ jobs.export-vars.outputs.testing_workflow }}
+      package_manager:
+        description: package manager is yarn or npm
+        value: ${{ jobs.export-vars.outputs.package_manager }}
+      node_version:
+        description: node version
+        value: ${{ jobs.export-vars.outputs.node_version }}
+
+    secrets:
+      repo_token:
+        required: true
+
+jobs:
+  export-vars:
+    name: Export Vars
+    runs-on: self-hosted-runner-standard
+
+    permissions:
+      id-token: write
+      contents: read
+
+    outputs:
+      local_runner: ${{ steps.step_export_vars.outputs.local_runner }}
+      testing_workflow: ${{ steps.step_export_vars.outputs.testing_workflow }}
+      package_manager: ${{ steps.step_export_vars.outputs.package_manager }}
+      node_version: ${{ steps.step_export_vars.outputs.node_version }}
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: export vars
+        id: step_export_vars
+        run: |
+          ### export local_runner
+          local_runner=$(eval "jq -r '.\"${service_name}\".local_runner' ./env/VERCEL.json")
+          echo "local_runner=$local_runner"
+          echo "local_runner=$local_runner" >> $GITHUB_OUTPUT
+
+          ### export testing_workflow
+          testing_workflow=$(eval "jq -r '.\"${service_name}\".testing_workflow' ./env/VERCEL.json")
+          echo "testing_workflow=$testing_workflow"
+          echo "testing_workflow=$testing_workflow" >> $GITHUB_OUTPUT
+
+          ### export package_manager
+          package_manager=$(eval "jq -r '.\"${service_name}\".package_manager' ./env/VERCEL.json")
+          echo "package_manager=$package_manager"
+          echo "package_manager=$package_manager" >> $GITHUB_OUTPUT
+
+          ### export node_version
+          node_version=$(eval "jq -r '.\"${service_name}\".node_version' ./env/VERCEL.json")
+          echo "node_version=$node_version"
+          echo "node_version=$node_version" >> $GITHUB_OUTPUT
