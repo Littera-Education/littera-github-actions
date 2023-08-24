@@ -7,7 +7,7 @@
     },
     "littera-core-ui": {
         "local_runner":  "self-hosted-runner-standard",
-        "testing_workflow": "npm_test",
+        "testing_workflow": "core",
         "package_manager": "yarn",
         "node_version": "16"
     },
