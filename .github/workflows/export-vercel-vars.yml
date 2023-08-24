@@ -26,9 +26,9 @@ on:
         description: node version
         value: ${{ jobs.export-vars.outputs.node_version }}
 
-    # secrets:
-    #   repo_token:
-    #     required: true
+    secrets:
+      repo_token:
+        required: true
 
 jobs:
   export-vars:
@@ -48,6 +48,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
+          repository: Littera-Education/littera-github-actions
+          token: ${{ secrets.repo_token }}
           path: vercel-config
           ref: ${{ inputs.vercel_config_branch }}
           fetch-depth: 0
