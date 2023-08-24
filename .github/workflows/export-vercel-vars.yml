@@ -55,6 +55,13 @@ jobs:
       - name: export vars
         id: step_export_vars
         run: |
+          ### export service_name
+          repo="${{ inputs.service_repo }}"
+          service_name=(${repo//\// })
+          service_name=${service_name[1]}
+          echo "service_name=${service_name}"
+          echo "service_name=${service_name}" >> $GITHUB_OUTPUT
+
           ### export local_runner
           local_runner=$(eval "jq -r '.\"${service_name}\".local_runner' vercel-config/env/VERCEL.json")
           echo "local_runner=$local_runner"
