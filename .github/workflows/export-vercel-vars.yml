@@ -55,6 +55,7 @@ jobs:
       - name: export vars
         id: step_export_vars
         run: |
+          ls -R
           ### export service_name
           repo="${{ inputs.service_repo }}"
           service_name=(${repo//\// })
