@@ -10,7 +10,7 @@ on:
         required: true
         type: string
       node_version:
-        type: number
+        type: string
         default: 18
       package_manager:
         type: string
@@ -58,6 +58,7 @@ jobs:
       environment: "dev"
       node_version: ${{ inputs.node_version }}
       package_manager: ${{ inputs.package_manager }}
+      local_runner: ${{ inputs.local_runner }}
     secrets:
       nexus_username: ${{ secrets.NEXUS_USERNAME }}
       nexus_npm_login: ${{ secrets.NEXUS_NPM_LOGIN }}

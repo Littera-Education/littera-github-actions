@@ -1,3 +1,9 @@
+# v8.7.0 (08/24/2023)
+* Added `./env/VERCEL.json` for vercel actions
+* Added `export-vercel-vars.yml` workflow
+* Added `npm-test-sharded.yml` for an action currently on used by littera-core-ui
+* converted all `node_version` inputs from `numeric` to  `string`. This is to allow numeric vars generated in bash to be send to called workflows without more bash magic. Not breaking.
+
 # v8.6.0 (08/23/2023)
 * npm install -g yarn for `npm-test.yml` and `pr-title-lint.yml`
 
