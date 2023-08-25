@@ -52,8 +52,8 @@ jobs:
         with:
           node-version: ${{ inputs.node_version }}
 
-      - name: Install yarn
-        run: npm install -g yarn
+      # - name: Install yarn
+      #   run: npm install -g yarn
 
       - name: Setup .npmrc for pulling & publishing to Nexus
         run: |
