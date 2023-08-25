@@ -10,7 +10,7 @@ on:
         required: true
         type: string
       node_version:
-        type: number
+        type: string
         default: 18
       package_manager:
         type: string
