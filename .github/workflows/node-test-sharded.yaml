@@ -1,0 +1,144 @@
+name: Sharded test
+# Used only by littera-core-ui
+
+on:
+  workflow_call:
+    inputs:
+      nexus_host_domain:
+        required: true
+        type: string
+      node_version:
+        type: number
+        default: 16
+
+    secrets:
+      nexus_username:
+        required: true
+      nexus_npm_login:
+        required: true
+      sonar_token:
+        required: true
+
+    outputs:
+      version:
+        description: 'artifact version'
+        value: ${{ jobs.after_shards.outputs.version }}
+      artifact_id:
+        description: 'artifact id'
+        value: ${{ jobs.after_shards.outputs.artifact_id }}
+
+jobs:
+  test-shards:
+    runs-on: self-hosted-runner-standard
+
+    strategy:
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .npmrc for pulling & publishing to Nexus
+        run: |
+          echo -e '\n' \
+          'registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n' \
+          '_auth=${{ secrets.nexus_npm_login }}\n' \
+          '//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n' \
+          'email=${{ secrets.nexus_username }}\n' \
+          'always-auth=true\n' \
+          >> .npmrc
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Install yarn
+        run: npm install -g yarn
+
+      - name: Yarn Install Dependencies
+        run: yarn install
+
+      - name: Yarn Test
+        run: yarn test --shard=${{ matrix.shard }}/${{ strategy.job-total }} --coverage
+
+      - name: Merge Coverage
+        run: mv coverage/lcov.info coverage/lcov_${{matrix.shard}}.info
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-artifacts
+          path: coverage/
+
+  report-coverage:
+    runs-on: self-hosted-runner-standard
+    needs: [test-shards]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Extract Version
+        id: extract-version
+        run: |
+          echo "currentVersion=$(npm pkg get version | xargs echo)" >> $GITHUB_OUTPUT
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: coverage-artifacts
+          path: coverage
+
+      - name: Merge Code Coverage
+        run: npx lcov-result-merger 'coverage/lcov_*.info' 'coverage/lcov.info'
+
+        # https://docs.sonarqube.org/latest/analyzing-source-code/scanners/sonarscanner/
+      - name: Run Sonar Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.sonar_token }}
+        run: npx sonarqube-scanner -Dsonar.projectVersion=${{ steps.extract-version.outputs.currentVersion }}
+
+  after-shards:
+    runs-on: self-hosted-runner-standard
+    needs: [test-shards, report-coverage]
+
+    if: success()
+
+    outputs:
+      success: ${{ steps.setsuccess.outputs.testShardsSuccess }}
+      version: ${{ steps.get-project-info.outputs.VERSION }}
+      artifact_id: ${{ steps.get-project-info.outputs.ARTIFACTID }}
+
+    steps:
+      - id: setsuccess
+        name: Extract Test Shards Success
+        run: |
+          echo "testShardsSuccess=true" >> $GITHUB_OUTPUT
+
+      - name: Get Project Info
+        id: get-project-info
+        run: |
+          echo "ARTIFACTID=$(npm pkg get name | xargs echo)" >> $GITHUB_OUTPUT
+          echo "VERSION=$(npm pkg get version | xargs echo)" >> $GITHUB_OUTPUT
+
+  gate:
+    name: Quality Gate
+    runs-on: self-hosted-runner-standard
+    needs: [test-shards, report-coverage, after-shards]
+
+    if: always()
+
+    steps:
+      - run: |
+          passed="${{ needs.after-shards.outputs.success }}"
+          if [[ $passed == "true" ]]; then
+            echo "Tests passed"
+            exit 0
+          else
+            echo "Tests failed"
+            exit 1
+          fi
