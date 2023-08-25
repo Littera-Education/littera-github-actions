@@ -58,6 +58,7 @@ jobs:
       environment: "dev"
       node_version: ${{ inputs.node_version }}
       package_manager: ${{ inputs.package_manager }}
+      local_runner: ${{ inputs.local_runner }}
     secrets:
       nexus_username: ${{ secrets.NEXUS_USERNAME }}
       nexus_npm_login: ${{ secrets.NEXUS_NPM_LOGIN }}
