@@ -31,7 +31,7 @@
     },
     "littera-test-ui-application": {
         "local_runner":  "self-hosted-runner-standard",
-        "testing_workflow": "npm_test",
+        "testing_workflow": "sharded_test",
         "package_manager": "yarn",
         "node_version": "16"
     },
