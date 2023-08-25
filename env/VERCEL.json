@@ -32,7 +32,7 @@
     "littera-test-ui-application": {
         "local_runner":  "self-hosted-runner-standard",
         "testing_workflow": "npm_test",
-        "package_manager": "yarn",
+        "package_manager": "npm",
         "node_version": "16"
     },
     "littera-toolkit": {
