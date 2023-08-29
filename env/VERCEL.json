@@ -20,13 +20,13 @@
     "littera-edi": {
         "local_runner":  "self-hosted-runner-standard",
         "testing_workflow": "npm_test",
-        "package_manager": "npm_test",
+        "package_manager": "npm",
         "node_version": "18"
     },
     "littera-shared-nodejs": {
         "local_runner":  "self-hosted-runner-standard",
         "testing_workflow": "npm_test",
-        "package_manager": "npm_test",
+        "package_manager": "npm",
         "node_version": "18"
     },
     "littera-login": {
