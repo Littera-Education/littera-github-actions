@@ -1,0 +1,24 @@
+{
+    "littera-jobs": {
+        "dev": {
+            "local_runner": "self-hosted-runner-standard",
+            "node_version": "18",
+            "aws_role_arn": "arn:aws:iam::022961735341:role/github-action-littera-jobs"
+        },
+        "testing": {
+            "local_runner": "self-hosted-runner-standard",
+            "node_version": "18",
+            "aws_role_arn": "arn:aws:iam::022961735341:role/github-action-littera-jobs"
+        },
+        "staging": {
+            "local_runner": "self-hosted-runner-standard",
+            "node_version": "18",
+            "aws_role_arn": "arn:aws:iam::022961735341:role/github-action-littera-jobs"
+        },
+        "production": {
+            "local_runner": "self-hosted-runner-standard",
+            "node_version": "18",
+            "aws_role_arn": "arn:aws:iam::022961735341:role/github-action-littera-jobs"
+        }
+    }
+}
