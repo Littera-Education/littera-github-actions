@@ -1,0 +1,79 @@
+name: Export Serverless Vars
+
+on:
+  workflow_call:
+    inputs:
+      service_repo:
+        description: Service Repo
+        type: string
+      serverless_config_branch:
+        description: Serverless Config Branch
+        type: string
+        default: "develop"
+      environment:
+        description: Environment
+        type: string
+        default: "dev"
+
+    outputs:
+      local_runner:
+        description: local runner
+        value: ${{ jobs.export-vars.outputs.local_runner }}
+      node_version:
+        description: node version
+        value: ${{ jobs.export-vars.outputs.node_version }}
+      aws_role_arn:
+        description: AWS Role ARN for deployment
+        value: ${{ jobs.export-vars.outputs.aws_role_arn }}
+
+    secrets:
+      repo_token:
+        required: true
+
+jobs:
+  export-vars:
+    name: Export Vars
+    runs-on: self-hosted-runner-standard
+
+    permissions:
+      id-token: write
+      contents: read
+
+    outputs:
+      local_runner: ${{ steps.step_export_vars.outputs.local_runner }}
+      node_version: ${{ steps.step_export_vars.outputs.node_version }}
+      aws_role_arn: ${{ steps.step_export_vars.outputs.aws_role_arn }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: Littera-Education/littera-github-actions
+          token: ${{ secrets.repo_token }}
+          path: serverless-config
+          ref: ${{ inputs.serverless_config_branch }}
+          fetch-depth: 0
+
+      - name: export vars
+        id: step_export_vars
+        run: |
+          ls -R
+          ### export service_name
+          repo="${{ inputs.service_repo }}"
+          service_name=(${repo//\// })
+          service_name=${service_name[1]}
+          echo "service_name=${service_name}"
+
+          ### export local_runner
+          local_runner=$(eval "jq -r '.\"${service_name}\".${{ inputs.environment }}.local_runner' serverless-config/env/SERVERLESS.json")
+          echo "local_runner=$local_runner"
+          echo "local_runner=$local_runner" >> $GITHUB_OUTPUT
+
+          ### export node_version
+          node_version=$(eval "jq -r '.\"${service_name}\".${{ inputs.environment }}.node_version' serverless-config/env/SERVERLESS.json")
+          echo "node_version=$node_version"
+          echo "node_version=$node_version" >> $GITHUB_OUTPUT
+
+          ### export aws_role_arn
+          aws_role_arn=$(eval "jq -r '.\"${service_name}\".${{ inputs.environment }}.aws_role_arn' serverless-config/env/SERVERLESS.json")
+          echo "aws_role_arn=$aws_role_arn"
+          echo "aws_role_arn=$aws_role_arn" >> $GITHUB_OUTPUT

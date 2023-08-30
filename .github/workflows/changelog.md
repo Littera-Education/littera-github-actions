@@ -1,3 +1,7 @@
+# v8.8.0 (08/30/2023)
+* Added `./env/SERVERLESS.json` for serverless actions
+* Added `export-serverless-vars.yml` workflow
+
 # v8.7.0 (08/24/2023)
 * Added `./env/VERCEL.json` for vercel actions
 * Added `export-vercel-vars.yml` workflow
