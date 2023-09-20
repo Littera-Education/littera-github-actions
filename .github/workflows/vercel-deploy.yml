@@ -22,9 +22,6 @@ on:
         required: false
         type: string
         default: "self-hosted-runner-standard"
-      custom_npm_install_command:
-        type: string
-        default: skip
 
     secrets:
       nexus_username:
