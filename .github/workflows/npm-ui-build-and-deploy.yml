@@ -11,7 +11,7 @@ on:
         type: string
       node_version:
         type: string
-        default: 18
+        default: "18"
       package_manager:
         type: string
         default: npm

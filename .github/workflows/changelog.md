@@ -1,3 +1,7 @@
+# v8.9.0 (09/20/2023)
+* Changed `vercel-deploy.yml` to do a local install and build before deploying, sending the compiled code over.
+  * This was to allow us to move our Nexus server to behind the VPN.
+
 # v8.8.0 (08/30/2023)
 * Added `./env/SERVERLESS.json` for serverless actions
 * Added `export-serverless-vars.yml` workflow

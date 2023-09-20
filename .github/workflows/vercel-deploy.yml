@@ -14,7 +14,7 @@ on:
         type: string
       node_version:
         type: string
-        default: 18
+        default: "18"
       package_manager:
         type: string
         default: npm
@@ -67,12 +67,17 @@ jobs:
           "always-auth=true\n" \
           >> .npmrc
 
+      - name: Vercel Build
+        run: |
+          npx vercel pull --yes --environment=production --token ${{ secrets.vercel_token }} --scope litteraeducation
+          npx vercel build --prod --yes --scope litteraeducation --token ${{ secrets.vercel_token }}
+
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.vercel_token }}
           github-token: ${{ secrets.github_actions_token }}
-          vercel-args: '--prod'
+          vercel-args: '--prod --prebuilt'
           scope: 'litteraeducation'
           vercel-org-id: ${{ secrets.vercel_org_id }}
           vercel-project-id: ${{ secrets.vercel_project_id }}
