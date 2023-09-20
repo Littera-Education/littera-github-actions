@@ -70,18 +70,19 @@ jobs:
           "always-auth=true\n" \
           >> .npmrc
 
-      # - name: Install dependencies (with cache)
-      #   if: ${{ inputs.custom_npm_install_command == 'skip' }}
-      #   uses: bahmutov/npm-install@v1
+      - name: Install dependencies (with cache)
+        if: ${{ inputs.custom_npm_install_command == 'skip' }}
+        uses: bahmutov/npm-install@v1
   
       - name: Custom Install dependencies (with cache)
-        # if: ${{ inputs.custom_npm_install_command != 'skip' }}
+        if: ${{ inputs.custom_npm_install_command != 'skip' }}
         uses: bahmutov/npm-install@v1
         with:
-          install-command: npm i --prefix ./temp-node-modules
+          install-command: ${{ inputs.custom_npm_install_command }}
 
       - name: Misc Bash
         run: |
+          mv node_modules temp_node_modules
           ls -la
           
       # do we want to prune?
