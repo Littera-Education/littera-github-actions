@@ -82,7 +82,7 @@ jobs:
 
       - name: Misc Bash
         run: |
-          mv node_modules temp_node_modules
+          npm run build
           ls -la
           
       # do we want to prune?
