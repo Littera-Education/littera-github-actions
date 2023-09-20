@@ -82,7 +82,7 @@ jobs:
 
       - name: Misc Bash
         run: |
-          npm run build
+          npx vercel build
           ls -la
           
       # do we want to prune?
@@ -94,7 +94,7 @@ jobs:
         with:
           vercel-token: ${{ secrets.vercel_token }}
           github-token: ${{ secrets.github_actions_token }}
-          vercel-args: '--prod'
+          vercel-args: '--prod --prebuilt --archive=tgz'
           scope: 'litteraeducation'
           vercel-org-id: ${{ secrets.vercel_org_id }}
           vercel-project-id: ${{ secrets.vercel_project_id }}
