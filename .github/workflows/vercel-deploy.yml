@@ -82,6 +82,7 @@ jobs:
 
       - name: Misc Bash
         run: |
+          npx vercel pull --yes --environment=production
           npx vercel build
           ls -la
           
