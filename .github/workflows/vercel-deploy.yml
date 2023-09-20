@@ -80,15 +80,10 @@ jobs:
         with:
           install-command: ${{ inputs.custom_npm_install_command }}
 
-      - name: Misc Bash
+      - name: Vercel Build
         run: |
           npx vercel pull --yes --environment=production --token ${{ secrets.vercel_token }} --scope litteraeducation
           npx vercel build --prod --yes --scope litteraeducation --token ${{ secrets.vercel_token }}
-          ls -la
-          
-      # do we want to prune?
-      # - name: Prune Dev Dependencies
-      #   run: npm prune --production
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
