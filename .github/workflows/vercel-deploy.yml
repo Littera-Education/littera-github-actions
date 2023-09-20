@@ -95,7 +95,7 @@ jobs:
         with:
           vercel-token: ${{ secrets.vercel_token }}
           github-token: ${{ secrets.github_actions_token }}
-          vercel-args: '--prod --prebuilt --archive=tgz'
+          vercel-args: '--prod --prebuilt'
           scope: 'litteraeducation'
           vercel-org-id: ${{ secrets.vercel_org_id }}
           vercel-project-id: ${{ secrets.vercel_project_id }}
