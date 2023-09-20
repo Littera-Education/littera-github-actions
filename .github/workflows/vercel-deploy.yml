@@ -70,17 +70,17 @@ jobs:
           "always-auth=true\n" \
           >> .npmrc
 
-      - name: Install dependencies (with cache)
-        if: ${{ inputs.custom_npm_install_command == 'skip' }}
-        uses: bahmutov/npm-install@v1
+      # - name: Install dependencies (with cache)
+      #   if: ${{ inputs.custom_npm_install_command == 'skip' }}
+      #   uses: bahmutov/npm-install@v1
   
       - name: Custom Install dependencies (with cache)
-        if: ${{ inputs.custom_npm_install_command != 'skip' }}
+        # if: ${{ inputs.custom_npm_install_command != 'skip' }}
         uses: bahmutov/npm-install@v1
         with:
-          install-command: ${{ inputs.custom_npm_install_command }}
+          install-command: npm ci --prefix ./temp-node-modules
 
-      - name: Setup .npmrc for pulling & publishing to Nexus
+      - name: Misc Bash
         run: |
           ls -la
           
