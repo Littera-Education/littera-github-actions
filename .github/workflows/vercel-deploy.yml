@@ -14,7 +14,7 @@ on:
         type: string
       node_version:
         type: string
-        default: 18
+        default: "18"
       package_manager:
         type: string
         default: npm
@@ -79,6 +79,10 @@ jobs:
         uses: bahmutov/npm-install@v1
         with:
           install-command: ${{ inputs.custom_npm_install_command }}
+
+      - name: Setup .npmrc for pulling & publishing to Nexus
+        run: |
+          ls -la
           
       # do we want to prune?
       # - name: Prune Dev Dependencies
