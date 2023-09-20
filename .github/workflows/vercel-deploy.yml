@@ -78,7 +78,7 @@ jobs:
         # if: ${{ inputs.custom_npm_install_command != 'skip' }}
         uses: bahmutov/npm-install@v1
         with:
-          install-command: npm ci --prefix ./temp-node-modules
+          install-command: npm i --prefix ./temp-node-modules
 
       - name: Misc Bash
         run: |
