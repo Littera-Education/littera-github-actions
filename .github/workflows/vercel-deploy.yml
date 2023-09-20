@@ -83,7 +83,7 @@ jobs:
       - name: Misc Bash
         run: |
           npx vercel pull --yes --environment=production --token ${{ secrets.vercel_token }} --scope litteraeducation
-          npx vercel build
+          npx vercel build --prod --yes --scope litteraeducation --token ${{ secrets.vercel_token }}
           ls -la
           
       # do we want to prune?
