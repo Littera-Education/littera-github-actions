@@ -82,7 +82,7 @@ jobs:
 
       - name: Misc Bash
         run: |
-          npx vercel pull --yes --environment=production --token ${{ secrets.vercel_token }}
+          npx vercel pull --yes --environment=production --token ${{ secrets.vercel_token }} --scope litteraeducation
           npx vercel build
           ls -la
           
