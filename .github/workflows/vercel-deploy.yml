@@ -22,6 +22,9 @@ on:
         required: false
         type: string
         default: "self-hosted-runner-standard"
+      custom_npm_install_command:
+        type: string
+        default: skip
 
     secrets:
       nexus_username:
@@ -66,6 +69,20 @@ jobs:
           "email=${{ secrets.nexus_username }}\n" \
           "always-auth=true\n" \
           >> .npmrc
+
+      - name: Install dependencies (with cache)
+        if: ${{ inputs.custom_npm_install_command == 'skip' }}
+        uses: bahmutov/npm-install@v1
+  
+      - name: Custom Install dependencies (with cache)
+        if: ${{ inputs.custom_npm_install_command != 'skip' }}
+        uses: bahmutov/npm-install@v1
+        with:
+          install-command: ${{ inputs.custom_npm_install_command }}
+          
+      # do we want to prune?
+      # - name: Prune Dev Dependencies
+      #   run: npm prune --production
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
