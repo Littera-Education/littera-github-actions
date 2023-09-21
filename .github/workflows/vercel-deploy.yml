@@ -24,6 +24,7 @@ on:
         default: "self-hosted-runner-standard"
       max_old_space_size:
         required: false
+        type: string
         default: "4096"
 
     secrets:
