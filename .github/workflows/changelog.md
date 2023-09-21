@@ -1,3 +1,6 @@
+# v8.9.1 (09/21/2023)
+* Export `VERCEL_PROJECT_ID` and `VERCEL_ORG_ID` before interacting with Vercel
+
 # v8.9.0 (09/20/2023)
 * Changed `vercel-deploy.yml` to do a local install and build before deploying, sending the compiled code over.
   * This was to allow us to move our Nexus server to behind the VPN.
