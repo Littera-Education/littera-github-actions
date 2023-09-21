@@ -1,3 +1,6 @@
+# v8.9.2 (09/21/2023)
+* In `vercel-deployment` added an input for `--max-old-space-size` for `Vercel Build`
+
 # v8.9.1 (09/21/2023)
 * Export `VERCEL_PROJECT_ID` and `VERCEL_ORG_ID` before interacting with Vercel
 
