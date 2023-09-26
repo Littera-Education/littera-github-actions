@@ -1,3 +1,6 @@
+# v8.9.3 (09/26/2023)
+* In `pr-title-lint` removed the installed action and using the npx command directly due to node12 deprecation and lack of support by the action developer.
+
 # v8.9.2 (09/21/2023)
 * In `vercel-deployment` added an input for `--max-old-space-size` for `Vercel Build`
 
