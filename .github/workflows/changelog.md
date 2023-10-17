@@ -1,3 +1,6 @@
+# v8.9.4 (10/17/2023)
+* Added littera-auth0-actions to VERCEL.json
+
 # v8.9.3 (09/26/2023)
 * In `pr-title-lint` removed the installed action and using the npx command directly due to node12 deprecation and lack of support by the action developer.
 
