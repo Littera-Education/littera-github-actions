@@ -1,3 +1,6 @@
+# v8.9.5 (10/17/2023)
+* Added littera-utils to VERCEL.json
+
 # v8.9.4 (10/17/2023)
 * Added littera-auth0-actions to VERCEL.json
 
