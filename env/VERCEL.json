@@ -5,6 +5,12 @@
         "package_manager": "npm",
         "node_version": "18"
     },
+    "littera-auth0-actions": {
+        "local_runner":  "self-hosted-runner-standard",
+        "testing_workflow": "npm_test",
+        "package_manager": "npm",
+        "node_version": "18"
+    },
     "littera-core-ui": {
         "local_runner":  "self-hosted-runner-standard",
         "testing_workflow": "sharded_test",
