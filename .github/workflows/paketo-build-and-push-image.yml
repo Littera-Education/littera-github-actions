@@ -63,10 +63,14 @@ jobs:
           path: config
           fetch-depth: 0
 
-      - name: Setup Paketo
-        uses: buildpacks/github-actions/setup-pack@v5.3.1
+      - name: Install Pack CLI
+        uses: buildpacks/github-actions/setup-pack@v5.4.0
         with:
           pack-version: 0.31.0
+
+      - name: Configure Pack CLi
+        run: |
+          pack config default-builder paketobuildpacks/builder-jammy-base
 
       - name: Setup Java
         uses: actions/setup-java@v3
