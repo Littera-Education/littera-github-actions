@@ -88,6 +88,22 @@ jobs:
         run: |
           ./mvnw dependency:copy -Dartifact=${{ inputs.group_id }}:${{ inputs.artifact_id }}:${{ inputs.version }}:jar -DoutputDirectory=./target -U
 
+      - name: Get runner arch
+        id: runner_arch
+        run: |
+          arch_value=$(uname -m)
+          if [ "$arch_value" = "x86_64" ]; then
+            echo "runner_arch=amd64" >> $GITHUB_OUTPUT
+          elif [ "$arch_value" = "aarch64" ]; then
+            echo "runner_arch=arm64" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup aws cli
+        uses: unfor19/install-aws-cli-action@v1
+        with:
+          version: 2
+          arch: ${{ steps.runner_arch.outputs.runner_arch }}
+
       - name: Configure AWS Creds
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
