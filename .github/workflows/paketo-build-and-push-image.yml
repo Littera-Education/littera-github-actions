@@ -128,7 +128,7 @@ jobs:
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com
 
           pack build ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_NAME:${{ inputs.version }} \
-            --trust-builder
+            --trust-builder \
             --timestamps \
             --descriptor config/${{ inputs.service_name }}/paketo/project-${{ inputs.environment }}.toml \
             --path target/${{ inputs.artifact_id }}-*.jar \
