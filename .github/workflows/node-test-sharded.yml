@@ -9,7 +9,7 @@ on:
         type: string
       node_version:
         type: number
-        default: 16
+        default: 18
 
     secrets:
       nexus_username:
@@ -38,16 +38,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup .npmrc for pulling & publishing to Nexus
-        run: |
-          echo -e '\n' \
-          'registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n' \
-          '_auth=${{ secrets.nexus_npm_login }}\n' \
-          '//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n' \
-          'email=${{ secrets.nexus_username }}\n' \
-          'always-auth=true\n' \
-          >> .npmrc
-
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
@@ -55,6 +45,15 @@ jobs:
 
       - name: Install yarn
         run: npm install -g yarn
+
+      - name: Setup .npmrc for pulling & publishing to Nexus
+        run: |
+          yarn config set npmAlwaysAuth true
+          yarn config set npmAuthIdent ${{ secrets.nexus_npm_login }}
+          yarn config set npmRegistryServer https://${{ inputs.nexus_host_domain }}/repository/npm-public
+
+          yarn config set 'npmRegistries["//${{ inputs.nexus_host_domain }}/repository/npm-local/"].npmAuthIdent' ${{ secrets.nexus_npm_login }}
+          yarn config set 'npmRegistries["//${{ inputs.nexus_host_domain }}/repository/npm-local/"].npmAlwaysAuth' true
 
       - name: Yarn Install Dependencies
         run: yarn install
