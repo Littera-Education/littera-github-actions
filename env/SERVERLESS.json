@@ -1,5 +1,10 @@
 {
     "littera-jobs": {
+        "debug": {
+            "local_runner": "self-hosted-runner-standard",
+            "node_version": "18",
+            "aws_role_arn": "arn:aws:iam::022961735341:role/github-action-littera-jobs"
+        },
         "dev": {
             "local_runner": "self-hosted-runner-standard",
             "node_version": "18",
@@ -34,6 +39,11 @@
         }
     },
     "littera-notifications": {
+        "debug": {
+            "local_runner": "self-hosted-runner-standard",
+            "node_version": "18",
+            "aws_role_arn": "arn:aws:iam::022961735341:role/github-action-littera-notifications"
+        },
         "dev": {
             "local_runner": "self-hosted-runner-standard",
             "node_version": "18",
@@ -56,6 +66,11 @@
         }
     },
     "littera-cognito-triggers": {
+        "debug": {
+            "local_runner": "self-hosted-runner-standard",
+            "node_version": "18",
+            "aws_role_arn": "arn:aws:iam::022961735341:role/github-action-littera-cognito-triggers"
+        },
         "dev": {
             "local_runner": "self-hosted-runner-standard",
             "node_version": "18",
