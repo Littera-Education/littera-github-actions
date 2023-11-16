@@ -1,4 +1,4 @@
-# v8.9.6 (10/17/2023)
+# v8.9.6 (11/16/2023)
 * Added debug env for littera-jobs, littera-notifications and littera-cognito-triggers in SERVERLESS.json
 
 # v8.9.5 (10/17/2023)
