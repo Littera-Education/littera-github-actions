@@ -1,4 +1,4 @@
-name: Serverless Deploy
+name: Serverless Remove
 
 on:
   workflow_call:
