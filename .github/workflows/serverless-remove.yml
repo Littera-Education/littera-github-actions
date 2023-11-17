@@ -1,0 +1,71 @@
+name: Serverless Remove
+
+on:
+  workflow_call:
+    inputs:
+      git_tag:
+        required: true
+        type: string
+        default: "develop"
+      nexus_host_domain:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+        default: "debug"
+      node_version:
+        type: string
+        default: "18"
+      local_runner:
+        required: false
+        type: string
+        default: "self-hosted-runner-standard"
+
+    secrets:
+      nexus_username:
+        required: true
+      nexus_npm_login:
+        required: true
+      aws_role_arn:
+        required: true
+      github_actions_token:
+        required: true
+
+jobs:
+  serverless-remove:
+    name: Remove ${{ inputs.git_tag }} to ${{ inputs.environment }}
+    runs-on: ${{ inputs.local_runner }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.git_tag }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Setup .npmrc for pulling & publishing to Nexus
+        run: |
+          echo -e '\n' \
+          'registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n' \
+          '//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}\n' \
+          '//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n' \
+          'email=${{ secrets.nexus_username }}\n' \
+          'always-auth=true\n' \
+          >> .npmrc
+
+      - name: Install dependencies (with cache)
+        uses: bahmutov/npm-install@v1
+
+      - name: Configure AWS Creds
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.aws_role_arn }}
+
+      - name: Remove jobs to ${{ inputs.environment }}
+        run: npx serverless remove --stage ${{ inputs.environment }}

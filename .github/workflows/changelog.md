@@ -1,3 +1,6 @@
+# v8.10.0 (11/17/2023)
+* Add `serverless-remove.yml` so we can remove the debug environments when they aren't being used.
+
 # v8.9.6 (11/16/2023)
 * Added debug env for littera-jobs, littera-notifications and littera-cognito-triggers in SERVERLESS.json
 
