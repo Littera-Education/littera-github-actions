@@ -1,3 +1,6 @@
+# v8.11.0 (11/21/2023)
+* Fixed `lcov-result-merger` upgrade in `node-test-sharded.yml`. (see: [LDO-2428](https://littera.atlassian.net/browse/LDO-2428)) 
+
 # v8.10.0 (11/17/2023)
 * Add `serverless-remove.yml` so we can remove the debug environments when they aren't being used.
 
