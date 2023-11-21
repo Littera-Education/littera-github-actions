@@ -94,7 +94,7 @@ jobs:
           path: coverage
 
       - name: Merge Code Coverage
-        run: npx lcov-result-merger 'coverage/lcov_*.info' 'coverage/lcov.info'
+        run: npx lcov-result-merger 'coverage/lcov_*.info' 'coverage/lcov.info' --legacy-temp-file
 
         # https://docs.sonarqube.org/latest/analyzing-source-code/scanners/sonarscanner/
       - name: Run Sonar Analysis
