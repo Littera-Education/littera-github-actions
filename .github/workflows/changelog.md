@@ -1,3 +1,12 @@
+# v8.11.0 (11/21/2023)
+* Fixed `lcov-result-merger` upgrade in `node-test-sharded.yml`. (see: [LDO-2428](https://littera.atlassian.net/browse/LDO-2428)) 
+
+# v8.10.0 (11/17/2023)
+* Add `serverless-remove.yml` so we can remove the debug environments when they aren't being used.
+
+# v8.9.6 (11/16/2023)
+* Added debug env for littera-jobs, littera-notifications and littera-cognito-triggers in SERVERLESS.json
+
 # v8.9.5 (10/17/2023)
 * Added littera-utils to VERCEL.json
 
