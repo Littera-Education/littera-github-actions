@@ -113,7 +113,7 @@ jobs:
       - name: Get Release PR Title
         uses: actions/github-script@v6
         id: release-pr-title
-        if: inputs.branch_name != 'snapshot;
+        if: inputs.branch_name != 'develop-snapshot;
         with:
           script: |
             const prs = await github.rest.pulls.list({
