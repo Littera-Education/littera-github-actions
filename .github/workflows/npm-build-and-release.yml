@@ -25,6 +25,9 @@ on:
         required: false
         type: string
         default: "self-hosted-runner-standard"
+      branch_name:
+        required: false
+        type: string
 
     secrets:
       nexus_username:
@@ -110,6 +113,7 @@ jobs:
       - name: Get Release PR Title
         uses: actions/github-script@v6
         id: release-pr-title
+        if: inputs.branch_name != 'snapshot;
         with:
           script: |
             const prs = await github.rest.pulls.list({

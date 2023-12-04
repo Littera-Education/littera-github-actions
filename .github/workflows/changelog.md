@@ -1,3 +1,6 @@
+# v8.12.0 (12/04/2023)
+* `npm-build-and-release.yml` does not run step `releaes-pr-tile` if triggering branch is 'snapshot'
+
 # v8.11.0 (11/21/2023)
 * Fixed `lcov-result-merger` upgrade in `node-test-sharded.yml`. (see: [LDO-2428](https://littera.atlassian.net/browse/LDO-2428)) 
 
