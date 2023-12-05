@@ -1,0 +1,77 @@
+name: get project info with npm
+
+on:
+  workflow_call:
+    inputs:
+      nexus_host_domain:
+        required: true
+        type: string
+      node_version:
+        type: string
+        default: 18
+      custom_npm_install_command:
+        type: string
+        default: skip
+      package_manager:
+        type: string
+        default: npm
+      local_runner:
+        required: false
+        type: string
+        default: "self-hosted-runner-standard"
+
+    secrets:
+      nexus_username:
+        required: true
+      nexus_npm_login:
+        required: true
+      sonar_token:
+        required: true
+
+    outputs:
+      version:
+        description: "artifact version"
+        value: ${{ jobs.npm_get_project_info.outputs.version }}
+      artifact_id: 
+        description: "artifact id"
+        value: ${{ jobs.npm_get_project_info.outputs.artifact_id }}
+
+jobs:
+  npm_get_project_info:
+    name: NPM (or Yarn) Tests
+    runs-on: ${{ inputs.local_runner }}
+
+    outputs:
+      version: ${{ steps.get-project-info.outputs.VERSION }}
+      artifact_id: ${{ steps.get-project-info.outputs.ARTIFACTID }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Setup .npmrc for pulling & publishing to Nexus
+        run: |
+          FULL_REPO_AUTH="//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}"
+          if [ ! "${{ inputs.package_manager }}" == "npm" ]; then
+            FULL_REPO_AUTH="_auth=${{ secrets.nexus_npm_login }}"
+          fi
+
+          echo -e "\n" \
+          "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
+          "$FULL_REPO_AUTH\n" \
+          "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
+          "email=${{ secrets.nexus_username }}\n" \
+          "always-auth=true\n" \
+          >> .npmrc
+          
+      - name: Get Project Info
+        id: get-project-info
+        run: |
+          echo "ARTIFACTID=$(npm pkg get name | xargs echo)" >> $GITHUB_OUTPUT
+          echo "VERSION=$(npm pkg get version | xargs echo)" >> $GITHUB_OUTPUT
