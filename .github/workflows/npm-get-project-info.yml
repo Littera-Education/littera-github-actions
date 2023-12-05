@@ -38,7 +38,7 @@ on:
 
 jobs:
   npm_get_project_info:
-    name: NPM (or Yarn) Tests
+    name: get project info
     runs-on: ${{ inputs.local_runner }}
 
     outputs:
