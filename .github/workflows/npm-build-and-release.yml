@@ -25,6 +25,9 @@ on:
         required: false
         type: string
         default: "self-hosted-runner-standard"
+      branch_name:
+        required: false
+        type: string
 
     secrets:
       nexus_username:
@@ -119,6 +122,7 @@ jobs:
       - name: Get Release PR Title
         uses: actions/github-script@v6
         id: release-pr-title
+        if: inputs.branch_name != 'develop-snapshot'
         with:
           script: |
             const prs = await github.rest.pulls.list({
@@ -142,7 +146,7 @@ jobs:
           if [ "${{ steps.release-please.outputs.release_created }}" ]; then
             version=${{ inputs.version }}
             artifact_url=https://${{ inputs.nexus_host_domain }}/repository/node-artifacts/${{ inputs.artifact_id }}/${{ inputs.version }}/dist.zip
-          elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" ]; then
+          elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" && inputs.branch != 'develop-snapshot']; then
             version="${{ steps.release-pr-title.outputs.result }}"
             echo $version
             versionparts=($version)

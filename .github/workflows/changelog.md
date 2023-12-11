@@ -1,5 +1,9 @@
-# v8.12.0 (12/1/2023)
+# v8.13.0 (12/1/2023)
 * Add support for `berry` npm package manager, in order to migrate to node18. See: [LDO-2370](https://littera.atlassian.net/browse/LDO-2370)
+* 
+# v8.12.0 (12/05/2023)
+* `npm-build-and-release.yml` accomodates case when branch_name=develop-snapshot
+* `npm-get-project-info.yml` added. Returns version and artifact_id from package.json
 
 # v8.11.0 (11/21/2023)
 * Fixed `lcov-result-merger` upgrade in `node-test-sharded.yml`. (see: [LDO-2428](https://littera.atlassian.net/browse/LDO-2428)) 
