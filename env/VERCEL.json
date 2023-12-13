@@ -14,8 +14,8 @@
     "littera-core-ui": {
         "local_runner":  "self-hosted-runner-standard",
         "testing_workflow": "sharded_test",
-        "package_manager": "berry",
-        "node_version": "18"
+        "package_manager": "yarn",
+        "node_version": "16"
     },
     "littera-goboard": {
         "local_runner":  "self-hosted-runner-standard",
