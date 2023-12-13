@@ -1,3 +1,6 @@
+# v8.13.1 (12/13/2023)
+* Reverting back to `yarn` briefly for core-ui rollback testing.
+
 # v8.13.0 (12/11/2023)
 * Add support for `berry` npm package manager, in order to migrate to node18. See: [LDO-2370](https://littera.atlassian.net/browse/LDO-2370)
 
