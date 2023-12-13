@@ -59,6 +59,7 @@ jobs:
       - name: Setup .npmrc for pulling & publishing to Nexus
         run: |
           if [ "${{ inputs.package_manager }}" == "berry" ]; then
+            npm install -g yarn
             yarn config set npmAlwaysAuth true
             yarn config set npmAuthIdent ${{ secrets.nexus_npm_login }}
             yarn config set npmRegistryServer https://${{ inputs.nexus_host_domain }}/repository/npm-public
