@@ -1,3 +1,6 @@
+# v8.14.0 (12/13/2023)
+* Add `maven_goal` input to `maven-build.yml` workflow and default it to `install`. For more details see: [LDO-2584](https://littera.atlassian.net/browse/LDO-2584)
+
 # v8.13.1 (12/11/2023)
 * Upon testing `core-ui`, the `yarn` package manager is missing to configure the `.yarnrc.yml`.
 

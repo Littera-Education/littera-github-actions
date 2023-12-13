@@ -16,6 +16,10 @@ on:
         required: false
         type: string
         default: 'self-hosted-runner-standard'
+      maven_goal:
+        required: false
+        type: string
+        default: "install"
 
     secrets:
       nexus_username:
@@ -98,7 +102,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
         run: |
-          ./mvnw -ntp clean install sonar:sonar -Dsonar.qualitygate.wait=true
+          ./mvnw -ntp clean ${{ inputs.maven_goal }} sonar:sonar -Dsonar.qualitygate.wait=true
       
       - name: Cache github pages
         id: cache-github-pages

@@ -14,7 +14,7 @@ on:
         type: string
       node_version:
         type: string
-        default: 18
+        default: "18"
       custom_npm_install_command:
         type: string
         default: skip
