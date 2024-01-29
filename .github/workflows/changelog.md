@@ -1,3 +1,6 @@
+# v8.15.0 (01/29/2024)
+* In `vercel-deploy.yaml` pin all Vercel CLI commands to the same version and expose that version to be overridable in case it's necessary.
+
 # v8.14.0 (12/13/2023)
 * Add `maven_goal` input to `maven-build.yml` workflow and default it to `install`. For more details see: [LDO-2584](https://littera.atlassian.net/browse/LDO-2584)
 

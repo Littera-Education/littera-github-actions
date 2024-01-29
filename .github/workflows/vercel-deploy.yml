@@ -26,6 +26,10 @@ on:
         required: false
         type: string
         default: "4096"
+      vercel_cli_version:
+        required: false
+        type: string
+        default: "33.4.0"
 
     secrets:
       nexus_username:
@@ -90,8 +94,8 @@ jobs:
         run: |
           export VERCEL_PROJECT_ID=${{ secrets.vercel_project_id }}
           export VERCEL_ORG_ID=${{ secrets.vercel_org_id }}
-          npx vercel pull --yes --environment=production --token ${{ secrets.vercel_token }} --scope litteraeducation
-          npx vercel build --prod --yes --scope litteraeducation --token ${{ secrets.vercel_token }}
+          npx vercel@${{ inputs.vercel_cli_version }} pull --yes --environment=production --token ${{ secrets.vercel_token }} --scope litteraeducation
+          npx vercel@${{ inputs.vercel_cli_version }} build --prod --yes --scope litteraeducation --token ${{ secrets.vercel_token }}
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
@@ -103,3 +107,4 @@ jobs:
           vercel-org-id: ${{ secrets.vercel_org_id }}
           vercel-project-id: ${{ secrets.vercel_project_id }}
           working-directory: ./
+          vercel-version: ${{ inputs.vercel_cli_version }}
