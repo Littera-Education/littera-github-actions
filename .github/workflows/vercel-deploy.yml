@@ -103,3 +103,4 @@ jobs:
           vercel-org-id: ${{ secrets.vercel_org_id }}
           vercel-project-id: ${{ secrets.vercel_project_id }}
           working-directory: ./
+          vercel-version: 33.4.0
