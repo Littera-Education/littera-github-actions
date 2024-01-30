@@ -91,5 +91,22 @@
             "node_version": "18",
             "aws_role_arn": "arn:aws:iam::022961735341:role/github-action-littera-cognito-triggers"
         }
+    },
+    "littera-customer-portal-jobs": {
+        "debug": {
+            "local_runner": "self-hosted-runner-standard",
+            "node_version": "18",
+            "aws_role_arn": "fill me in"
+        },
+        "dev": {
+            "local_runner": "self-hosted-runner-standard",
+            "node_version": "18",
+            "aws_role_arn": "fill me in"
+        },
+        "production": {
+            "local_runner": "self-hosted-runner-standard",
+            "node_version": "18",
+            "aws_role_arn": "fill me in"
+        }
     }
 }
