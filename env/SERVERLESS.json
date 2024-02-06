@@ -94,19 +94,22 @@
     },
     "littera-customer-portal-jobs": {
         "debug": {
+            "aws_account" : "littera-lab3",
             "local_runner": "self-hosted-runner-standard",
-            "node_version": "18",
-            "aws_role_arn": "fill me in"
+            "node_version": "20",
+            "aws_role_arn": "arn:aws:iam::558357037541:role/github-action-littera-customer-portal-jobs"
         },
         "dev": {
+            "aws_account" : "littera-app-dev1",
             "local_runner": "self-hosted-runner-standard",
-            "node_version": "18",
-            "aws_role_arn": "fill me in"
+            "node_version": "20",
+            "aws_role_arn": "arn:aws:iam::576592653045:role/github-action-littera-customer-portal-jobs"
         },
         "production": {
+            "aws_account" : "littera-app-prod1",
             "local_runner": "self-hosted-runner-standard",
-            "node_version": "18",
-            "aws_role_arn": "fill me in"
+            "node_version": "20",
+            "aws_role_arn": "arn:aws:iam::259768243988:role/github-action-littera-customer-portal-jobs"
         }
     }
 }

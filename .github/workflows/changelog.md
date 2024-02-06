@@ -1,3 +1,6 @@
+# v8.16.0 (02/06/2024)
+* env vars for `littera-customer-portal-jobs` added to SERVERLESS.json
+
 # v8.15.0 (01/29/2024)
 * In `vercel-deploy.yaml` pin all Vercel CLI commands to the same version and expose that version to be overridable in case it's necessary.
 
