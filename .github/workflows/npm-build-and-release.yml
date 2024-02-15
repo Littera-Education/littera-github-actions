@@ -67,7 +67,7 @@ jobs:
             echo "release-please-config.json does not exist, creating..."
             echo -e "{\n" \
               "  \"release-type\": \"node\",\n" \
-              "  \"pull-request-title-pattern\": \"chore${scope}: release${component} ${version} [skip ci]\",\n" \
+              "  \"pull-request-title-pattern\": \"chore${scope}: release${component} ${version} [skip ci]\"\n" \
               "}" > release-please-config.json
           fi
 
