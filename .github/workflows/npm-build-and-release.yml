@@ -71,6 +71,10 @@ jobs:
               "}" > release-please-config.json
           fi
 
+      - name: Pre Release Please Validate
+        run: |
+          cat release-please-config.json
+
       - name: Release Please
         id: release-please
         uses: google-github-actions/release-please-action@v4
