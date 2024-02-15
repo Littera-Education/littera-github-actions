@@ -61,19 +61,19 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-      - name: Pre Release Please
-        run: |
-          if ! test -f release-please-config.json; then
-            echo "release-please-config.json does not exist, creating..."
-            echo -e "{\n" \
-              "  \"release-type\": \"node\",\n" \
-              "  \"pull-request-title-pattern\": \"chore\${scope}: release\${component} \${version} [skip ci]\"\n" \
-              "}" > release-please-config.json
-          fi
+#      - name: Pre Release Please
+#        run: |
+#          if ! test -f release-please-config.json; then
+#            echo "release-please-config.json does not exist, creating..."
+#            echo -e "{\n" \
+#              "  \"release-type\": \"node\",\n" \
+#              "  \"pull-request-title-pattern\": \"chore\${scope}: release\${component} \${version} [skip ci]\"\n" \
+#              "}" > release-please-config.json
+#          fi
 
-      - name: Pre Release Please Validate
-        run: |
-          cat release-please-config.json
+#      - name: Pre Release Please Validate
+#        run: |
+#          cat release-please-config.json
 
       - name: Release Please
         id: release-please
