@@ -61,12 +61,21 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
+      - name: Pre Release Please
+        run: |
+          if ! test -f release-please-config.json; then
+            echo "release-please-config.json does not exist, creating..."
+            echo -e "{\n" \
+              "  \"release-type\": \"node\",\n" \
+              "  \"pull-request-title-pattern\": \"chore${scope}: release${component} ${version} [skip ci]\",\n" \
+              "}" > release-please-config.json
+          fi
+
       - name: Release Please
         id: release-please
         uses: google-github-actions/release-please-action@v4
         with:
           token: ${{ secrets.github_actions_token }}
-          release-type: simple
 
       - name: Set up Node
         uses: actions/setup-node@v4
