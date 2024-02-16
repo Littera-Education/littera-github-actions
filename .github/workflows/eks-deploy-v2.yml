@@ -78,7 +78,7 @@ jobs:
           role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/github-assume-role
 
       - name: Checkout EKS Config Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: Littera-Education/littera-eks-config
           token: ${{ secrets.repo_token }}

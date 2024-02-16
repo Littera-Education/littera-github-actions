@@ -1,3 +1,6 @@
+# v8.17.0 (02/16/2024)
+* Updated many actions, primarily around Node & Vercel, to checkout@v4, setup-node@v4, and release-please-action@v4
+
 # v8.16.0 (02/06/2024)
 * env vars for `littera-customer-portal-jobs` added to SERVERLESS.json
 
