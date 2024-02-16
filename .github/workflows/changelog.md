@@ -1,3 +1,6 @@
+# v8.18.0 (02/16/2024)
+* Set fetch-depth on checkout in `vercel-deploy`
+
 # v8.17.0 (02/16/2024)
 * Updated many actions, primarily around Node & Vercel, to checkout@v4, setup-node@v4, and release-please-action@v4
 
