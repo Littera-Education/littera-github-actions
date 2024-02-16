@@ -44,7 +44,7 @@ jobs:
       artifact_url: ${{ steps.upload-artifact.outputs.ARTIFACT_URL }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
@@ -71,7 +71,7 @@ jobs:
           package-name: ${{ inputs.artifact_id }}
 
       - name: Set up Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node_version }}
 
