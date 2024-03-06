@@ -10,11 +10,6 @@
             "node_version": "18",
             "aws_role_arn": "arn:aws:iam::022961735341:role/github-action-littera-jobs"
         },
-        "testing": {
-            "local_runner": "self-hosted-runner-standard",
-            "node_version": "18",
-            "aws_role_arn": "arn:aws:iam::022961735341:role/github-action-littera-jobs"
-        },
         "staging": {
             "local_runner": "self-hosted-runner-standard",
             "node_version": "18",
@@ -49,11 +44,6 @@
             "node_version": "18",
             "aws_role_arn": "arn:aws:iam::022961735341:role/github-action-littera-notifications"
         },
-        "testing": {
-            "local_runner": "self-hosted-runner-standard",
-            "node_version": "18",
-            "aws_role_arn": "arn:aws:iam::022961735341:role/github-action-littera-notifications"
-        },
         "staging": {
             "local_runner": "self-hosted-runner-standard",
             "node_version": "18",
@@ -72,11 +62,6 @@
             "aws_role_arn": "arn:aws:iam::022961735341:role/github-action-littera-cognito-triggers"
         },
         "dev": {
-            "local_runner": "self-hosted-runner-standard",
-            "node_version": "18",
-            "aws_role_arn": "arn:aws:iam::022961735341:role/github-action-littera-cognito-triggers"
-        },
-        "testing": {
             "local_runner": "self-hosted-runner-standard",
             "node_version": "18",
             "aws_role_arn": "arn:aws:iam::022961735341:role/github-action-littera-cognito-triggers"
