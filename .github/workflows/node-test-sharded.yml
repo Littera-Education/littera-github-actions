@@ -8,7 +8,7 @@ on:
         required: true
         type: string
       node_version:
-        type: number
+        type: string
         default: 18
       custom_npm_install_command:
         type: string
@@ -48,6 +48,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Set up Node
         uses: actions/setup-node@v4
