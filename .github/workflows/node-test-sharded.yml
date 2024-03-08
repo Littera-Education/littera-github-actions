@@ -10,6 +10,16 @@ on:
       node_version:
         type: number
         default: 18
+      custom_npm_install_command:
+        type: string
+        default: skip
+      package_manager:
+        type: string
+        default: npm
+      local_runner:
+        required: false
+        type: string
+        default: "self-hosted-runner-standard"
 
     secrets:
       nexus_username:
@@ -29,7 +39,8 @@ on:
 
 jobs:
   test-shards:
-    runs-on: self-hosted-runner-standard
+    name: NPM (or Yarn) Sharded Tests
+    runs-on: ${{ inputs.local_runner }}
 
     strategy:
       matrix:
@@ -43,23 +54,57 @@ jobs:
         with:
           node-version: ${{ inputs.node_version }}
 
-      - name: Install yarn
-        run: npm install -g yarn
-
       - name: Setup .npmrc for pulling & publishing to Nexus
         run: |
-          yarn config set npmAlwaysAuth true
-          yarn config set npmAuthIdent ${{ secrets.nexus_npm_login }}
-          yarn config set npmRegistryServer https://${{ inputs.nexus_host_domain }}/repository/npm-public
+          if [ "${{ inputs.package_manager }}" == "berry" ]; then
+            yarn config set npmAlwaysAuth true
+            yarn config set npmAuthIdent ${{ secrets.nexus_npm_login }}
+            yarn config set npmRegistryServer https://${{ inputs.nexus_host_domain }}/repository/npm-public
 
-          yarn config set 'npmRegistries["//${{ inputs.nexus_host_domain }}/repository/npm-local/"].npmAuthIdent' ${{ secrets.nexus_npm_login }}
-          yarn config set 'npmRegistries["//${{ inputs.nexus_host_domain }}/repository/npm-local/"].npmAlwaysAuth' true
+            yarn config set 'npmRegistries["//${{ inputs.nexus_host_domain }}/repository/npm-local/"].npmAuthIdent' ${{ secrets.nexus_npm_login }}
+            yarn config set 'npmRegistries["//${{ inputs.nexus_host_domain }}/repository/npm-local/"].npmAlwaysAuth' true
+          elif [ "${{ inputs.package_manager }}" == "yarn" ]; then
+            FULL_REPO_AUTH="_auth=${{ secrets.nexus_npm_login }}"
+            echo -e "\n" \
+                "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
+                "$FULL_REPO_AUTH\n" \
+                "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
+                "email=${{ secrets.nexus_username }}\n" \
+                "always-auth=true\n" \ >> .npmrc
+          elif [ "${{ inputs.package_manager }}" == "npm" ]; then
+              FULL_REPO_AUTH="//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}"
+              echo -e "\n" \
+                "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
+                "$FULL_REPO_AUTH\n" \
+                "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
+                "email=${{ secrets.nexus_username }}\n" \
+                "always-auth=true\n" \ >> .npmrc
+          fi
+
+      - name: Install yarn
+        if: ${{ inputs.package_manager != 'npm' }}
+        run: npm install -g yarn
 
       - name: Yarn Install Dependencies
+        if: ${{ inputs.package_manager != 'npm' }}
         run: yarn install
 
       - name: Yarn Test
+        if: ${{ inputs.package_manager != 'npm' }}
         run: yarn test --shard=${{ matrix.shard }}/${{ strategy.job-total }} --coverage
+
+      - name: Install dependencies (with cache)
+        if: ${{ inputs.package_manager == 'npm' && inputs.custom_npm_install_command == 'skip' }}
+        uses: bahmutov/npm-install@v1
+
+      - name: Custom Install dependencies (with cache)
+        if: ${{ inputs.package_manager == 'npm' && inputs.custom_npm_install_command != 'skip' }}
+        uses: bahmutov/npm-install@v1
+        with:
+          install-command: ${{ inputs.custom_npm_install_command }}
+
+      - name: Execute Unit Tests
+        run: npm run test:cov
 
       - name: Merge Coverage
         run: mv coverage/lcov.info coverage/lcov_${{matrix.shard}}.info
@@ -71,7 +116,7 @@ jobs:
           path: coverage/
 
   report-coverage:
-    runs-on: self-hosted-runner-standard
+    runs-on: ${{ inputs.local_runner }}
     needs: [test-shards]
 
     steps:
@@ -102,7 +147,7 @@ jobs:
         run: npx sonarqube-scanner -Dsonar.projectVersion=${{ steps.extract-version.outputs.currentVersion }}
 
   after-shards:
-    runs-on: self-hosted-runner-standard
+    runs-on: ${{ inputs.local_runner }}
     needs: [test-shards, report-coverage]
 
     if: success()
@@ -126,7 +171,7 @@ jobs:
 
   gate:
     name: Quality Gate
-    runs-on: self-hosted-runner-standard
+    runs-on: ${{ inputs.local_runner }}
     needs: [test-shards, report-coverage, after-shards]
 
     if: always()
