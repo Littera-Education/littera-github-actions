@@ -106,7 +106,7 @@ jobs:
           install-command: ${{ inputs.custom_npm_install_command }}
 
       - name: Execute Unit Tests
-        run: npm run test:cov
+        run: npm run test:cov -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
       - name: Merge Coverage
         run: mv coverage/lcov.info coverage/lcov_${{matrix.shard}}.info
