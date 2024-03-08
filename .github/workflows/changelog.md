@@ -1,6 +1,9 @@
-# v8.19.0 (02/16/2024)
+# v8.12.0 (03/08/2024)
 * add support for `npm` in `node-test-sharded` flow
 * added support for `custom_npm_install_command` in `pr-title-lint` flow
+
+# v8.19.0 (03/06/2024)
+* Removed the `testing` environment across the board
 
 # v8.18.0 (02/16/2024)
 * Set fetch-depth on checkout in `vercel-deploy`
