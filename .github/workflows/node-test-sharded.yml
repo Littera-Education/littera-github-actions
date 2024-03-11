@@ -56,6 +56,10 @@ jobs:
         with:
           node-version: ${{ inputs.node_version }}
 
+      - name: Install yarn
+        if: ${{ inputs.package_manager != 'npm' }}
+        run: npm install -g yarn
+
       - name: Setup .npmrc for pulling & publishing to Nexus
         run: |
           if [ "${{ inputs.package_manager }}" == "berry" ]; then
@@ -82,10 +86,6 @@ jobs:
                 "email=${{ secrets.nexus_username }}\n" \
                 "always-auth=true\n" \ >> .npmrc
           fi
-
-      - name: Install yarn
-        if: ${{ inputs.package_manager != 'npm' }}
-        run: npm install -g yarn
 
       - name: Yarn Install Dependencies
         if: ${{ inputs.package_manager != 'npm' }}
