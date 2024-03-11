@@ -1,3 +1,6 @@
+# v8.20.1 (03/11/2024)
+* `node-test-sharded` need to install yarn globally before setting config
+
 # v8.20.0 (03/08/2024)
 * add support for `npm` in `node-test-sharded` flow
 * added support for `custom_npm_install_command` in `pr-title-lint` flow
