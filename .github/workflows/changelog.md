@@ -1,3 +1,6 @@
+# v8.21.0 (03/13/2024)
+* Update VERCEL.json so core-ui uses `npm`
+
 # v8.20.1 (03/11/2024)
 * `node-test-sharded` need to install yarn globally before setting config
 
