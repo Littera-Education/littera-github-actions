@@ -1,3 +1,6 @@
+# v8.22.0 (03/18/2024)
+* Update VERCEL.json so toolkit uses `npm` and node 18
+
 # v8.21.0 (03/13/2024)
 * Update VERCEL.json so core-ui uses `npm`
 
