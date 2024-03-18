@@ -62,7 +62,7 @@ jobs:
           ref: "develop"
           path: vercel-env-vars
           fetch-depth: 0
-          token: ${{ secrets.repo_token }}
+          token: ${{ secrets.github_actions_token }}
           submodules: true
 
       - name: Configure AWS Creds
