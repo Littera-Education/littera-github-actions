@@ -47,7 +47,7 @@ on:
 
 jobs:
   apply-env-vars:
-    name: Apply Env Vars to ${{ inputs.environment }} ${{ github.repository.name }}
+    name: Apply Env Vars to ${{ inputs.environment }}-${{ github.event.repository.name }}
     runs-on: ${{ inputs.local_runner }}
 
     permissions:
@@ -55,11 +55,6 @@ jobs:
       contents: read
 
     steps:
-      - name: Prep SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.LITTERA_GITHUB_SSH }}
-
       - name: Checkout Vercel Terraform
         uses: actions/checkout@v4
         with:
@@ -67,14 +62,14 @@ jobs:
           ref: "develop"
           path: vercel-env-vars
           fetch-depth: 0
-          ssh-key: ${{ secrets.LITTERA_GITHUB_SSH }}
+          token: ${{ secrets.repo_token }}
           submodules: true
 
       - name: Configure AWS Creds
         uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
           aws-region: us-east-1
-          role-to-assume: arn:aws:iam::595237692563:role/github-action-${{ github.repository.name }}
+          role-to-assume: arn:aws:iam::595237692563:role/github-action-${{ github.event.repository.name }}
 
       - name: Set up Node
         # Needed to install terraform
@@ -89,12 +84,12 @@ jobs:
         id: init
         run: |
           cd vercel-env-vars
-          ./terraform-scripts/terraform.sh -a init -c ${{ inputs.environment }} -t "-no-color -backend-config=""key=${{ github.repository.name }}.tfstate"""
+          ./terraform-scripts/terraform.sh -a init -c ${{ inputs.environment }} -t "-no-color -backend-config=""key=${{ github.event.repository.name }}.tfstate"""
 
       - name: Terraform Apply
         run: |
           cd vercel-env-vars
-          ./terraform-scripts/terraform.sh -a apply -c ${{ inputs.environment }} -t "-no-color -detailed-exitcode -auto-approve -var=""app_name=${{ github.repository.name }}"""
+          ./terraform-scripts/terraform.sh -a apply -c ${{ inputs.environment }} -t "-no-color -detailed-exitcode -auto-approve -var=""app_name=${{ github.event.repository.name }}"""
 
   deploy-to-vercel:
     name: Deploy ${{ inputs.git_tag }} to ${{ inputs.environment }}
