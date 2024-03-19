@@ -1,3 +1,6 @@
+# v8.23.0 (03/21/2024)
+* Update `vercel-deploy.yml` to do a Terraform apply of environment variables for the Vercel app. Form ore details see: [LDO-3078](https://littera.atlassian.net/browse/LDO-3078)
+
 # v8.22.0 (03/18/2024)
 * Update VERCEL.json so toolkit uses `npm` and node 18
 
