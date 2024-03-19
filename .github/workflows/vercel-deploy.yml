@@ -47,7 +47,7 @@ on:
 
 jobs:
   apply-env-vars:
-    name: Apply Env Vars to ${{ inputs.environment }}-${{ github.event.repository.name }}
+    name: Apply Vercel TF to ${{ inputs.environment }}-${{ github.event.repository.name }}
     runs-on: ${{ inputs.local_runner }}
 
     permissions:
