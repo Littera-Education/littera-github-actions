@@ -59,10 +59,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Littera-Education/terraform-root-vercel
+          token: ${{ secrets.github_actions_token }}
           ref: "develop"
           path: vercel-env-vars
           fetch-depth: 0
-          token: ${{ secrets.github_actions_token }}
           submodules: true
 
       - name: Configure AWS Creds
