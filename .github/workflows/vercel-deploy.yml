@@ -89,7 +89,7 @@ jobs:
       - name: Terraform Apply
         run: |
           cd vercel-env-vars
-          ./terraform-scripts/terraform.sh -a apply -c ${{ inputs.environment }} -t "-no-color -detailed-exitcode -auto-approve -var=""app_name=${{ github.event.repository.name }}"""
+          ./terraform-scripts/terraform.sh -a apply -c ${{ inputs.environment }} -t "-no-color -auto-approve -var=""app_name=${{ github.event.repository.name }}"""
 
   deploy-to-vercel:
     name: Deploy ${{ inputs.git_tag }} to ${{ inputs.environment }}
