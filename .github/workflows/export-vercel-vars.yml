@@ -91,13 +91,9 @@ jobs:
 
           ### export apps (turborepo support)
           turborepo_apps_array=$(eval "jq -r '.\"${service_name}\".turborepo_apps' vercel-config/env/VERCEL.json")
-          turborepo_apps=""
-
-          for turborepo_app in "${turborepo_apps_array[@]}"; do
-            turborepo_apps+="$turborepo_app,"
-          done
+          turborepo_apps=$(printf "\"%s\"," "${turborepo_apps_array[@]}")
           turborepo_apps=${turborepo_apps::-1}
 
-          echo "turborepo_apps=$turborepo_apps"
-          echo "turborepo_apps=$turborepo_apps" >> $GITHUB_OUTPUT
+          echo "turborepo_apps="$turborepo_apps
+          echo "turborepo_apps="$turborepo_apps >> $GITHUB_OUTPUT
           
