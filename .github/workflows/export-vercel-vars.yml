@@ -90,7 +90,12 @@ jobs:
           echo "node_version=$node_version" >> $GITHUB_OUTPUT
 
           ### export apps (turborepo support)
-          turborepo_apps=$(eval "jq -r '.\"${service_name}\".turborepo_apps' vercel-config/env/VERCEL.json")
-          echo "turborepo_apps=$turborepo_apps"
-          echo "turborepo_apps=$turborepo_apps" >> $GITHUB_OUTPUT
+          turborepo_apps_array=$(eval "jq -r '.\"${service_name}\".turborepo_apps' vercel-config/env/VERCEL.json")
+          turborepo_apps=""
+          for turborepo_app in "${turborepo_apps_array[@]}"; do
+            turborepo_apps+="$turborepo_app,"
+          done
+          turborepo_apps=${turborepo_apps::-1}
+          echo "turborepo_apps=[$turborepo_apps]"
+          echo "turborepo_apps=[$turborepo_apps]" >> $GITHUB_OUTPUT
           
