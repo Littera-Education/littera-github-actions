@@ -93,7 +93,6 @@ jobs:
           turborepo_apps_array=$(eval "jq -r '.\"${service_name}\".turborepo_apps' vercel-config/env/VERCEL.json")
           turborepo_apps=$(printf "\"%s\"," "${turborepo_apps_array[@]}")
           turborepo_apps=${turborepo_apps::-1}
-
           echo "turborepo_apps="$turborepo_apps
           echo "turborepo_apps="$turborepo_apps >> $GITHUB_OUTPUT
           
