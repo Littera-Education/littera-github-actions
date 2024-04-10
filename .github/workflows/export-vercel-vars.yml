@@ -92,11 +92,11 @@ jobs:
           ### export apps (turborepo support)
           turborepo_apps=$(eval "jq -r '.\"${service_name}\".turborepo_apps' vercel-config/env/VERCEL.json")
           echo "turborepo_apps=$turborepo_apps"
-          if [ ! -z turborepo_apps ]; then
-            echo "turborepo_apps=${{ toJSON(turborepo_apps) }}"
-            echo "turborepo_apps=${{ toJSON(turborepo_apps) }}" >> $GITHUB_OUTPUT
-          else
-            echo "turborepo_apps=[]"
-            echo "turborepo_apps=[]" >> $GITHUB_OUTPUT
-          fi
+          #if [ ! -z turborepo_apps ]; then
+          #  echo "turborepo_apps=${{ toJSON(turborepo_apps) }}"
+          #  echo "turborepo_apps=${{ toJSON(turborepo_apps) }}" >> $GITHUB_OUTPUT
+          #else
+          #  echo "turborepo_apps=[]"
+          #  echo "turborepo_apps=[]" >> $GITHUB_OUTPUT
+          #fi
           
