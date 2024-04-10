@@ -52,7 +52,10 @@
         "testing_workflow": "npm_test",
         "package_manager": "npm",
         "node_version": "18",
-        "apps": "['littera-test-turborepo-router','littera-test-turborepo-core']"
+        "turborepo_apps": [
+            "littera-test-turborepo-router",
+            "littera-test-turborepo-core"
+        ]
     },
     "littera-test-ui-application": {
         "local_runner":  "self-hosted-runner-standard",
