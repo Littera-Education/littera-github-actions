@@ -1,0 +1,31 @@
+name: Turborepo - Release Please
+
+on:
+  workflow_call:
+    inputs:
+      local_runner:
+        required: false
+        type: string
+        default: "self-hosted-runner-standard"
+
+    secrets:
+      github_actions_token:
+        required: true
+
+jobs:
+  turbo-release-please:
+    name: Turbo Release Please
+    runs-on: ${{ inputs.local_runner }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Release Please
+        id: release
+        uses: google-github-actions/release-please-action@v4
+        with:
+          token: ${{ secrets.github_actions_token }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
