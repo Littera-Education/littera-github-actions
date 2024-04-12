@@ -19,9 +19,9 @@ on:
         required: false
         type: string
         default: "self-hosted-runner-standard"
-      app_name:
-        type: string
+      pending_apps:
         required: true
+        type: string
 
     secrets:
       nexus_username:
@@ -34,13 +34,17 @@ on:
         required: true
       vercel_org_id:
         required: true
-      vercel_project_id:
+      vercel_project_ids:
         required: true
 
 jobs:
   turbo-deploy:
-    name: Building & Deploying ${{ inputs.environment }}-${{ inputs.app_name }}-${{ inputs.git_tag }}
+    name: Building & Deploying ${{ inputs.environment }}-${{ matrix.app }}-${{ inputs.git_tag }}
     runs-on: ${{ inputs.local_runner }}
+
+    strategy:
+      matrix:
+        app: ${{ fromJSON(inputs.pending_apps) }}
 
     steps:
       - uses: actions/checkout@v4
@@ -65,12 +69,19 @@ jobs:
       - name: Install dependencies (with cache)
         uses: bahmutov/npm-install@v1
 
+      - name: Get Secret Keys for Map Lookup
+        id: get-secret-keys
+        run: |
+          VERCEL_PROJECT_NAME_UNDERSCORED=$(echo ${{ matrix.app }} | tr '-' '_')
+          echo "VERCEL_PROJECT_NAME_UNDERSCORED=$VERCEL_PROJECT_NAME_UNDERSCORED" >> $GITHUB_OUTPUT
+
       - name: Vercel Build
         env:
           NODE_OPTIONS: --max-old-space-size=4096
         run: |
-          export VERCEL_PROJECT_ID=${{ secrets.vercel_project_id }}
-          export VERCEL_ORG_ID=${{ secrets.vercel_org_id }}
+          echo "project key = ${{ secrets.DEV_VERCEL_PROJECT_ID_LITTERA_TEST_TURBOREPO_CORE }}"
+          export VERCEL_PROJECT_ID=${{ fromJSON(secrets.vercel_project_ids)[format('{0}_{1}', inputs.environment, matrix.app)] }}
+          export VERCEL_ORG_ID=${{ secrets.vercel_org_id}}
           npx vercel@33.7.0 pull --yes --environment=production --token ${{ secrets.vercel_token }} --scope litteraeducation
           npx vercel@33.7.0 build --prod --yes --scope litteraeducation --token ${{ secrets.vercel_token }}
 
@@ -82,6 +93,6 @@ jobs:
           vercel-args: '--prod --prebuilt'
           scope: 'litteraeducation'
           vercel-org-id: ${{ secrets.vercel_org_id}}
-          vercel-project-id: ${{ secrets.vercel_project_id }}
+          vercel-project-id: ${{ fromJSON(secrets.vercel_project_ids)[format('{0}_{1}', inputs.environment, matrix.app)] }}
           working-directory: ./
           vercel-version: 33.7.0
