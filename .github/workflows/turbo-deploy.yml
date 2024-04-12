@@ -34,6 +34,8 @@ on:
         required: true
       vercel_org_id:
         required: true
+      vercel_project_ids:
+        required: true
 
 jobs:
   turbo-deploy:
@@ -77,7 +79,7 @@ jobs:
         env:
           NODE_OPTIONS: --max-old-space-size=4096
         run: |
-          export VERCEL_PROJECT_ID=${{ secrets[format('{0}_VERCEL_PROJECT_ID_{1}', inputs.environment, steps.get-secret-keys.outputs.VERCEL_PROJECT_NAME_UNDERSCORED)] }}
+          export VERCEL_PROJECT_ID=${{ fromJSON(secrets.vercel_project_ids)[format('{0}_{1}', inputs.environment, matrix.app)] }}
           export VERCEL_ORG_ID=${{ secrets.vercel_org_id}}
           npx vercel@33.7.0 pull --yes --environment=production --token ${{ secrets.vercel_token }} --scope litteraeducation
           npx vercel@33.7.0 build --prod --yes --scope litteraeducation --token ${{ secrets.vercel_token }}
@@ -90,6 +92,6 @@ jobs:
           vercel-args: '--prod --prebuilt'
           scope: 'litteraeducation'
           vercel-org-id: ${{ secrets.vercel_org_id}}
-          vercel-project-id: ${{ secrets[format('{0}_VERCEL_PROJECT_ID_{1}', inputs.environment, steps.get-secret-keys.outputs.VERCEL_PROJECT_NAME_UNDERSCORED)] }}
+          vercel-project-id: ${{ fromJSON(secrets.vercel_project_ids)[format('{0}_{1}', inputs.environment, matrix.app)] }}
           working-directory: ./
           vercel-version: 33.7.0
