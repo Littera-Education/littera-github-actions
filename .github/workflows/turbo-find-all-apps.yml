@@ -56,7 +56,7 @@ jobs:
       - name: Install dependencies (with cache)
         uses: bahmutov/npm-install@v1
 
-      - name: Find all Turborepo Apps
+      - name: Find All Turborepo Apps
         id: turbo_find_all_apps
         # https://github.com/orgs/community/discussions/46992
         run: |
