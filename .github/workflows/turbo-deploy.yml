@@ -1,0 +1,95 @@
+name: Turborepo - Build & Deploy
+
+on:
+  workflow_call:
+    inputs:
+      git_tag:
+        required: true
+        type: string
+      nexus_host_domain:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+      node_version:
+        type: string
+        default: 18
+      local_runner:
+        required: false
+        type: string
+        default: "self-hosted-runner-standard"
+      pending_apps:
+        required: true
+        type: string
+
+    secrets:
+      nexus_username:
+        required: true
+      nexus_npm_login:
+        required: true
+      github_actions_token:
+        required: true
+      vercel_token:
+        required: true
+      vercel_org_id:
+        required: true
+
+jobs:
+  turbo-deploy:
+    name: Building & Deploying ${{ inputs.environment }}-${{ matrix.app }}-${{ inputs.git_tag }}
+    runs-on: ${{ inputs.local_runner }}
+
+    strategy:
+      matrix:
+        app: ${{ fromJSON(inputs.pending_apps) }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Setup .npmrc for pulling & publishing to Nexus
+        run: |
+          FULL_REPO_AUTH="//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}"
+          echo -e "\n" \
+            "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
+            "$FULL_REPO_AUTH\n" \
+            "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
+            "email=${{ secrets.nexus_username }}\n" \
+            "always-auth=true\n" \ >> .npmrc
+
+      - name: Install dependencies (with cache)
+        uses: bahmutov/npm-install@v1
+
+      - name: Get Secret Keys for Map Lookup
+        id: get-secret-keys
+        run: |
+          VERCEL_PROJECT_NAME_UNDERSCORED=$(echo ${{ matrix.app }} | tr '-' '_')
+          echo "VERCEL_PROJECT_NAME_UNDERSCORED=$VERCEL_PROJECT_NAME_UNDERSCORED" >> $GITHUB_OUTPUT
+
+      - name: Vercel Build
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+        run: |
+          export VERCEL_PROJECT_ID=${{ secrets[format('{0}_VERCEL_PROJECT_ID_{1}', inputs.environment, steps.get-secret-keys.outputs.VERCEL_PROJECT_NAME_UNDERSCORED)] }}
+          export VERCEL_ORG_ID=${{ secrets.vercel_org_id}}
+          npx vercel@33.7.0 pull --yes --environment=production --token ${{ secrets.vercel_token }} --scope litteraeducation
+          npx vercel@33.7.0 build --prod --yes --scope litteraeducation --token ${{ secrets.vercel_token }}
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.vercel_token }}
+          github-token: ${{ secrets.github_actions_token }}
+          vercel-args: '--prod --prebuilt'
+          scope: 'litteraeducation'
+          vercel-org-id: ${{ secrets.vercel_org_id}}
+          vercel-project-id: ${{ secrets[format('{0}_VERCEL_PROJECT_ID_{1}', inputs.environment, steps.get-secret-keys.outputs.VERCEL_PROJECT_NAME_UNDERSCORED)] }}
+          working-directory: ./
+          vercel-version: 33.7.0

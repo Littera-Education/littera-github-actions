@@ -1,0 +1,75 @@
+name: Turborepo - Apply Env Vars
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      node_version:
+        type: string
+        default: 18
+      local_runner:
+        required: false
+        type: string
+        default: "self-hosted-runner-standard"
+      pending_apps:
+        required: true
+        type: string
+
+    secrets:
+      github_actions_token:
+        required: true
+      vercel_token:
+        required: true
+
+jobs:
+  turbo-apply-env-vars:
+    name: Apply Vercel TF to ${{ inputs.environment }}-${{ matrix.app }}-${{ inputs.git_tag }}
+    runs-on: ${{ inputs.local_runner }}
+
+    strategy:
+      matrix:
+        app: ${{ fromJSON(inputs.pending_apps) }}
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Checkout Vercel Terraform
+        uses: actions/checkout@v4
+        with:
+          repository: Littera-Education/terraform-root-vercel
+          token: ${{ secrets.github_actions_token }}
+          ref: "develop"
+          path: vercel-env-vars
+          fetch-depth: 0
+          submodules: true
+
+      - name: Configure AWS Creds
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::595237692563:role/github-action-${{ github.event.repository.name }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        id: init
+        run: |
+          cd vercel-env-vars
+          ./terraform-scripts/terraform.sh -a init -c ${{ inputs.environment }} -t "-no-color -backend-config=""key=${{ matrix.app }}.tfstate"""
+
+      - name: Terraform Apply
+        env:
+          VERCEL_API_TOKEN: ${{ secrets.vercel_token }}
+        run: |
+          cd vercel-env-vars
+          ./terraform-scripts/terraform.sh -a apply -c ${{ inputs.environment }} -t "-no-color -auto-approve -var=""app_name=${{ matrix.app }}"""
