@@ -1,0 +1,70 @@
+name: Turborepo - Find All Apps
+
+on:
+  workflow_call:
+    inputs:
+      nexus_host_domain:
+        required: true
+        type: string
+      node_version:
+        type: string
+        default: 18
+      custom_npm_install_command:
+        type: string
+        default: skip
+      package_manager:
+        type: string
+        default: npm
+      local_runner:
+        required: false
+        type: string
+        default: "self-hosted-runner-standard"
+
+    secrets:
+      nexus_username:
+        required: true
+      nexus_npm_login:
+        required: true
+
+jobs:
+  pr_title_lint:
+    name: PR Title Lint
+    runs-on: ${{ inputs.local_runner }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Install yarn
+        if: ${{ inputs.package_manager != 'npm' }}
+        run: npm install -g yarn
+
+      - name: Setup .npmrc for pulling & publishing to Nexus
+        run: |
+          FULL_REPO_AUTH="//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}"
+          echo -e "\n" \
+            "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
+            "$FULL_REPO_AUTH\n" \
+            "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
+            "email=${{ secrets.nexus_username }}\n" \
+            "always-auth=true\n" \ >> .npmrc
+
+      - name: Install dependencies (with cache)
+        uses: bahmutov/npm-install@v1
+
+      - name: Find all Turborepo Apps
+        id: find_all_turborepo_apps
+        # https://github.com/orgs/community/discussions/46992
+        run: |
+          all_apps=""
+          while IFS= read -r app_name; do
+            all_apps+="\"$app_name\","
+          done < <(npm query .workspace | jq -r '.[] | select(.location | contains("apps/")) | .name')
+          all_apps="[${all_apps%?}]"
+          echo "all_apps="$all_apps >> $GITHUB_OUTPUT
