@@ -9,12 +9,6 @@ on:
       node_version:
         type: string
         default: 18
-      custom_npm_install_command:
-        type: string
-        default: skip
-      package_manager:
-        type: string
-        default: npm
       local_runner:
         required: false
         type: string
@@ -26,10 +20,18 @@ on:
       nexus_npm_login:
         required: true
 
+    outputs:
+      all_apps:
+        description: local runner
+        value: ${{ jobs.turbo-find-all-apps.outputs.all_apps }}
+
 jobs:
-  pr_title_lint:
-    name: PR Title Lint
+  turbo-find-all-apps:
+    name: Turbo Find All Apps
     runs-on: ${{ inputs.local_runner }}
+
+    outputs:
+      all_apps: ${{ steps.turbo_find_all_apps.outputs.all_apps }}
 
     steps:
       - uses: actions/checkout@v4
@@ -40,10 +42,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node_version }}
-
-      - name: Install yarn
-        if: ${{ inputs.package_manager != 'npm' }}
-        run: npm install -g yarn
 
       - name: Setup .npmrc for pulling & publishing to Nexus
         run: |
@@ -59,7 +57,7 @@ jobs:
         uses: bahmutov/npm-install@v1
 
       - name: Find all Turborepo Apps
-        id: find_all_turborepo_apps
+        id: turbo_find_all_apps
         # https://github.com/orgs/community/discussions/46992
         run: |
           all_apps=""
