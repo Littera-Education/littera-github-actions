@@ -69,6 +69,7 @@ jobs:
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@v2
         with:
+          projectBaseDir: ${{ steps.get-project-info.outputs.WORKSPACE_PATH }}
           args: >
             -Dsonar.projectVersion=${{ steps.get-project-info.outputs.VERSION }}
         env:
