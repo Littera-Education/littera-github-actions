@@ -1,4 +1,4 @@
-name: Turborepo - Find Pending Apps
+name: Turborepo - Lint
 
 on:
   workflow_call:
@@ -13,7 +13,7 @@ on:
         required: false
         type: string
         default: "self-hosted-runner-standard"
-      all_apps:
+      pending_apps:
         required: true
         type: string
 
@@ -23,18 +23,14 @@ on:
       nexus_npm_login:
         required: true
 
-    outputs:
-      pending_apps:
-        description: local runner
-        value: ${{ jobs.turbo-find-pending-apps.outputs.pending_apps }}
-
 jobs:
-  turbo-find-pending-apps:
-    name: Turbo Find Pending Apps
+  turbo-lint:
+    name: Turbo Lint
     runs-on: ${{ inputs.local_runner }}
 
-    outputs:
-      pending_apps: ${{ steps.turbo_find_pending_apps.outputs.pending_apps }}
+    strategy:
+      matrix:
+        app: ${{ fromJSON(inputs.pending_apps) }}
 
     steps:
       - uses: actions/checkout@v4
@@ -59,18 +55,5 @@ jobs:
       - name: Install dependencies (with cache)
         uses: bahmutov/npm-install@v1
 
-      - name: Find Pending Turborepo Apps
-        id: turbo_find_pending_apps
-        # https://github.com/orgs/community/discussions/46992
-        run: |
-          set +e
-          pending_apps=""
-          for app in ${{ join(fromJSON(inputs.all_apps), ' ') }}
-          do
-            npx turbo-ignore $app --task=build
-            if [ $? -ne 0 ]; then
-              pending_apps+="\"$app\","
-            fi
-          done
-          pending_apps="[${pending_apps%?}]"
-          echo "pending_apps="$pending_apps >> $GITHUB_OUTPUT
+      - name: Execute Linting
+        run: npm run lint -- --filter=${{ matrix.app }}
