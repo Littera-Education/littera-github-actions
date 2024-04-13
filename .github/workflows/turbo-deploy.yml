@@ -69,12 +69,6 @@ jobs:
       - name: Install dependencies (with cache)
         uses: bahmutov/npm-install@v1
 
-      - name: Get Secret Keys for Map Lookup
-        id: get-secret-keys
-        run: |
-          VERCEL_PROJECT_NAME_UNDERSCORED=$(echo ${{ matrix.app }} | tr '-' '_')
-          echo "VERCEL_PROJECT_NAME_UNDERSCORED=$VERCEL_PROJECT_NAME_UNDERSCORED" >> $GITHUB_OUTPUT
-#'dev-littera-test-turborepo-core
       - name: Vercel Build
         env:
           NODE_OPTIONS: --max-old-space-size=4096
