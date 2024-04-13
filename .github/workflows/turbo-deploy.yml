@@ -74,13 +74,13 @@ jobs:
         run: |
           VERCEL_PROJECT_NAME_UNDERSCORED=$(echo ${{ matrix.app }} | tr '-' '_')
           echo "VERCEL_PROJECT_NAME_UNDERSCORED=$VERCEL_PROJECT_NAME_UNDERSCORED" >> $GITHUB_OUTPUT
-
+#'dev-littera-test-turborepo-core
       - name: Vercel Build
         env:
           NODE_OPTIONS: --max-old-space-size=4096
         run: |
-          echo "project key = ${{ fromJSON(secrets.vercel_project_ids)[format('{0}_{1}', inputs.environment, matrix.app)] }}"
-          export VERCEL_PROJECT_ID=${{ fromJSON(secrets.vercel_project_ids)[format('{0}_{1}', inputs.environment, matrix.app)] }}
+          echo "project key = ${{ format('{0}-{1}', inputs.environment, matrix.app) }}"
+          export VERCEL_PROJECT_ID=${{ fromJSON(secrets.vercel_project_ids)[format('{0}-{1}', inputs.environment, matrix.app)] }}
           export VERCEL_ORG_ID=${{ secrets.vercel_org_id}}
           npx vercel@33.7.0 pull --yes --environment=production --token ${{ secrets.vercel_token }} --scope litteraeducation
           npx vercel@33.7.0 build --prod --yes --scope litteraeducation --token ${{ secrets.vercel_token }}
