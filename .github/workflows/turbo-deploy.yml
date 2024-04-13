@@ -79,7 +79,6 @@ jobs:
         env:
           NODE_OPTIONS: --max-old-space-size=4096
         run: |
-          echo "project key = ${{ format('{0}-{1}', inputs.environment, matrix.app) }}"
           export VERCEL_PROJECT_ID=${{ fromJSON(secrets.vercel_project_ids)[format('{0}-{1}', inputs.environment, matrix.app)] }}
           export VERCEL_ORG_ID=${{ secrets.vercel_org_id}}
           npx vercel@33.7.0 pull --yes --environment=production --token ${{ secrets.vercel_token }} --scope litteraeducation
@@ -93,6 +92,6 @@ jobs:
           vercel-args: '--prod --prebuilt'
           scope: 'litteraeducation'
           vercel-org-id: ${{ secrets.vercel_org_id}}
-          vercel-project-id: ${{ fromJSON(secrets.vercel_project_ids)[format('{0}_{1}', inputs.environment, matrix.app)] }}
+          vercel-project-id: ${{ fromJSON(secrets.vercel_project_ids)[format('{0}-{1}', inputs.environment, matrix.app)] }}
           working-directory: ./
           vercel-version: 33.7.0
