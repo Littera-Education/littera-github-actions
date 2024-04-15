@@ -87,16 +87,16 @@ jobs:
           project_id_key=${{ format('{0}-{1}', inputs.environment, matrix.app) }}
           project_ids_json=${{ fromJSON(needs.export_vars_to_outputs.outputs.project_ids) }}
           echo "project_id_key=$project_id_key"
-          echo "project_id_key=$project_id_key" >> $GITHUB_OUTPUT
           echo "project_ids_json=$project_ids_json"
-          echo "project_id=${{ fromJSON(needs.export_vars_to_outputs.outputs.project_ids) }}"
+          project_id=$(jq -r '.[project_id_key]' <<< "${{ needs.export_vars_to_outputs.outputs.project_ids }}")
+          echo "project_id=$project_id"
 
 
       - name: Vercel Build
         env:
           NODE_OPTIONS: --max-old-space-size=4096
         run: |
-          export VERCEL_PROJECT_ID=${{ fromJSON(needs.export_vars_to_outputs.outputs.project_ids)[steps.get_vercel_details.outputs.project_id_key] }}
+          export VERCEL_PROJECT_ID=${{steps.get_vercel_details.outputs.project_id}}
           export VERCEL_ORG_ID=${{ secrets.vercel_org_id}}
           npx vercel@33.7.0 pull --yes --environment=production --token ${{ secrets.vercel_token }} --scope litteraeducation
           npx vercel@33.7.0 build --prod --yes --scope litteraeducation --token ${{ secrets.vercel_token }}
