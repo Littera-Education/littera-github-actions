@@ -89,7 +89,12 @@ jobs:
           echo "node_version=$node_version" >> $GITHUB_OUTPUT
 
           ### export project_ids
-          project_ids=${{ toJSON($(eval "jq -r '.\"${service_name}\".project_ids' vercel-config/env/VERCEL.json")) }}
+          project_ids=$(eval "jq -r '.\"${service_name}\".project_ids' vercel-config/env/VERCEL.json")
+          if [ -z "$project_ids" ]; then
+            project_ids="{}"
+          else
+            project_ids=${{ toJSON(project_ids) }}
+          fi
           echo "project_ids=$project_ids"
           echo "project_ids=$project_ids" >> $GITHUB_OUTPUT
           
