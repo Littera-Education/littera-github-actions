@@ -88,8 +88,9 @@ jobs:
           project_ids_json=${{ fromJSON(needs.export_vars_to_outputs.outputs.project_ids) }}
           echo "project_id_key=$project_id_key"
           echo "project_ids_json=$project_ids_json"
-          project_id=$(jq -r '.[project_id_key]' <<< "${{ needs.export_vars_to_outputs.outputs.project_ids }}")
+          project_id=$(jq -r ".[$project_id_key]" <<< "${{ needs.export_vars_to_outputs.outputs.project_ids }}")
           echo "project_id=$project_id"
+          echo "project_id=$project_id" >> $GITHUB_OUTPUT
 
 
       - name: Vercel Build
