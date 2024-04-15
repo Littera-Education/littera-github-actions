@@ -1,3 +1,6 @@
+# v8.24.0 (04/15/2024)
+* Add numerous `turborepo` supporting workflows.
+
 # v8.23.0 (03/21/2024)
 * Update `vercel-deploy.yml` to do a Terraform apply of environment variables for the Vercel app. Form ore details see: [LDO-3078](https://littera.atlassian.net/browse/LDO-3078)
 
