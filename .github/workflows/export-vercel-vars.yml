@@ -47,6 +47,7 @@ jobs:
       testing_workflow: ${{ steps.step_export_vars.outputs.testing_workflow }}
       package_manager: ${{ steps.step_export_vars.outputs.package_manager }}
       node_version: ${{ steps.step_export_vars.outputs.node_version }}
+      project_ids: ${{ steps.step_export_vars.outputs.project_ids }}
 
     steps:
       - uses: actions/checkout@v4
@@ -90,7 +91,7 @@ jobs:
 
           ### export project_ids
           project_ids=$(eval "jq -r '.\"${service_name}\".project_ids' vercel-config/env/VERCEL.json" | jq tostring)
-          if [ -z "$project_ids" ]; then
+          if [ $project_ids == "null" ]; then
             project_ids="{}"
           fi
           echo "project_ids=$project_ids"
