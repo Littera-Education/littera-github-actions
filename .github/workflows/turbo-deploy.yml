@@ -19,6 +19,14 @@ on:
         required: false
         type: string
         default: "self-hosted-runner-standard"
+      max_old_space_size:
+        required: false
+        type: string
+        default: "4096"
+      vercel_cli_version:
+        required: false
+        type: string
+        default: "33.7.0"
       vercel_config_branch:
         required: true
         type: string
@@ -92,12 +100,12 @@ jobs:
 
       - name: Vercel Build
         env:
-          NODE_OPTIONS: --max-old-space-size=4096
+          NODE_OPTIONS: --max-old-space-size=${{ inputs.max_old_space_size }}
         run: |
           export VERCEL_PROJECT_ID=${{steps.get_vercel_details.outputs.project_id}}
           export VERCEL_ORG_ID=${{ secrets.vercel_org_id}}
-          npx vercel@33.7.0 pull --yes --environment=production --token ${{ secrets.vercel_token }} --scope litteraeducation
-          npx vercel@33.7.0 build --prod --yes --scope litteraeducation --token ${{ secrets.vercel_token }}
+          npx vercel@${{ inputs.vercel_cli_version }} pull --yes --environment=production --token ${{ secrets.vercel_token }} --scope litteraeducation
+          npx vercel@${{ inputs.vercel_cli_version }} build --prod --yes --scope litteraeducation --token ${{ secrets.vercel_token }}
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
@@ -109,4 +117,4 @@ jobs:
           vercel-org-id: ${{ secrets.vercel_org_id}}
           vercel-project-id: ${{steps.get_vercel_details.outputs.project_id}}
           working-directory: ./
-          vercel-version: 33.7.0
+          vercel-version: ${{ inputs.vercel_cli_version }}
