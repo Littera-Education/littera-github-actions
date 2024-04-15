@@ -25,6 +25,9 @@ on:
       node_version:
         description: node version
         value: ${{ jobs.export-vars.outputs.node_version }}
+      project_ids:
+        description: project ids as a stringified json object
+        value: ${{ jobs.export-vars.outputs.project_ids }}
 
     secrets:
       repo_token:
@@ -84,4 +87,9 @@ jobs:
           node_version=$(eval "jq -r '.\"${service_name}\".node_version' vercel-config/env/VERCEL.json")
           echo "node_version=$node_version"
           echo "node_version=$node_version" >> $GITHUB_OUTPUT
+
+          ### export project_ids
+          project_ids=${{ toJSON($(eval "jq -r '.\"${service_name}\".project_ids' vercel-config/env/VERCEL.json")) }}
+          echo "project_ids=$project_ids"
+          echo "project_ids=$project_ids" >> $GITHUB_OUTPUT
           
