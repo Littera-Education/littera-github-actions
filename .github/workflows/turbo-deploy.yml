@@ -84,13 +84,12 @@ jobs:
       - name: Get Vercel Project ID
         id: get_vercel_details
         run: |
-          echo "needs.export_vars_to_outputs.outputs.project_ids = ${{ needs.export_vars_to_outputs.outputs.project_ids }}"
-          echo "fromJSON(needs.export_vars_to_outputs.outputs.project_ids) = ${{ fromJSON(needs.export_vars_to_outputs.outputs.project_ids) }}"
           project_id_key=${{ format('{0}-{1}', inputs.environment, matrix.app) }}
+          project_ids_json=${{ fromJSON(needs.export_vars_to_outputs.outputs.project_ids) }}
           echo "project_id_key=$project_id_key"
-          echo "project_id_key2="$project_id_key
-          echo "project_id=${{ fromJSON(needs.export_vars_to_outputs.outputs.project_ids)[format('{0}-{1}', inputs.environment, matrix.app)] }}"
-          echo "project_id=${{ fromJSON(needs.export_vars_to_outputs.outputs.project_ids)[format('{0}-{1}', inputs.environment, matrix.app)] }}" >> $GITHUB_OUTPUT
+          echo "project_ids_json=$project_ids_json"
+          echo "project_id=${{ project_ids_json[project_id_key] }}"
+
 
       - name: Vercel Build
         env:
