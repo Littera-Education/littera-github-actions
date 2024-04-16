@@ -2,8 +2,8 @@
 if [ $# -eq 0 ]
   then
     echo "No arguments supplied"
-    echo "./tag_it.sh version_tag latest_tag"
-    echo "./tag_it.sh v8.20.1 v8-latest"
+    echo "./update_tags.sh version_tag latest_tag"
+    echo "./update_tags.sh v8.20.1 v8-latest"
     exit 1
 fi
 
