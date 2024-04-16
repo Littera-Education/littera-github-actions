@@ -75,7 +75,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-region: us-east-1
-          role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/github-assume-role
+          role-to-assume: ${{ inputs.github_oidc_role }}
 
       - name: Checkout EKS Config Repo
         uses: actions/checkout@v4
