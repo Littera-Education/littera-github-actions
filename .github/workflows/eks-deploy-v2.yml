@@ -43,6 +43,9 @@ on:
         required: false
         type: string
         default: "self-hosted-runner-standard"
+      github_oidc_role:
+        required: true
+        type: string
 
     secrets:
       repo_token:
