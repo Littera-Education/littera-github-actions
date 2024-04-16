@@ -61,6 +61,7 @@ jobs:
     outputs:
       cluster_name: ${{ steps.step_export_vars.outputs.cluster_name}}
       kubctl_download_url: ${{ steps.step_export_vars.outputs.kubctl_download_url }}
+      github_oidc_role: ${{ steps.step_export_vars.outputs.github_oidc_role }}
       aws_account_id: ${{ steps.step_export_vars.outputs.aws_account_id }}
       service_name: ${{ steps.step_export_vars.outputs.service_name }}
       iam_role: ${{ steps.step_export_vars.outputs.iam_role }}
@@ -105,6 +106,11 @@ jobs:
           kubctl_download_url=$(eval "jq -r '.${{ inputs.environment }}.kubctl_download_url.\"$target_config\"' eks-config/env/EKS_JSON.json")
           echo "kubctl_download_url=$kubctl_download_url"
           echo "kubctl_download_url=$kubctl_download_url" >> $GITHUB_OUTPUT
+
+          ### export github_oidc_role
+          github_oidc_role=$(eval "jq -r '.${{ inputs.environment }}.github_oidc_role.\"$target_config\"' eks-config/env/EKS_JSON.json")
+          echo "github_oidc_role=$github_oidc_role"
+          echo "github_oidc_role=$github_oidc_role" >> $GITHUB_OUTPUT
 
           ### export service_name
           repo="${{ inputs.service_repo }}"
