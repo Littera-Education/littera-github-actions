@@ -26,6 +26,9 @@ on:
       kubctl_download_url:
         description: kubectl Download URL
         value: ${{ jobs.export-vars.outputs.kubctl_download_url }}
+      github_oidc_role:
+        description: Github OIDC Role
+        value: ${{ jobs.export-vars.outputs.github_oidc_role }}
       aws_account_id:
         description: AWS Account ID
         value: ${{ jobs.export-vars.outputs.aws_account_id }}
