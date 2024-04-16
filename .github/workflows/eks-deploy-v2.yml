@@ -23,7 +23,7 @@ on:
         required: true
         type: string
       aws_account_id_ecr:
-        required: true
+        required: false
         type: string
         default: "794071690772"
       kubctl_download_url:
@@ -111,7 +111,7 @@ jobs:
         run: |
 
           set -e
-          
+
           # install kubectl
           curl -o kubectl ${{ inputs.kubctl_download_url }}
           chmod +x ./kubectl
