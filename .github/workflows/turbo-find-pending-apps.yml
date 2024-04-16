@@ -25,8 +25,11 @@ on:
 
     outputs:
       pending_apps:
-        description: local runner
+        description: list of all apps in the repository with pending changes
         value: ${{ jobs.turbo-find-pending-apps.outputs.pending_apps }}
+      length:
+        description: length of the list of apps with pending changes
+        value: ${{ jobs.turbo-find-pending-apps.outputs.length }}
 
 jobs:
   turbo-find-pending-apps:
@@ -35,6 +38,7 @@ jobs:
 
     outputs:
       pending_apps: ${{ steps.turbo_find_pending_apps.outputs.pending_apps }}
+      length: ${{ steps.turbo_find_pending_apps.outputs.length }}
 
     steps:
       - uses: actions/checkout@v4
@@ -74,3 +78,4 @@ jobs:
           done
           pending_apps="[${pending_apps%?}]"
           echo "pending_apps="$pending_apps >> $GITHUB_OUTPUT
+          echo "length=$(echo $pending_apps | jq length)" >> $GITHUB_OUTPUT
