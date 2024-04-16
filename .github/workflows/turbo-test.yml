@@ -29,7 +29,6 @@ jobs:
   turbo-test:
     name: Turbo Test
     runs-on: ${{ inputs.local_runner }}
-    if: ${{ inputs.pending_apps != '[]' }}
 
     strategy:
       matrix:
