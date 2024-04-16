@@ -77,5 +77,7 @@ jobs:
             fi
           done
           pending_apps="[${pending_apps%?}]"
+          echo "pending_apps="$pending_apps
+          echo "length=$(echo $pending_apps | jq length)"
           echo "pending_apps="$pending_apps >> $GITHUB_OUTPUT
           echo "length=$(echo $pending_apps | jq length)" >> $GITHUB_OUTPUT
