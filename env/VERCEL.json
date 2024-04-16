@@ -80,5 +80,15 @@
         "testing_workflow": "npm_test",
         "package_manager": "npm",
         "node_version": "18"
+    },
+    "littera-web-ui": {
+        "local_runner":  "self-hosted-runner-standard",
+        "testing_workflow": "npm_test",
+        "package_manager": "npm",
+        "node_version": "18",
+        "project_ids": {
+            "dev-littera-web-ui-core": "",
+            "dev-littera-web-ui-router": ""
+        }
     }
 }
