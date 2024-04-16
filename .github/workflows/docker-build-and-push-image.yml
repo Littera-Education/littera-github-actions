@@ -5,6 +5,9 @@ on:
     inputs:
       nexus_host_url:
         type: string
+      environment:
+        required: true
+        type: string
       group_id:
         type: string
       artifact_id:
