@@ -1,0 +1,59 @@
+name: Turborepo - Lint
+
+on:
+  workflow_call:
+    inputs:
+      nexus_host_domain:
+        required: true
+        type: string
+      node_version:
+        type: string
+        default: 18
+      local_runner:
+        required: false
+        type: string
+        default: "self-hosted-runner-standard"
+      pending_apps:
+        required: true
+        type: string
+
+    secrets:
+      nexus_username:
+        required: true
+      nexus_npm_login:
+        required: true
+
+jobs:
+  turbo-lint:
+    name: Turbo Lint
+    runs-on: ${{ inputs.local_runner }}
+
+    strategy:
+      matrix:
+        app: ${{ fromJSON(inputs.pending_apps) }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Setup .npmrc for pulling & publishing to Nexus
+        run: |
+          FULL_REPO_AUTH="//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}"
+          echo -e "\n" \
+            "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
+            "$FULL_REPO_AUTH\n" \
+            "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
+            "email=${{ secrets.nexus_username }}\n" \
+            "always-auth=true\n" \ >> .npmrc
+
+      - name: Install dependencies (with cache)
+        uses: bahmutov/npm-install@v1
+
+      - name: Execute Linting
+        run: npm run lint -- --filter=${{ matrix.app }}
