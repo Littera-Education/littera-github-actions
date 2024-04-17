@@ -1,3 +1,6 @@
+# v8.25.0 (04/17/2024)
+* Add project ids to `littera-web-ui` for dev environment.
+
 # v8.24.0 (04/15/2024)
 * Add numerous `turborepo` supporting workflows.
 
