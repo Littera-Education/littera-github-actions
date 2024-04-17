@@ -87,8 +87,8 @@
         "package_manager": "npm",
         "node_version": "18",
         "project_ids": {
-            "dev-littera-web-ui-core": "",
-            "dev-littera-web-ui-router": ""
+            "dev-littera-web-ui-core": "prj_Wab84z7n8MEgoXs3sciS2DB9ISRB",
+            "dev-littera-web-ui-router": "prj_wYU7bFzL0LJSiNmNoi0ZpQYbo5lQ"
         }
     }
 }
