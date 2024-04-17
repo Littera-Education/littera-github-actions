@@ -79,7 +79,7 @@ jobs:
           arch: ${{ steps.runner_arch.outputs.runner_arch }}
           
       - name: Configure AWS Creds
-        uses: aws-actions/configure-aws-credentials@v1-node16
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-east-1
           role-to-assume: ${{ inputs.github_oidc_role }}
@@ -92,10 +92,6 @@ jobs:
           ref: ${{ inputs.eks_config_branch }}
           path: config
           fetch-depth: 0
-
-
-      - name: Checkout
-        uses: actions/checkout@v2
 
       - name: Retag Image
         run: |
