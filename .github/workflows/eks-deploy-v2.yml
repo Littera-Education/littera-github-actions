@@ -95,19 +95,22 @@ jobs:
 
       - name: Retag Image
         run: |
-
+        
           set -e
-
+      
+          # Fetch the authentication token from AWS ECR
           AUTH_TOKEN=$(aws ecr get-login-password --region us-east-1)
       
+          # Set registry and repository details
           REGISTRY_NAME="https://${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com"
-          REPOSITORY=${{ inputs.service_name }}"
-          TAG=${{ inputs.image_version }}
-          ENVIRONMENT_TAG=${{ inputs.environment }}
+          REPOSITORY="${{ inputs.service_name }}"  # Corrected the misplaced quotation mark
+          TAG="${{ inputs.image_version }}"
+          ENVIRONMENT_TAG="${{ inputs.environment }}"
           CONTENT_TYPE="application/vnd.docker.distribution.manifest.v2+json"
       
+          # Fetch the manifest of the existing image
           MANIFEST=$(curl -s -H "Authorization: Bearer $AUTH_TOKEN" -H "Accept: $CONTENT_TYPE" "$REGISTRY_NAME/v2/$REPOSITORY/manifests/$TAG")
-    
+      
           # Check for curl failure
           if [ $? -ne 0 ]; then
             echo "Failed to fetch the manifest for tag $TAG."
@@ -123,6 +126,7 @@ jobs:
             exit 1
           fi
           echo "Image tagged successfully from $TAG to $ENVIRONMENT_TAG."
+        
 
       # - name: Tag ECR image with environment
       #   run: |
