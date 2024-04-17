@@ -98,8 +98,9 @@ jobs:
         
           set -e
       
-          # Fetch the authentication token from AWS ECR
-          AUTH_TOKEN=$(aws ecr get-login-password --region us-east-1)
+          # This form of token is needed for the ECR API
+         
+          AUTH_TOKEN=$(aws ecr get-authorization-token --output text --query 'authorizationData[].authorizationToken')
       
           # Set registry and repository details
           REGISTRY_NAME="https://${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com"
@@ -109,16 +110,18 @@ jobs:
           CONTENT_TYPE="application/vnd.docker.distribution.manifest.v2+json"
       
           # Fetch the manifest of the existing image
-          MANIFEST=$(curl -s -H "Authorization: Bearer $AUTH_TOKEN" -H "Accept: $CONTENT_TYPE" "$REGISTRY_NAME/v2/$REPOSITORY/manifests/$TAG")
+          MANIFEST=$(curl -s -H "Authorization: Basic $AUTH_TOKEN" -H "Accept: $CONTENT_TYPE" "https://$REGISTRY_NAME/v2/$REPOSITORY/manifests/$TAG")
       
           # Check for curl failure
           if [ $? -ne 0 ]; then
             echo "Failed to fetch the manifest for tag $TAG."
             exit 1
           fi
+
+          echo $MANIFEST
       
           # Push the fetched manifest as a new tag
-          RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X PUT -H "Authorization: Bearer $AUTH_TOKEN" -H "Content-Type: $CONTENT_TYPE" -d "$MANIFEST" "$REGISTRY_NAME/v2/$REPOSITORY/manifests/$ENVIRONMENT_TAG")
+          RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X PUT -H "Authorization: Basic $AUTH_TOKEN" -H "Content-Type: $CONTENT_TYPE" -d "$MANIFEST" "https://$REGISTRY_NAME/v2/$REPOSITORY/manifests/$ENVIRONMENT_TAG")
           
           # Check if the image retagging was successful
           if [ "$RESPONSE_CODE" != "201" ]; then
