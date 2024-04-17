@@ -100,21 +100,29 @@ jobs:
 
           AUTH_TOKEN=$(aws ecr get-login-password --region us-east-1)
       
-          # Assuming you are using Docker Hub, which seems to be indicated by your registry name
-          REGISTRY_NAME="https://index.docker.io/v1/"
-          REPOSITORY="${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com"
+          REGISTRY_NAME="https://${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com"
+          REPOSITORY=${{ inputs.service_name }}"
+          TAG=${{ inputs.image_version }}
+          ENVIRONMENT_TAG=${{ inputs.environment }}
           CONTENT_TYPE="application/vnd.docker.distribution.manifest.v2+json"
       
-          # Retrieve the Docker image manifest from the registry
-          MANIFEST=$(curl -s -H "Authorization: Bearer ${AUTH_TOKEN}" -H "Accept: ${CONTENT_TYPE}" "${REGISTRY_NAME}/v2/${REPOSITORY}/manifests/${{ inputs.image_version }}")
-          
-          # Push the same manifest as a new tag
-          RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X PUT -H "Authorization: Bearer ${AUTH_TOKEN}" -H "Content-Type: ${CONTENT_TYPE}" -d "${MANIFEST}" "${REGISTRY_NAME}/v2/${REPOSITORY}/manifests/${{ inputs.environment }}")
-      
-          if [ "$RESPONSE_CODE" != "201" ]; then
-            echo "Failed to retag image, server responded with status code $RESPONSE_CODE"
+          MANIFEST=$(curl -s -H "Authorization: Bearer $AUTH_TOKEN" -H "Accept: $CONTENT_TYPE" "$REGISTRY_NAME/v2/$REPOSITORY/manifests/$TAG")
+    
+          # Check for curl failure
+          if [ $? -ne 0 ]; then
+            echo "Failed to fetch the manifest for tag $TAG."
             exit 1
           fi
+      
+          # Push the fetched manifest as a new tag
+          RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X PUT -H "Authorization: Bearer $AUTH_TOKEN" -H "Content-Type: $CONTENT_TYPE" -d "$MANIFEST" "$REGISTRY_NAME/v2/$REPOSITORY/manifests/$ENVIRONMENT_TAG")
+          
+          # Check if the image retagging was successful
+          if [ "$RESPONSE_CODE" != "201" ]; then
+            echo "Failed to retag image, server responded with status code $RESPONSE_CODE."
+            exit 1
+          fi
+          echo "Image tagged successfully from $TAG to $ENVIRONMENT_TAG."
 
       # - name: Tag ECR image with environment
       #   run: |
