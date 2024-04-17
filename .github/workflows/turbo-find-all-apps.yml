@@ -26,7 +26,7 @@ on:
         value: ${{ jobs.turbo-find-all-apps.outputs.all_apps }}
       length:
         description: length of the list of apps
-        value: ${{ jobs.turbo-find-pending-apps.outputs.length }}
+        value: ${{ jobs.turbo-find-all-apps.outputs.length }}
 
 jobs:
   turbo-find-all-apps:
