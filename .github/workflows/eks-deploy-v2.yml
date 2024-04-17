@@ -93,22 +93,42 @@ jobs:
           path: config
           fetch-depth: 0
 
-      - name: Tag ECR image with environment
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Retag Image
         run: |
 
           set -e
 
-          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com
+          AUTH_TOKEN=$curl(aws ecr get-login-password --region us-east-1)
 
-          if [[ "${{ inputs.service_name }}" == "littera-core-api" ]]; then
-            docker pull ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.image_version }}
-            docker tag ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.image_version }} ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.environment }}
-            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.environment }}
-          else
-            docker pull ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.image_version }}
-            docker tag ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.image_version }} ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.environment }}
-            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.environment }}
-          fi
+          REGISTRY_NAME="https://index.docker.io/v1/"  # Change this as per your Docker registry
+          REPOSITORY="${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com"
+          CONTENT_TYPE="application/vnd.docker.distribution.manifest.v2+json"
+
+          MANIFEST=$(curl -s -H "Authorization: Bearer $(echo ${{ secrets.DOCKER_TOKEN }})" -H "Accept: ${CONTENT_TYPE}" "${REGISTRY_NAME}/v2/${REPOSITORY}/manifests/${{ inputs.image_version }}")
+          
+          # Push the same manifest as a new tag
+          curl -s -o /dev/null -w "%{http_code}" -X PUT -H "Authorization: Bearer $(echo $AUTH_TOKEN)" -H "Content-Type: ${CONTENT_TYPE}" -d "${MANIFEST}" "${REGISTRY_NAME}/v2/${REPOSITORY}/manifests/${{ inputs.environment }}"
+
+      # - name: Tag ECR image with environment
+      #   run: |
+
+      #     set -e
+
+      #     aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com
+
+      #     if [[ "${{ inputs.service_name }}" == "littera-core-api" ]]; then
+      #       docker pull ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.image_version }}
+      #       docker tag ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.image_version }} ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.environment }}
+      #       docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.environment }}
+      #     else
+      #       docker pull ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.image_version }}
+      #       docker tag ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.image_version }} ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.environment }}
+      #       docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.environment }}
+      #     fi
 
       - name: Deploy to EKS
         run: |
