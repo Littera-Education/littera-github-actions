@@ -122,7 +122,7 @@ jobs:
           arch: ${{ steps.runner_arch.outputs.runner_arch }}
       
       - name: Configure AWS Creds
-        uses: aws-actions/configure-aws-credentials@v1-node16
+        uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
           aws-region: us-east-1
           role-to-assume: ${{ inputs.github_oidc_role }}
