@@ -129,10 +129,10 @@ jobs:
           
           # Check if the image retagging was successful
           if [ "$RESPONSE_CODE" != "201" ]; then
-            echo "Failed to retag image, server responded with status code $RESPONSE_CODE."
+            echo "Failed to tag image, server responded with status code $RESPONSE_CODE."
             exit 1
           fi
-          echo "Image tagged successfully from $TAG to $ENVIRONMENT_TAG."
+          echo "Image $TAG tagged $ENVIRONMENT_TAG."
 
       - name: Deploy to EKS
         run: |
