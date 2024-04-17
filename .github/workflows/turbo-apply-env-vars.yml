@@ -25,7 +25,7 @@ on:
 
 jobs:
   turbo-apply-env-vars:
-    name: Apply Vercel TF to ${{ inputs.environment }}-${{ matrix.app }}-${{ inputs.git_tag }}
+    name: Apply Vercel TF to ${{ inputs.environment }}-${{ matrix.app }}
     runs-on: ${{ inputs.local_runner }}
 
     strategy:
