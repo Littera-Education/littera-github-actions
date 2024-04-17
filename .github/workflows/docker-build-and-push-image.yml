@@ -5,6 +5,9 @@ on:
     inputs:
       nexus_host_url:
         type: string
+      environment:
+        required: true
+        type: string
       group_id:
         type: string
       artifact_id:
@@ -24,10 +27,17 @@ on:
       aws_account_id:
         required: true
         type: string
+      aws_account_id_ecr:
+        required: false
+        type: string
+        default: "794071690772"
       local_runner:
         required: false
         type: string
         default: "self-hosted-runner-standard"
+      github_oidc_role:
+        required: true
+        type: string
 
     secrets:
       nexus_username:
@@ -112,32 +122,38 @@ jobs:
           arch: ${{ steps.runner_arch.outputs.runner_arch }}
       
       - name: Configure AWS Creds
-        uses: aws-actions/configure-aws-credentials@v1-node16
+        uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
           aws-region: us-east-1
-          role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/github-assume-role
+          role-to-assume: ${{ inputs.github_oidc_role }}
 
       - name: Build, tag, and push docker image to Amazon ECR
         run: |
 
-          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com
+          set -e
+
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com
 
           if [[ "${{ inputs.service_name }}" == "littera-core-api" ]]; then
-            docker build -t littera-core .
+            docker build -t littera-core:latest .
             if [ -z "${{ inputs.test_tag_suffix }}" ]; then
-              docker tag littera-core:latest ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}
-              docker push ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}
+              docker tag littera-core:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}
+              docker tag littera-core:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.environment }}
+              docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}
+              docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.environment }}
             else
-              docker tag littera-core:latest ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
-              docker push ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
+              docker tag littera-core:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
+              docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
             fi
           else
             docker build -t ${{ inputs.service_name }} .
             if [ -z "${{ inputs.test_tag_suffix }}" ]; then
-              docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
-              docker push ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
+              docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
+              docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.environment }}
+              docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
+              docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.environment }}
             else
-              docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
-              docker push ${{ inputs.aws_account_id }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
+              docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
+              docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
             fi
           fi
