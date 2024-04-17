@@ -1,3 +1,6 @@
+# v8.26.0 (04/17/2024)
+* Changes to move to ecr repo in `littera-ecr`
+
 # v8.25.0 (04/17/2024)
 * Add project ids to `littera-web-ui` for dev environment.
 
