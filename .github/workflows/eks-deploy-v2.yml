@@ -98,16 +98,23 @@ jobs:
 
           set -e
 
-          AUTH_TOKEN=$curl(aws ecr get-login-password --region us-east-1)
-
-          REGISTRY_NAME="https://index.docker.io/v1/"  # Change this as per your Docker registry
+          AUTH_TOKEN=$(aws ecr get-login-password --region us-east-1)
+      
+          # Assuming you are using Docker Hub, which seems to be indicated by your registry name
+          REGISTRY_NAME="https://index.docker.io/v1/"
           REPOSITORY="${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com"
           CONTENT_TYPE="application/vnd.docker.distribution.manifest.v2+json"
-
-          MANIFEST=$(curl -s -H "Authorization: Bearer $AUTH_TOKEN" -H "Accept: ${CONTENT_TYPE}" "${REGISTRY_NAME}/v2/${REPOSITORY}/manifests/${{ inputs.image_version }}")
+      
+          # Retrieve the Docker image manifest from the registry
+          MANIFEST=$(curl -s -H "Authorization: Bearer ${AUTH_TOKEN}" -H "Accept: ${CONTENT_TYPE}" "${REGISTRY_NAME}/v2/${REPOSITORY}/manifests/${{ inputs.image_version }}")
           
           # Push the same manifest as a new tag
-          curl -s -o /dev/null -w "%{http_code}" -X PUT -H "Authorization: Bearer $AUTH_TOKEN" -H "Content-Type: ${CONTENT_TYPE}" -d "${MANIFEST}" "${REGISTRY_NAME}/v2/${REPOSITORY}/manifests/${{ inputs.environment }}"
+          RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X PUT -H "Authorization: Bearer ${AUTH_TOKEN}" -H "Content-Type: ${CONTENT_TYPE}" -d "${MANIFEST}" "${REGISTRY_NAME}/v2/${REPOSITORY}/manifests/${{ inputs.environment }}")
+      
+          if [ "$RESPONSE_CODE" != "201" ]; then
+            echo "Failed to retag image, server responded with status code $RESPONSE_CODE"
+            exit 1
+          fi
 
       # - name: Tag ECR image with environment
       #   run: |
