@@ -110,7 +110,7 @@ jobs:
           CONTENT_TYPE="application/vnd.docker.distribution.manifest.v2+json"
       
           # Fetch the manifest of the existing image
-          MANIFEST=$(curl -s -H "Authorization: Basic $AUTH_TOKEN" -H "Accept: $CONTENT_TYPE" "https://$REGISTRY_NAME/v2/$REPOSITORY/manifests/$TAG")
+          MANIFEST=$(curl -s -H "Authorization: Basic $AUTH_TOKEN" -H "Accept: $CONTENT_TYPE" "$REGISTRY_NAME/v2/$REPOSITORY/manifests/$TAG")
       
           # Check for curl failure
           if [ $? -ne 0 ]; then
@@ -121,7 +121,7 @@ jobs:
           echo $MANIFEST
       
           # Push the fetched manifest as a new tag
-          RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X PUT -H "Authorization: Basic $AUTH_TOKEN" -H "Content-Type: $CONTENT_TYPE" -d "$MANIFEST" "https://$REGISTRY_NAME/v2/$REPOSITORY/manifests/$ENVIRONMENT_TAG")
+          RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X PUT -H "Authorization: Basic $AUTH_TOKEN" -H "Content-Type: $CONTENT_TYPE" -d "$MANIFEST" "$REGISTRY_NAME/v2/$REPOSITORY/manifests/$ENVIRONMENT_TAG")
           
           # Check if the image retagging was successful
           if [ "$RESPONSE_CODE" != "201" ]; then
