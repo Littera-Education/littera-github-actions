@@ -1,3 +1,6 @@
+# v9.0.0 (4/18/2024)
+* v8.27.0 and v8.26.0 are going to be v9.0.0, v9-latest, v9-onbase
+
 # v8.27.0 (04/17/2024)
 * Fix unused turborepo options.
 
