@@ -47,16 +47,6 @@
         "package_manager": "npm",
         "node_version": "18"
     },
-    "littera-test-turborepo": {
-        "local_runner":  "self-hosted-runner-standard",
-        "testing_workflow": "npm_test",
-        "package_manager": "npm",
-        "node_version": "20",
-        "project_ids": {
-            "dev-littera-test-turborepo-core": "prj_n3tSiKhKOmdT7RARkMloCZ7Iw6Sl",
-            "dev-littera-test-turborepo-router": "prj_0SRAGC534CBFM1D5mstesobHk3JJ"
-        }
-    },
     "littera-test-ui-application": {
         "local_runner":  "self-hosted-runner-standard",
         "testing_workflow": "npm_test",
@@ -85,10 +75,6 @@
         "local_runner":  "self-hosted-runner-standard",
         "testing_workflow": "npm_test",
         "package_manager": "npm",
-        "node_version": "18",
-        "project_ids": {
-            "dev-littera-web-ui-core": "prj_Wab84z7n8MEgoXs3sciS2DB9ISRB",
-            "dev-littera-web-ui-router": "prj_wYU7bFzL0LJSiNmNoi0ZpQYbo5lQ"
-        }
+        "node_version": "18"
     }
 }
