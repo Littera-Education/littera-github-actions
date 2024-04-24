@@ -212,10 +212,10 @@ jobs:
           sudo wget https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 -O /usr/bin/yq
           sudo chmod +x /usr/bin/yq
 
-      - uses: azure/setup-kubectl@v3
-        if: ${{ inputs.cluster_name == 'littera-eks-dev4' || inputs.cluster_name == 'littera-eks-staging4' || inputs.cluster_name == 'littera-eks-production4' }}
-        with:
-          version: '1.29.0'
+      # - uses: azure/setup-kubectl@v3
+      #   if: ${{ inputs.cluster_name == 'littera-eks-dev4' || inputs.cluster_name == 'littera-eks-staging4' || inputs.cluster_name == 'littera-eks-production4' }}
+      #   with:
+      #     version: '1.29.4'
   
       - name: Patch Deployment and Apply ConfigMap
         if: ${{ inputs.cluster_name == 'littera-eks-dev4' || inputs.cluster_name == 'littera-eks-staging4' || inputs.cluster_name == 'littera-eks-production4' }}
@@ -231,6 +231,11 @@ jobs:
         run: |
   
           set -e
+
+          # install kubectl
+          curl -o kubectl ${{ inputs.kubctl_download_url }}
+          chmod +x ./kubectl
+          mkdir -p $HOME/bin && mv ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
 
           manifest_path=".config/$service_name/eks/eks-$environment-deployment.yaml"
 
