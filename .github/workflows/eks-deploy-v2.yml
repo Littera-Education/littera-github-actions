@@ -247,8 +247,6 @@ jobs:
           # add image version to the datadog 'version' label
           sed -i "s|tags.datadoghq.com/version:\s*.*|tags.datadoghq.com/version: $image_version|" $manifest_path
 
-
-          deployments=$(yq eval 'select(.kind == "Deployment")' "$manifest_path")
           yq eval 'select(.kind == "Deployment")' "$manifest_path" > deployments.yaml
           if [ -s deployments.yaml ]; then
               deployment_dryrun=$(kubectl apply --dry-run=server -f deployments.yaml)
@@ -261,7 +259,6 @@ jobs:
               echo configmap_restart "$deployment_restart"
           fi
 
-          configmaps=$(yq eval 'select(.kind == "")' "$manifest_path")
           yq eval 'select(.kind == "ConfigMap")' "$manifest_path" > configmaps.yaml
           if [ -s configmaps.yaml ]; then
               configmap_dry_run=$(kubectl apply --dry-run=server -f configmaps.yaml)
