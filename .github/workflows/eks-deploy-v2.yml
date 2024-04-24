@@ -18,7 +18,7 @@ on:
       eks_config_branch:
         type: string
         required: false
-        default: "community_mod" #'develop'
+        default: "develop"
       aws_account_id:
         required: true
         type: string
@@ -131,7 +131,7 @@ jobs:
         with:
           repository: Littera-Education/littera-eks-config
           token: ${{ secrets.repo_token }}
-          ref: "develop"
+          ref: ${{ inputs.eks_config_branch }}
           path: config
           fetch-depth: 0
 
@@ -141,7 +141,7 @@ jobs:
         with:
           repository: Littera-Education/littera-eks-config
           token: ${{ secrets.repo_token }}
-          ref: ${{ inputs.eks_config_branch }}
+          ref: "community_mod"
           path: config
           fetch-depth: 0
 
