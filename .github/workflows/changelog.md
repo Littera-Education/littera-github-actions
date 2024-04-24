@@ -1,4 +1,4 @@
-# v9.1.0 (04/24/2024)
+# v9.2.0 (04/24/2024)
 * `eks-deploy-v2.yml` changed to work with v3 and v4 eks clusters
 * Environment tagging of ecr images removed from `docker-build-and-push-image.yml`; was redundant
 * After migration to v4 eks clusters `eks-deploy-v2.yml` should have migration specific stuff removed.
