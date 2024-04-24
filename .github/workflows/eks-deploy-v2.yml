@@ -18,7 +18,7 @@ on:
       eks_config_branch:
         type: string
         required: false
-        default: 'develop'
+        default: "community_mod" #'develop'
       aws_account_id:
         required: true
         type: string
@@ -84,15 +84,6 @@ jobs:
           aws-region: us-east-1
           role-to-assume: ${{ inputs.github_oidc_role }}
 
-      - name: Checkout EKS Config Repo
-        uses: actions/checkout@v4
-        with:
-          repository: Littera-Education/littera-eks-config
-          token: ${{ secrets.repo_token }}
-          ref: ${{ inputs.eks_config_branch }}
-          path: config
-          fetch-depth: 0
-
       - name: Tag ECR image with environment
         run: |
         
@@ -134,7 +125,28 @@ jobs:
           fi
           echo "Image $TAG tagged $ENVIRONMENT_TAG."
 
-      - name: Deploy to EKS
+      - name: Checkout EKS Config Repo/'develop' branch
+        if: ${{ inputs.cluster_name == 'littera-eks-dev3' || inputs.cluster_name == 'littera-eks-staging3' || inputs.cluster_name == 'littera-eks-production3' }}
+        uses: actions/checkout@v4
+        with:
+          repository: Littera-Education/littera-eks-config
+          token: ${{ secrets.repo_token }}
+          ref: "develop"
+          path: config
+          fetch-depth: 0
+
+      - name: Checkout EKS Config Repo/'community_mod' branch
+        if: ${{ inputs.cluster_name == 'littera-eks-dev4' || inputs.cluster_name == 'littera-eks-staging4' || inputs.cluster_name == 'littera-eks-production4' }}
+        uses: actions/checkout@v4
+        with:
+          repository: Littera-Education/littera-eks-config
+          token: ${{ secrets.repo_token }}
+          ref: ${{ inputs.eks_config_branch }}
+          path: config
+          fetch-depth: 0
+
+      - name: Apply Deployment and ConfigMap
+        if: ${{ inputs.cluster_name == 'littera-eks-dev3' || inputs.cluster_name == 'littera-eks-staging3' || inputs.cluster_name == 'littera-eks-production3' }}
         run: |
 
           set -e
@@ -190,4 +202,97 @@ jobs:
           else
             kubectl rollout restart deployment ${{ inputs.service_name }} -n littera-services-${{ inputs.environment }}
             kubectl rollout status deployment ${{ inputs.service_name }} -n littera-services-${{ inputs.environment }} --timeout=${{ inputs.github_actions_deploy_timeout }}
+          fi
+
+      - name: Install yq
+        if: ${{ inputs.cluster_name == 'littera-eks-dev4' || inputs.cluster_name == 'littera-eks-staging4' || inputs.cluster_name == 'littera-eks-production4' }}
+        env:
+          YQ_VERSION: v4.27.2
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 -O /usr/bin/yq
+          sudo chmod +x /usr/bin/yq
+
+      - uses: azure/setup-kubectl@v3
+        if: ${{ inputs.cluster_name == 'littera-eks-dev4' || inputs.cluster_name == 'littera-eks-staging4' || inputs.cluster_name == 'littera-eks-production4' }}
+        with:
+          version: '1.29.0'
+  
+      - name: Patch Deployment and Apply ConfigMap
+        if: ${{ inputs.cluster_name == 'littera-eks-dev4' || inputs.cluster_name == 'littera-eks-staging4' || inputs.cluster_name == 'littera-eks-production4' }}
+        env:
+          service_name: ${{ inputs.service_name }}
+          image_version: ${{ inputs.image_version }}
+          environment: ${{ inputs.environment }}
+          aws_account_id_ecr: ${{ inputs.aws_account_id_ecr }}
+          create_substring: "created (server dry run)"
+          change_substring: "configured (server dry run)"
+          no_change_substring: "unchanged (server dry run)"
+          cluster_name: ${{ inputs.cluster_name }}
+        run: |
+  
+          set -e
+
+          manifest_path=".config/$service_name/eks/eks-$environment-deployment.yaml"
+
+          # set and use kube context
+          aws eks --region us-east-1 update-kubeconfig --name $cluster_name
+
+          # edit ECR image path in eks manifest file
+          if [[ $service_name == "littera-core-api" ]]; then
+              sed -i "s|image:\s*.*|image: $aws_account_id_ecr.dkr.ecr.us-east-1.amazonaws.com/littera-core:$image_version|" $manifest_path
+          else
+              sed -i "s|image:\s*.*|image: $aws_account_id_ecr.dkr.ecr.us-east-1.amazonaws.com/$service_name:$image_version|" $manifest_path
+          fi
+
+          # add image version to the datadog 'version' label
+          sed -i "s|tags.datadoghq.com/version:\s*.*|tags.datadoghq.com/version: $image_version|" $manifest_path
+
+
+          deployments=$(yq eval 'select(.kind == "Deployment")' "$manifest_path")
+          yq eval 'select(.kind == "Deployment")' "$manifest_path" > deployments.yaml
+          if [ -s deployments.yaml ]; then
+              deployment_dryrun=$(kubectl apply --dry-run=server -f deployments.yaml)
+              echo deployment_dryrun: "$deployment_dryrun"
+              if grep -q "$change_substring" <<< "$deployment_dryrun" || grep -q "$create_substring" <<< "$deployment_dryrun"; then
+                  deployment_restart=true
+              elif grep -q "$no_change_substring" <<< "$deployment_dryrun"; then
+                  deployment_restart=false
+              fi
+              echo configmap_restart "$deployment_restart"
+          fi
+
+          configmaps=$(yq eval 'select(.kind == "")' "$manifest_path")
+          yq eval 'select(.kind == "ConfigMap")' "$manifest_path" > configmaps.yaml
+          if [ -s configmaps.yaml ]; then
+              configmap_dry_run=$(kubectl apply --dry-run=server -f configmaps.yaml)
+              echo configmap_dry_run: "$configmap_dry_run"
+              if grep -q "$change_substring" <<< "$configmap_dry_run" || grep -q "$create_substring" <<< "$configmap_dry_run"; then
+                  configmap_restart=true
+              elif grep -q "$no_change_substring" <<< "$deployment_dryrun"; then
+                  configmap_restart=false
+              fi
+              echo configmap_restart "$configmap_restart"
+          fi
+
+          if [[ $deployment_restart == true ]] ; then
+              echo "no rolling restart required"
+              kubectl apply -f configmaps.yaml
+              kubectl apply -f deployments.yaml
+              if [[ $service_name == "littera-core-api" ]]; then
+                  kubectl rollout status deployment/littera-core-web deployment/littera-core-worker-n littera-services-$environment
+              else
+                  kubectl rollout status deployment $service_name -n littera-services-$environment
+              fi
+
+          elif [[ $deployment_restart == false && $configmap_restart == true ]]; then
+              echo "rolling restart required"
+              kubectl apply -f configmaps.yaml
+              if [[ $service_name == "littera-core-api" ]]; then
+                  kubectl rollout restart deployment littera-core-web -n littera-servies-$environment
+                  kubectl rollout restart deployment littera-core-worker -n littera-servies-$environment
+                  kubectl rollout status deployment/littera-core-web deployment/littera-core-worker -n littera-services-$environment
+              else
+                  kubectl rollout restart deployment $service_name -n littera-services-$environment
+                  kubectl rollout status deployment $service_name -n littera-services-$environment
+              fi
           fi
