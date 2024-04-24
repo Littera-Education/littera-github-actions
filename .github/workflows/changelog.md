@@ -3,6 +3,9 @@
 * Environment tagging of ecr images removed from `docker-build-and-push-image.yml`; was redundant
 * After migration to v4 eks clusters `eks-deploy-v2.yml` should have migration specific stuff removed.
 
+# v9.1.0 (4/23/2024)
+* Remove `turbo-*` workflows
+
 # v9.0.0 (4/18/2024)
 * v8.27.0 and v8.26.0 are going to be v9.0.0, v9-latest, v9-onbase
 
