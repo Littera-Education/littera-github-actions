@@ -276,7 +276,7 @@ jobs:
               kubectl apply -f configmaps.yaml
               kubectl apply -f deployments.yaml
               if [[ $service_name == "littera-core-api" ]]; then
-                  kubectl rollout status deployment/littera-core-web deployment/littera-core-worker-n littera-services-$environment
+                  kubectl rollout status deployment/littera-core-web deployment/littera-core-worker -n littera-services-$environment
               else
                   kubectl rollout status deployment $service_name -n littera-services-$environment
               fi
