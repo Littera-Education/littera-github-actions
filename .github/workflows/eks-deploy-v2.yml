@@ -261,7 +261,7 @@ jobs:
               elif grep -q "$no_change_substring" <<< "$deployment_dryrun"; then
                   deployment_restart=false
               fi
-              echo deployment_restart "$deployment_restart"
+              echo deployment_restart: "$deployment_restart"
           fi
 
           yq eval 'select(.kind == "ConfigMap")' "$manifest_path" > configmaps.yaml
@@ -270,10 +270,10 @@ jobs:
               echo configmap_dry_run: "$configmap_dry_run"
               if grep -q "$change_substring" <<< "$configmap_dry_run" || grep -q "$create_substring" <<< "$configmap_dry_run"; then
                   configmap_restart=true
-              elif grep -q "$no_change_substring" <<< "$deployment_dryrun"; then
+              elif grep -q "$no_change_substring" <<< "$configmap_dryrun"; then
                   configmap_restart=false
               fi
-              echo configmap_restart "$configmap_restart"
+              echo configmap_restart: "$configmap_restart"
           fi
 
           if [[ $deployment_restart == true ]] ; then
