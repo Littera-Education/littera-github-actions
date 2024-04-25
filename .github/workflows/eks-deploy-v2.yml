@@ -131,7 +131,7 @@ jobs:
         with:
           repository: Littera-Education/littera-eks-config
           token: ${{ secrets.repo_token }}
-          ref: ${{ inputs.eks_config_branch }}
+          ref: "develop"
           path: config
           fetch-depth: 0
 
@@ -141,7 +141,7 @@ jobs:
         with:
           repository: Littera-Education/littera-eks-config
           token: ${{ secrets.repo_token }}
-          ref: "community_mod"
+          ref: "community_mod" # ${{ inputs.eks_config_branch }}
           path: config
           fetch-depth: 0
 
@@ -227,15 +227,18 @@ jobs:
           create_substring: "created (server dry run)"
           change_substring: "configured (server dry run)"
           no_change_substring: "unchanged (server dry run)"
+          kubctl_download_url: ${{ inputs.kubctl_download_url }}
           cluster_name: ${{ inputs.cluster_name }}
         run: |
   
           set -e
 
           # install kubectl
-          curl -o kubectl ${{ inputs.kubctl_download_url }}
+          curl -o kubectl $kubctl_download_url
           chmod +x ./kubectl
           mkdir -p $HOME/bin && mv ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
+
+          kubectl --version
 
           manifest_path="config/$service_name/eks/eks-$environment-deployment.yaml"
 

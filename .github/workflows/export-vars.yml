@@ -17,7 +17,7 @@ on:
       eks_config_branch:
         description: EKS Config Branch
         type: string
-        default: "community_mod"
+        default: "community_mod" # "develop"
 
     outputs:
       cluster_name:
