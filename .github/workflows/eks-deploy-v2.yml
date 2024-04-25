@@ -238,12 +238,12 @@ jobs:
           chmod +x ./kubectl
           mkdir -p $HOME/bin && mv ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
 
-          kubectl version
-
           manifest_path="config/$service_name/eks/eks-$environment-deployment.yaml"
 
           # set and use kube context
           aws eks --region us-east-1 update-kubeconfig --name $cluster_name
+
+          kubectl version
 
           # edit ECR image path in eks manifest file
           if [[ $service_name == "littera-core-api" ]]; then
