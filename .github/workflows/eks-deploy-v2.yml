@@ -266,9 +266,9 @@ jobs:
 
           yq eval 'select(.kind == "ConfigMap")' "$manifest_path" > configmaps.yaml
           if [ -s configmaps.yaml ]; then
-              configmap_dry_run=$(kubectl apply --dry-run=server -f configmaps.yaml)
-              echo configmap_dry_run: "$configmap_dry_run"
-              if grep -q "$change_substring" <<< "$configmap_dry_run" || grep -q "$create_substring" <<< "$configmap_dry_run"; then
+              configmap_dryrun=$(kubectl apply --dry-run=server -f configmaps.yaml)
+              echo configmap_dry_run: "$configmap_dryrun"
+              if grep -q "$change_substring" <<< "$configmap_dry_run" || grep -q "$create_substring" <<< "$configmap_dryrun"; then
                   configmap_restart=true
               elif grep -q "$no_change_substring" <<< "$configmap_dryrun"; then
                   configmap_restart=false
