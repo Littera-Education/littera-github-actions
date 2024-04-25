@@ -280,7 +280,7 @@ jobs:
           fi
 
           if [[ $deployment_restart == true ]] ; then
-              echo "no rolling restart required"
+              echo "deployment will initiate a rolling restart"
               kubectl apply -f configmaps.yaml
               kubectl apply -f deployments.yaml
               if [[ $service_name == "littera-core-api" ]]; then
@@ -290,7 +290,7 @@ jobs:
               fi
 
           elif [[ $deployment_restart == false && $configmap_restart == true ]]; then
-              echo "rolling restart required"
+              echo "An explicit rolling restart will be initiated"
               kubectl apply -f configmaps.yaml
               if [[ $service_name == "littera-core-api" ]]; then
                   kubectl rollout restart deployment littera-core-web -n littera-servies-$environment
