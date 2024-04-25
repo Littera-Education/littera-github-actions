@@ -232,12 +232,12 @@ jobs:
               echo configmap_restart: "$configmap_restart"
           fi
 
-          echo "***************************************************************************************************""
-          echo ""
+          echo " "
+          echo "***************************************************************************************************"
           echo NOTE: If the action fails due to the timeout of $github_actions_deploy_timeout,
           echo the deployment may still have succeeded. Please contact devops in #team-devops-collab about this
-          echo ""
-          echo "***************************************************************************************************""
+          echo "***************************************************************************************************"
+          echo " "
 
           if [[ $deployment_restart == true ]] ; then
               echo "deployment will initiate a rolling restart"
