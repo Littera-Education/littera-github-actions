@@ -138,9 +138,7 @@ jobs:
             docker build -t littera-core:latest .
             if [ -z "${{ inputs.test_tag_suffix }}" ]; then
               docker tag littera-core:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}
-              docker tag littera-core:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.environment }}
               docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}
-              docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.environment }}
             else
               docker tag littera-core:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
               docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/littera-core:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
@@ -149,9 +147,7 @@ jobs:
             docker build -t ${{ inputs.service_name }} .
             if [ -z "${{ inputs.test_tag_suffix }}" ]; then
               docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
-              docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.environment }}
               docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
-              docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.environment }}
             else
               docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
               docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
