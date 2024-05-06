@@ -1,3 +1,6 @@
+# v9.2.1 (05/06/2024)
+* Replaced `kubectl apply -dry-run=server ...` with `kubectl diff ...` as the method for determining `rolling restart` logic
+
 # v9.2.0 (04/24/2024)
 * `eks-deploy-v2.yml` changed to work with v3 and v4 eks clusters
 * Environment tagging of ecr images removed from `docker-build-and-push-image.yml`; was redundant
