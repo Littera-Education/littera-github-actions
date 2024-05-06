@@ -210,24 +210,24 @@ jobs:
 
           yq eval 'select(.kind == "Deployment")' "$manifest_path" > deployments.yaml
           if [ -s deployments.yaml ]; then
-              deployment_dryrun=$(kubectl apply --dry-run=server -f deployments.yaml)
-              echo deployment_dryrun: "$deployment_dryrun"
-              if grep -q "$change_substring" <<< "$deployment_dryrun" || grep -q "$create_substring" <<< "$deployment_dryrun"; then
-                  deployment_restart=true
-              elif grep -q "$no_change_substring" <<< "$deployment_dryrun"; then
+              deployment_diff=$(kubectl diff -f deployments.yaml || true)
+              echo deployment_diff: ${#deployment_diff}
+              if [[ -z "$deployment_diff" ]]; then
                   deployment_restart=false
+              else
+                  deployment_restart=true
               fi
               echo deployment_restart: "$deployment_restart"
           fi
-
+          
           yq eval 'select(.kind == "ConfigMap")' "$manifest_path" > configmaps.yaml
           if [ -s configmaps.yaml ]; then
-              configmap_dryrun=$(kubectl apply --dry-run=server -f configmaps.yaml)
-              echo configmap_dryrun: "$configmap_dryrun"
-              if grep -q "$change_substring" <<< "$configmap_dryrun" || grep -q "$create_substring" <<< "$configmap_dryrun"; then
-                  configmap_restart=true
-              elif grep -q "$no_change_substring" <<< "$configmap_dryrun"; then
+              configmap_diff=$(kubectl diff -f configmaps.yaml || true)
+              echo configmap_diff: ${#configmap_diff}
+              if [[ -z "$configmap_diff" ]]; then
                   configmap_restart=false
+              else
+                  configmap_restart=true
               fi
               echo configmap_restart: "$configmap_restart"
           fi
@@ -260,6 +260,10 @@ jobs:
                   kubectl rollout restart deployment $service_name -n littera-services-$environment
                   kubectl rollout status deployment $service_name -n littera-services-$environment
               fi
+          fi
+
+          if [[ $deployment_restart == false && $configmap_restart == false ]]; then
+              echo "No changes detected in the deployment or configmap"
           fi
       
       - name: Tag ECR image with environment
