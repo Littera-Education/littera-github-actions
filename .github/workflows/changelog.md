@@ -1,3 +1,6 @@
+# v9.2.2 (05/06/2024)
+* typo
+
 # v9.2.1 (05/06/2024)
 * Replaced `kubectl apply -dry-run=server ...` with `kubectl diff ...` as the method for determining `rolling restart` logic
 
