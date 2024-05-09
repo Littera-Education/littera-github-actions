@@ -13,6 +13,9 @@ on:
         required: true
         description: "What part of the version to increment: major, minor, or patch"
         type: string
+      aws_account_id:
+        type: string
+        default: 'not-provided'
 
     secrets:
       nexus_username:
@@ -54,6 +57,13 @@ jobs:
           NAME=$(./mvnw -ntp help:evaluate -Dexpression=project.name -q -DforceStdout)
           echo "NAME=$NAME" >> $GITHUB_OUTPUT
 
+      - name: Configure AWS Creds
+        if: ${{ inputs.aws_account_id != 'not-provided' }}
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/github-assume-role
+
       - name: Prep SSH
         uses: webfactory/ssh-agent@v0.7.0
         with:
@@ -64,6 +74,11 @@ jobs:
         run: |
           git config --global user.name 'Littera GitHub'
           git config --global user.email 'littera-github@litteraeducation.com'
+
+          if [[ "${{ inputs.aws_account_id }}" != "not-provided" ]]; then
+            export DOCKER_REGISTRY_PASSWORD=$(aws ecr get-login-password --region us-east-1)
+          fi
+
           ./mvnw -ntp --batch-mode build-helper:parse-version release:prepare -DscmCommentPrefix="[skip ci][maven-release-plugin] " -DdevelopmentVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT -DreleaseVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} -Darguments='-Dmaven.test.skip=true -Dmaven.javadoc.skip=true' release:perform
 
       - name: Maven Release Minor
@@ -71,6 +86,11 @@ jobs:
         run: |
           git config --global user.name 'Littera GitHub'
           git config --global user.email 'littera-github@litteraeducation.com'
+
+          if [[ "${{ inputs.aws_account_id }}" != "not-provided" ]]; then
+            export DOCKER_REGISTRY_PASSWORD=$(aws ecr get-login-password --region us-east-1)
+          fi
+          
           ./mvnw -ntp --batch-mode build-helper:parse-version release:prepare -DscmCommentPrefix="[skip ci][maven-release-plugin] " -DdevelopmentVersion=\${parsedVersion.majorVersion}.\${parsedVersion.nextMinorVersion}.0-SNAPSHOT -DreleaseVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} -Darguments='-Dmaven.test.skip=true -Dmaven.javadoc.skip=true' release:perform
 
       - name: Maven Release Major
@@ -78,6 +98,11 @@ jobs:
         run: |
           git config --global user.name 'Littera GitHub'
           git config --global user.email 'littera-github@litteraeducation.com'
+          
+          if [[ "${{ inputs.aws_account_id }}" != "not-provided" ]]; then
+            export DOCKER_REGISTRY_PASSWORD=$(aws ecr get-login-password --region us-east-1)
+          fi
+
           ./mvnw -ntp --batch-mode build-helper:parse-version release:prepare -DscmCommentPrefix="[skip ci][maven-release-plugin] " -DdevelopmentVersion=\${parsedVersion.nextMajorVersion}.0.0-SNAPSHOT -DreleaseVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} -Darguments='-Dmaven.test.skip=true -Dmaven.javadoc.skip=true' release:perform
 
       - name: Cache github pages
