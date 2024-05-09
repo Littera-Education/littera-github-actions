@@ -1,3 +1,6 @@
+# v9.3.0 (05/09/2024)
+* Add ECR password to maven release for spring built images. For details see [LDO-3340](https://littera.atlassian.net/browse/LDO-3340)
+
 # v9.2.2 (05/06/2024)
 * typo
 
