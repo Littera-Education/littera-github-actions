@@ -34,6 +34,10 @@ jobs:
     name: Maven ${{ inputs.version_increment_type }} Release version ${{ inputs.version }}
     runs-on: ${{ inputs.local_runner }}
 
+    permissions:
+      id-token: write
+      contents: read
+
     steps:
       - uses: actions/checkout@v3
         with:
