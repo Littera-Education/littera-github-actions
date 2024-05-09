@@ -1,3 +1,6 @@
+# v9.4.0 (05/09/2024)
+* `eks-deploy-v2.yml` has migration specific stuff removed.
+
 # v9.3.0 (05/09/2024)
 * Add ECR password to maven release for spring built images. For details see [LDO-3340](https://littera.atlassian.net/browse/LDO-3340)
 
