@@ -1,0 +1,164 @@
+name: Build and push NextJS docker image to ECR
+
+on:
+  workflow_call:
+    inputs:
+      nexus_host_domain:
+        required: true
+        type: string
+      artifact_id:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      node_version:
+        type: string
+        default: "18"
+      local_runner:
+        required: false
+        type: string
+        default: "self-hosted-runner-standard"
+      branch_name:
+        required: false
+        type: string
+      service_name:
+        required: true
+        type: string
+      test_tag_suffix:
+        required: false
+        type: string
+      aws_account_id_ecr:
+        required: false
+        type: string
+        default: "794071690772"
+      github_oidc_role:
+        required: true
+        type: string
+
+    secrets:
+      nexus_username:
+        required: true
+      nexus_password:
+        required: true
+      nexus_npm_login:
+        required: true
+      github_actions_token:
+        required: true
+
+    outputs:
+      version:
+        description: "artifact version"
+        value: ${{ jobs.npm_build.outputs.version }}
+
+jobs:
+  npm_docker_build:
+    name: NPM Docker Build and Push
+    runs-on: ${{ inputs.local_runner }}
+
+    outputs:
+      version: ${{ steps.upload-artifact.outputs.VERSION }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Release Please
+        id: release-please
+        uses: google-github-actions/release-please-action@v4
+        with:
+          token: ${{ secrets.github_actions_token }}
+          release-type: node
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Setup .npmrc for pulling & publishing to Nexus
+        run: |
+          FULL_REPO_AUTH="//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}"
+          echo -e "\n" \
+            "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
+            "$FULL_REPO_AUTH\n" \
+            "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
+            "email=${{ secrets.nexus_username }}\n" \
+            "always-auth=true\n" \ >> .npmrc
+
+      - name: Get Release PR Title
+        uses: actions/github-script@v6
+        id: release-pr-title
+        if: inputs.branch_name != 'develop-snapshot'
+        with:
+          script: |
+            const prs = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            })
+
+            const releasepr = prs.data.filter(pr => pr.title.includes("chore(main): release"))
+            console.log(releasepr)
+
+            if(releasepr.length > 0) {
+              return releasepr.pop().title
+            }
+
+            console.log('No pending release prs found')
+          result-encoding: string
+
+      - name: Get Deployable Version
+        id: get-version
+        run: |
+          if [ "${{ steps.release-please.outputs.release_created }}" ]; then
+            version=${{ inputs.version }}
+          elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" && inputs.branch != 'develop-snapshot']; then
+            version="${{ steps.release-pr-title.outputs.result }}"
+            echo $version
+            versionparts=($version)
+            echo ${versionparts[-1]}
+            version="${versionparts[-1]}-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
+          else
+            echo "WARN: Unable to get version from release-please, defaulting to package.json"
+            version="$(npm pkg get version | xargs echo)-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
+          fi
+
+          echo "VERSION=$version" >> $GITHUB_OUTPUT
+
+      - name: Get runner arch
+        id: runner_arch
+        run: |
+          arch_value=$(uname -m)
+          if [ "$arch_value" = "x86_64" ]; then
+            echo "runner_arch=amd64" >> $GITHUB_OUTPUT
+          elif [ "$arch_value" = "aarch64" ]; then
+            echo "runner_arch=arm64" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup aws cli
+        uses: unfor19/install-aws-cli-action@v1
+        with:
+          version: 2
+          arch: ${{ steps.runner_arch.outputs.runner_arch }}
+      
+      - name: Configure AWS Creds
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ inputs.github_oidc_role }}
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        run: |
+          set -e
+
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com
+
+          DOCKER_BUILDKIT=1 docker build . -t ${{ inputs.service_name }} --secret id=npmrc,src=$HOME/.npmrc
+          if [ -z "${{ inputs.test_tag_suffix }}" ]; then
+            docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
+            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}
+          else
+            docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
+            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ inputs.version }}-${{ inputs.test_tag_suffix }}
+          fi
+
