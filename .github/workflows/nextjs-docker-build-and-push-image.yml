@@ -6,12 +6,6 @@ on:
       nexus_host_domain:
         required: true
         type: string
-      artifact_id:
-        required: true
-        type: string
-      version:
-        required: true
-        type: string
       node_version:
         type: string
         default: "18"
@@ -111,7 +105,7 @@ jobs:
         id: get-version
         run: |
           if [ "${{ steps.release-please.outputs.release_created }}" ]; then
-            version=${{ inputs.version }}
+            version="$(npm pkg get version | xargs echo)
           elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" && inputs.branch != 'develop-snapshot']; then
             version="${{ steps.release-pr-title.outputs.result }}"
             echo $version
