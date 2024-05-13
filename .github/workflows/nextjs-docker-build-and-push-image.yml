@@ -64,6 +64,7 @@ jobs:
 
       - name: Release Please
         id: release-please
+        if: inputs.branch_name == 'main'
         uses: google-github-actions/release-please-action@v4
         with:
           token: ${{ secrets.github_actions_token }}
@@ -87,7 +88,7 @@ jobs:
       - name: Get Release PR Title
         uses: actions/github-script@v6
         id: release-pr-title
-        if: inputs.branch_name != 'develop-snapshot'
+        if: inputs.branch_name == 'main'
         with:
           script: |
             const prs = await github.rest.pulls.list({
@@ -110,7 +111,7 @@ jobs:
         run: |
           if [ "${{ steps.release-please.outputs.release_created }}" ]; then
             version="$(npm pkg get version | xargs echo)"
-          elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" && inputs.branch != 'develop-snapshot']; then
+          elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" && inputs.branch_name == 'main']; then
             version="${{ steps.release-pr-title.outputs.result }}"
             echo $version
             versionparts=($version)
