@@ -43,7 +43,7 @@ on:
     outputs:
       version:
         description: "artifact version"
-        value: ${{ jobs.npm_build.outputs.version }}
+        value: ${{ jobs.npm_docker_build.outputs.version }}
 
 jobs:
   npm_docker_build:
@@ -51,7 +51,7 @@ jobs:
     runs-on: ${{ inputs.local_runner }}
 
     outputs:
-      version: ${{ steps.upload-artifact.outputs.VERSION }}
+      version: ${{ steps.get-version.outputs.VERSION }}
 
     steps:
       - uses: actions/checkout@v4
