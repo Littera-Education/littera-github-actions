@@ -146,6 +146,9 @@ jobs:
           aws-region: us-east-1
           role-to-assume: ${{ inputs.github_oidc_role }}
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
       - name: Build, tag, and push docker image to Amazon ECR
         run: |
           set -e
