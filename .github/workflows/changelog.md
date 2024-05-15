@@ -1,3 +1,6 @@
+# v9.5.0 (5/15/2024)
+* `maven-release` add `continue-on-error` when publishing GitHub Pages
+
 # v9.4.0 (05/09/2024)
 * `eks-deploy-v2.yml` has migration specific stuff removed.
 
