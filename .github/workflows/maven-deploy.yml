@@ -13,6 +13,9 @@ on:
         required: false
         type: string
         default: "self-hosted-runner-standard"
+      github_oidc_role:
+        type: string
+        default: 'not-provided'
 
     secrets:
       nexus_username:
@@ -46,6 +49,31 @@ jobs:
           active_profiles: '[ "github" ]'
           output_file: /home/runner/.m2/settings.xml
 
+      - name: Get runner arch
+        if: ${{ inputs.github_oidc_role != 'not-provided' }}
+        id: runner_arch
+        run: |
+          arch_value=$(uname -m)
+          if [ "$arch_value" = "x86_64" ]; then
+            echo "runner_arch=amd64" >> $GITHUB_OUTPUT
+          elif [ "$arch_value" = "aarch64" ]; then
+            echo "runner_arch=arm64" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup aws cli
+        if: ${{ inputs.github_oidc_role != 'not-provided' }}
+        uses: unfor19/install-aws-cli-action@v1
+        with:
+          version: 2
+          arch: ${{ steps.runner_arch.outputs.runner_arch }}
+
+      - name: Configure AWS Creds
+        if: ${{ inputs.github_oidc_role != 'not-provided' }}
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ inputs.github_oidc_role }}
+
       - name: Get Project Info
         id: get-project-info
         run: |
@@ -54,6 +82,10 @@ jobs:
 
       - name: Maven SNAPSHOT
         run: |
+          if [[ "${{ inputs.github_oidc_role }}" != "not-provided" ]]; then
+            export DOCKER_REGISTRY_PASSWORD=$(aws ecr get-login-password --region us-east-1)
+          fi
+
           ./mvnw -ntp -DskipTests=true clean deploy
       
       - name: Cache github pages
