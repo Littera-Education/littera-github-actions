@@ -28,6 +28,10 @@ jobs:
     name: Maven Deploy version ${{ inputs.version }}
     runs-on: ${{ inputs.local_runner }}
 
+    permissions:
+      id-token: write
+      contents: read
+
     steps:
       - uses: actions/checkout@v3
         with:
