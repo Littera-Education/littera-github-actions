@@ -1,3 +1,6 @@
+# v9.6.23 (5/20/2024)
+* `npm-build-and-release.yml` bug fix for hotfix versioning and release-please action deprecation
+
 # v9.6.1 (5/20/2024)
 * `eks-deploy-v2.yml` bug fix
 
