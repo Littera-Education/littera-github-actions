@@ -154,7 +154,7 @@ jobs:
               configmap_diff=$(kubectl diff -f configmaps.yaml || true)
               echo configmap_diff: ${#configmap_diff}
               if [[ -z "$configmap_diff" ]]; then
-                if echo "${version}" | grep -q "SNAPSHOT"; then
+                if echo "${version}" | grep -qE ".*-SNAPSHOT$"; then
                   configmap_restart=true
                 else
                   configmap_restart=false
