@@ -1,3 +1,6 @@
+# v9.6.1 (5/20/2024)
+* `eks-deploy-v2.yml` bug fix
+
 # v9.6.0 (5/20/2024)
 * `eks-deploy-v2.yml`, if image is a snapshot, always do a rolling restart of the deployment
 
