@@ -1,4 +1,4 @@
-# v9.6.23 (5/20/2024)
+# v9.6.2 (5/20/2024)
 * `npm-build-and-release.yml` bug fix for hotfix versioning and release-please action deprecation
 
 # v9.6.1 (5/20/2024)
