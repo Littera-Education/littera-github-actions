@@ -1,3 +1,6 @@
+# v9.6.0 (5/20/2024)
+* `eks-deploy-v2.yml`, if image is a snapshot, always do a rolling restart of the deployment
+
 # v9.5.0 (5/15/2024)
 * `maven-release` add `continue-on-error` when publishing GitHub Pages
 
