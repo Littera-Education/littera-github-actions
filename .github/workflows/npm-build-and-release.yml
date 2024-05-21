@@ -56,6 +56,10 @@ jobs:
       version: ${{ steps.upload-artifact.outputs.VERSION }}
       artifact_url: ${{ steps.upload-artifact.outputs.ARTIFACT_URL }}
 
+    permissions:
+      contents: write
+      pull-requests: write
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -63,10 +67,11 @@ jobs:
 
       - name: Release Please
         id: release-please
-        uses: google-github-actions/release-please-action@v4
+        uses: googleapis/release-please-action@v4
         with:
           token: ${{ secrets.github_actions_token }}
           release-type: node
+          target-branch: ${{ github.ref_name }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
