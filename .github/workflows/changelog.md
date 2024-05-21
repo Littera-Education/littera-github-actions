@@ -1,3 +1,6 @@
+# v9.7.0 (5/21/2024)
+* Add ECR password to maven deploy for spring built images. For details see [LDO-3340](https://littera.atlassian.net/browse/LDO-3340)
+
 # v9.6.2 (5/20/2024)
 * `npm-build-and-release.yml` bug fix for hotfix versioning and release-please action deprecation
 
