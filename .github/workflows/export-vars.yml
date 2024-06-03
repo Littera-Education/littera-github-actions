@@ -148,7 +148,7 @@ jobs:
           ### export deployable_service_names
           deployable_service_names=$(eval "jq -r -c '.\"${service_name}\".deployable_service_names' eks-config/env/EKS_REPO_JSON.json")
           if [[ $deployable_service_names = "null" ]]; then
-            deployable_service_names="[\"${serice_name}\"]"
+            deployable_service_names="[\"${service_name}\"]"
           fi
           echo "deployable_service_names=$deployable_service_names"
           echo "deployable_service_names=$deployable_service_names" >> $GITHUB_OUTPUT
