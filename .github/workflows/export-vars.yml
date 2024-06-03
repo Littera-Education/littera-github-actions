@@ -47,6 +47,9 @@ on:
       local_runner:
         description: local runner
         value: ${{ jobs.export-vars.outputs.local_runner }}
+      deployable_service_names:
+        description: Deployable Service Names
+        value: ${{ jobs.export-vars.outputs.deployable_service_names }}
 
     secrets:
       repo_token:
@@ -71,6 +74,7 @@ jobs:
       environment: ${{ steps.step_export_vars.outputs.environment }}
       github_actions_deploy_timeout: ${{ steps.step_export_vars.outputs.github_actions_deploy_timeout }}
       local_runner: ${{ steps.step_export_vars.outputs.local_runner }}
+      deployable_service_names: ${{ steps.step_export_vars.outputs.deployable_service_names }}
 
     steps:
       - name: Checkout EKS Config
@@ -140,3 +144,11 @@ jobs:
           ### export environment
           echo "environment=${{ inputs.environment }}"
           echo "environment=${{ inputs.environment }}" >> $GITHUB_OUTPUT
+
+          ### export deployable_service_names
+          deployable_service_names=$(eval "jq -r -c '.\"${service_name}\".deployable_service_names' eks-config/env/EKS_REPO_JSON.json")
+          if [[ $deployable_service_names = "null" ]]; then
+            deployable_service_names="[\"${serice_name}\"]"
+          fi
+          echo "deployable_service_names=$deployable_service_names"
+          echo "deployable_service_names=$deployable_service_names" >> $GITHUB_OUTPUT
