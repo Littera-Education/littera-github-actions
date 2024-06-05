@@ -50,8 +50,6 @@ on:
     secrets:
       repo_token:
         required: true
-      NEW_RELIC_LICENSE_KEY:
-        required: false
 
 jobs:
   deploy-to-eks:
