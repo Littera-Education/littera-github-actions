@@ -1,3 +1,6 @@
+# v9.9.0 (6/12/2024)
+* Remove new relic reference
+
 # v9.8.0 (6/12/2024)
 * Add `deployable_service_names` to `export-vars` job. For details see [LDO-3329](https://littera.atlassian.net/browse/LDO-3329)
 
