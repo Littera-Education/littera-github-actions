@@ -1,5 +1,8 @@
-# v9.8.0 (6/12/2024)
+# v9.9.0 (6/12/2024)
 * Remove new relic reference
+
+# v9.8.0 (6/12/2024)
+* Add `deployable_service_names` to `export-vars` job. For details see [LDO-3329](https://littera.atlassian.net/browse/LDO-3329)
 
 # v9.7.0 (5/21/2024)
 * Add ECR password to maven deploy for spring built images. For details see [LDO-3340](https://littera.atlassian.net/browse/LDO-3340)
