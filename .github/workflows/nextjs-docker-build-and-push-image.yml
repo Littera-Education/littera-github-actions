@@ -202,6 +202,8 @@ jobs:
 
           buildargs=$(yq '[.spec.template.spec.containers[0].env[] | select(.name | test("NEXT_PUBLIC_.*"))] | .[] | ("--build-arg " + .name + "=\"" + .value + "\"")' $manifest_path)
 
+          echo "Docker build command:\n DOCKER_BUILDKIT=1 docker build $buildargs . -t ${{ inputs.service_name }} --secret id=npmrc,src=./.npmrc"
+
           DOCKER_BUILDKIT=1 docker build $buildargs . -t ${{ inputs.service_name }} --secret id=npmrc,src=./.npmrc
           if [ -z "${{ inputs.test_tag_suffix }}" ]; then
             docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}
