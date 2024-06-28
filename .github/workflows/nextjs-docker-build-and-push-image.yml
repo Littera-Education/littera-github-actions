@@ -16,6 +16,9 @@ on:
       service_name:
         required: true
         type: string
+      environment:
+        required: true
+        type: string
       test_tag_suffix:
         required: false
         type: string
@@ -26,6 +29,10 @@ on:
       github_oidc_role:
         required: true
         type: string
+      eks_config_branch:
+        type: string
+        required: false
+        default: "develop"
 
     secrets:
       nexus_username:
@@ -132,6 +139,15 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
+      - name: Checkout EKS Config Repo/'${{ inputs.eks_config_branch }}' branch
+        uses: actions/checkout@v4
+        with:
+          repository: Littera-Education/littera-eks-config
+          token: ${{ secrets.repo_token }}
+          ref: ${{ inputs.eks_config_branch }}
+          path: config
+          fetch-depth: 0
+
       - name: Setup .npmrc for pulling & publishing to Nexus
         run: |
           FULL_REPO_AUTH="//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}"
@@ -173,7 +189,9 @@ jobs:
 
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com
 
-          echo $(compgen -v NEXT_PUBLIC_ | sed 's/=\(.*\)/=\1/g' | sed 's/^/--build-arg /')
+          manifest_path="config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml"
+
+          echo $manifest_path
           exit 1
 
           DOCKER_BUILDKIT=1 docker build . -t ${{ inputs.service_name }} --secret id=npmrc,src=./.npmrc
