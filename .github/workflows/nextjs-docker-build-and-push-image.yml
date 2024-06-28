@@ -204,7 +204,7 @@ jobs:
 
           echo $buildargs > .env.production.local
 
-          echo .env.production.local
+          cat .env.production.local
 
           DOCKER_BUILDKIT=1 docker build . -t ${{ inputs.service_name }} --secret id=npmrc,src=./.npmrc --secret id=envproductionlocal,src=./.env.production.local
           if [ -z "${{ inputs.test_tag_suffix }}" ]; then
