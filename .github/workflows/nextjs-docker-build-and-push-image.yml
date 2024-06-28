@@ -51,8 +51,8 @@ jobs:
       version: ${{ steps.get-version.outputs.VERSION }}
 
     permissions:
-      id-token: write
-      contents: read
+      contents: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -68,10 +68,11 @@ jobs:
       - name: Release Please
         id: release-please
         if: steps.extract_branch_name.outputs.branch_name  == 'main'
-        uses: google-github-actions/release-please-action@v4
+        uses: googleapis/release-please-action@v4
         with:
-          token: ${{ secrets.github_actions_token }}
           release-type: node
+          token: ${{ secrets.github_actions_token }}
+          target-branch: ${{ github.ref_name }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
