@@ -80,7 +80,7 @@ jobs:
           target-branch: ${{ github.ref_name }}
 
       - name: Get Release PR Title
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         id: release-pr-title
         if: steps.extract_branch_name.outputs.branch_name == 'main'
         with:
