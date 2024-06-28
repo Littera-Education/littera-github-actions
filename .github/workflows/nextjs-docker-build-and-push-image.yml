@@ -120,7 +120,7 @@ jobs:
 
     permissions:
       id-token: write
-      # contents: read
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
