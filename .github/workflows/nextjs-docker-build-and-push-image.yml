@@ -200,11 +200,13 @@ jobs:
 
           manifest_path="config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml"
 
-          buildargs=$(yq '[.spec.template.spec.containers[0].env[] | select(.name | test("NEXT_PUBLIC_.*"))] | .[] | ("--build-arg " + .name + "=\"" + .value + "\"")' $manifest_path | tr '\n' ' ')
+          buildargs=$(yq '[.spec.template.spec.containers[0].env[] | select(.name | test("NEXT_PUBLIC_.*"))] | .[] | (.name + "=\"" + .value + "\"")' $manifest_path)
 
-          echo "Docker build command: DOCKER_BUILDKIT=1 docker build $buildargs --no-cache . -t ${{ inputs.service_name }} --secret id=npmrc,src=./.npmrc"
+          echo $buildargs > .env.production.local
 
-          DOCKER_BUILDKIT=1 docker build $buildargs . -t ${{ inputs.service_name }} --secret id=npmrc,src=./.npmrc
+          echo .env.production.local
+
+          DOCKER_BUILDKIT=1 docker build $buildargs . -t ${{ inputs.service_name }} --secret id=npmrc,src=./.npmrc --secret id=envproductionlocal,src=./.env.production.local
           if [ -z "${{ inputs.test_tag_suffix }}" ]; then
             docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}
             docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}
@@ -213,3 +215,4 @@ jobs:
             docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.test_tag_suffix }}
           fi
 
+# buildargs=$(yq '[.spec.template.spec.containers[0].env[] | select(.name | test("NEXT_PUBLIC_.*"))] | .[] | ("--build-arg " + .name + "=\"" + .value + "\"")' $manifest_path | tr '\n' ' ')
