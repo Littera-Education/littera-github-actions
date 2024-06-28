@@ -13,6 +13,9 @@ on:
         required: false
         type: string
         default: "self-hosted-runner-standard"
+      branch_name:
+        required: false
+        type: string
       service_name:
         required: true
         type: string
@@ -51,28 +54,21 @@ jobs:
       version: ${{ steps.get-version.outputs.VERSION }}
 
     permissions:
-      contents: write
-      pull-requests: write
+      id-token: write
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-      - name: Extract branch name
-        id: extract_branch_name
-        run: |
-          echo "branch_name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-          echo "branch_name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-
       - name: Release Please
         id: release-please
-        if: steps.extract_branch_name.outputs.branch_name  == 'main'
-        uses: googleapis/release-please-action@v4
+        if: inputs.branch_name == 'main'
+        uses: google-github-actions/release-please-action@v4
         with:
-          release-type: node
           token: ${{ secrets.github_actions_token }}
-          target-branch: ${{ github.ref_name }}
+          release-type: node
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -92,7 +88,7 @@ jobs:
       - name: Get Release PR Title
         uses: actions/github-script@v6
         id: release-pr-title
-        if: steps.extract_branch_name.outputs.branch_name == 'main'
+        if: inputs.branch_name == 'main'
         with:
           script: |
             const prs = await github.rest.pulls.list({
@@ -115,7 +111,7 @@ jobs:
         run: |
           if [ "${{ steps.release-please.outputs.release_created }}" ]; then
             version="$(npm pkg get version | xargs echo)"
-          elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" && "${{ steps.extract_branch_name.outputs.branch_name }}" == 'main']; then
+          elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" && inputs.branch_name == 'main']; then
             version="${{ steps.release-pr-title.outputs.result }}"
             echo $version
             versionparts=($version)
