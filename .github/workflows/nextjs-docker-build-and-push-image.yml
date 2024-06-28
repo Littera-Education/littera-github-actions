@@ -200,9 +200,9 @@ jobs:
 
           manifest_path="config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml"
 
-          buildargs=$(yq '[.spec.template.spec.containers[0].env[] | select(.name | test("NEXT_PUBLIC_.*"))] | .[] | ("--build-arg " + .name + "=\"" + .value + "\"")' $manifest_path)
+          buildargs=$(yq '[.spec.template.spec.containers[0].env[] | select(.name | test("NEXT_PUBLIC_.*"))] | .[] | ("--build-arg " + .name + "=\"" + .value + "\"")' $manifest_path | tr '\n' ' ')
 
-          echo "Docker build command:\n DOCKER_BUILDKIT=1 docker build $buildargs . -t ${{ inputs.service_name }} --secret id=npmrc,src=./.npmrc"
+          echo "Docker build command: DOCKER_BUILDKIT=1 docker build $buildargs . -t ${{ inputs.service_name }} --secret id=npmrc,src=./.npmrc"
 
           DOCKER_BUILDKIT=1 docker build $buildargs . -t ${{ inputs.service_name }} --secret id=npmrc,src=./.npmrc
           if [ -z "${{ inputs.test_tag_suffix }}" ]; then
