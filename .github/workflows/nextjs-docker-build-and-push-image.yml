@@ -40,18 +40,17 @@ on:
     outputs:
       version:
         description: "artifact version"
-        value: ${{ jobs.npm_docker_build.outputs.version }}
+        value: ${{ jobs.release_versioning.outputs.version }}
 
 jobs:
-  npm_docker_build:
-    name: NPM Docker Build and Push
+  release_versioning:
+    name: Release Versioning
     runs-on: ${{ inputs.local_runner }}
 
     outputs:
       version: ${{ steps.get-version.outputs.VERSION }}
 
     permissions:
-      id-token: write
       contents: write
       pull-requests: write
 
@@ -74,21 +73,6 @@ jobs:
           release-type: node
           token: ${{ secrets.github_actions_token }}
           target-branch: ${{ github.ref_name }}
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ inputs.node_version }}
-
-      - name: Setup .npmrc for pulling & publishing to Nexus
-        run: |
-          FULL_REPO_AUTH="//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}"
-          echo -e "\n" \
-            "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
-            "$FULL_REPO_AUTH\n" \
-            "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
-            "email=${{ secrets.nexus_username }}\n" \
-            "always-auth=true\n" \ >> .npmrc
 
       - name: Get Release PR Title
         uses: actions/github-script@v6
@@ -127,7 +111,36 @@ jobs:
             version="$(npm pkg get version | xargs echo)-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
           fi
 
-          echo "VERSION=$version" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+  npm_docker_build:
+    name: NextJS Docker Build and Push
+    runs-on: ${{ inputs.local_runner }}
+    needs: [ release_versioning ]
+
+    permissions:
+      id-token: write
+      # contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Setup .npmrc for pulling & publishing to Nexus
+        run: |
+          FULL_REPO_AUTH="//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}"
+          echo -e "\n" \
+            "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
+            "$FULL_REPO_AUTH\n" \
+            "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
+            "email=${{ secrets.nexus_username }}\n" \
+            "always-auth=true\n" \ >> .npmrc
 
       - name: Get runner arch
         id: runner_arch
@@ -162,10 +175,10 @@ jobs:
 
           DOCKER_BUILDKIT=1 docker build . -t ${{ inputs.service_name }} --secret id=npmrc,src=./.npmrc
           if [ -z "${{ inputs.test_tag_suffix }}" ]; then
-            docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ steps.get-version.outputs.VERSION }}
-            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ steps.get-version.outputs.VERSION }}
+            docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}
+            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}
           else
-            docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ steps.get-version.outputs.VERSION }}-${{ inputs.test_tag_suffix }}
-            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ steps.get-version.outputs.VERSION }}-${{ inputs.test_tag_suffix }}
+            docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.test_tag_suffix }}
+            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.test_tag_suffix }}
           fi
 
