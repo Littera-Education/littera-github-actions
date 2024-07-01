@@ -209,7 +209,7 @@ jobs:
             if echo "$publicEnvVarsMapping" | jq -e '.value' >/dev/null 2>&1; then
               name=$(echo "$publicEnvVarsMapping" | yq '.name' -)
               value=$(echo "$publicEnvVarsMapping" | yq '.value' -)
-              echo "$name=\"$value\""
+              echo "$name=\"$value\"" >> .env.production.local
             fi
           done
 
