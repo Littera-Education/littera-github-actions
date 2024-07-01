@@ -200,10 +200,17 @@ jobs:
 
           manifest_path="config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml"
 
-          buildargs=$(yq '[.spec.template.spec.containers[0].env[] | select(.name | test("NEXT_PUBLIC_.*"))] | .[] | (.name + "=\"" + .value + "\"")' $manifest_path)
-
-          echo $buildargs > .env.production.local
-          echo "NEXT_PUBLIC_TEST=123" >> .env.production.local
+          echo NEXT_PUBLIC_EXTERNAL_BASE_URL_SELF="https://dev.webui.prv.app.litteraeducation.com" >> .env.production.local
+          echo NEXT_PUBLIC_EXTERNAL_BASE_URL_ZENDESK="https://litteraeducation.zendesk.com/hc/en-us" >> .env.production.local
+          echo NEXT_PUBLIC_SWR_RETRY_COUNT="5" >> .env.production.local
+          echo NEXT_PUBLIC_SWR_RETRY_INTERVAL="5000" >> .env.production.local
+          echo NEXT_PUBLIC_GOOGLE_ANALYTICS="" >> .env.production.local
+          echo NEXT_PUBLIC_DATADOG_ENABLED="false" >> .env.production.local
+          echo NEXT_PUBLIC_DATADOG_CLIENT_TOKEN="" >> .env.production.local
+          echo NEXT_PUBLIC_DATADOG_APPLICATION_ID="" >> .env.production.local
+          echo NEXT_PUBLIC_DATADOG_SERVICE_NAME="" >> .env.production.local
+          echo NEXT_PUBLIC_DATADOG_ENVIRONMENT="" >> .env.production.local
+          echo NEXT_PUBLIC_TEST="123" >> .env.production.local
 
           cat .env.production.local
 
