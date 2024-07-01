@@ -204,18 +204,20 @@ jobs:
 
           # Format output into key/value per line into a .env.production.local file
           for publicEnvVarsMapping in "${publicEnvVarsMappings[@]}"; do
-            name=$(echo "$publicEnvVarsMapping" | yq '.name' -)
-            value=$(echo "$publicEnvVarsMapping" | yq '.value' -)
-            echo "$name=\"$value\"" >> .env.production.local
+            # Checks for the existence of the "value" key, allowing us to write empty strings only if the key exists
+            # This also helps filter out writing secrets that utilize valueFrom
+            if echo "$publicEnvVarsMapping" | jq -e '.value' >/dev/null 2>&1; then
+              name=$(echo "$publicEnvVarsMapping" | yq '.name' -)
+              value=$(echo "$publicEnvVarsMapping" | yq '.value' -)
+              echo "$name=\"$value\""
+            fi
           done
 
           DOCKER_BUILDKIT=1 docker build . -t ${{ inputs.service_name }} --secret id=npmrc,src=./.npmrc --secret id=envproductionlocal,src=./.env.production.local
           if [ -z "${{ inputs.test_tag_suffix }}" ]; then
-            docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}
-            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}
+            docker tag ${{ inputs.service_name }}:latest:${{ inputs.environment }} ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}:${{ inputs.environment }}
+            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}:${{ inputs.environment }}
           else
-            docker tag ${{ inputs.service_name }}:latest ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.test_tag_suffix }}
-            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.test_tag_suffix }}
+            docker tag ${{ inputs.service_name }}:latest:${{ inputs.environment }} ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}:${{ inputs.environment }}-${{ inputs.test_tag_suffix }}
+            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}:${{ inputs.environment }}-${{ inputs.test_tag_suffix }}
           fi
-
-# buildargs=$(yq '[.spec.template.spec.containers[0].env[] | select(.name | test("NEXT_PUBLIC_.*"))] | .[] | ("--build-arg " + .name + "=\"" + .value + "\"")' $manifest_path | tr '\n' ' ')
