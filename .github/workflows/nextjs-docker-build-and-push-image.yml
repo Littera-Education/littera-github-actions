@@ -215,9 +215,9 @@ jobs:
 
           DOCKER_BUILDKIT=1 docker build . -t ${{ inputs.service_name }} --secret id=npmrc,src=./.npmrc --secret id=envproductionlocal,src=./.env.production.local
           if [ -z "${{ inputs.test_tag_suffix }}" ]; then
-            docker tag ${{ inputs.service_name }}:latest:${{ inputs.environment }} ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}:${{ inputs.environment }}
-            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}:${{ inputs.environment }}
+            docker tag ${{ inputs.service_name }}:latest-${{ inputs.environment }} ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}
+            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}
           else
-            docker tag ${{ inputs.service_name }}:latest:${{ inputs.environment }} ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}:${{ inputs.environment }}-${{ inputs.test_tag_suffix }}
-            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}:${{ inputs.environment }}-${{ inputs.test_tag_suffix }}
+            docker tag ${{ inputs.service_name }}:latest-${{ inputs.environment }} ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}-${{ inputs.test_tag_suffix }}
+            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}-${{ inputs.test_tag_suffix }}
           fi
