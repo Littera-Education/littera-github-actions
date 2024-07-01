@@ -198,21 +198,16 @@ jobs:
 
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com
 
+          # Parse out all public variables required for build time & middleware
           manifest_path="config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml"
+          readarray publicEnvVarsMappings < <(yq -o=j -I=0 '.spec.template.spec.containers[0].env[] | select(.name | test("NEXT_PUBLIC_.*"))' $manifest_path )
 
-          echo NEXT_PUBLIC_EXTERNAL_BASE_URL_SELF="https://dev.webui.prv.app.litteraeducation.com" >> .env.production.local
-          echo NEXT_PUBLIC_EXTERNAL_BASE_URL_ZENDESK="https://litteraeducation.zendesk.com/hc/en-us" >> .env.production.local
-          echo NEXT_PUBLIC_SWR_RETRY_COUNT="5" >> .env.production.local
-          echo NEXT_PUBLIC_SWR_RETRY_INTERVAL="5000" >> .env.production.local
-          echo NEXT_PUBLIC_GOOGLE_ANALYTICS="" >> .env.production.local
-          echo NEXT_PUBLIC_DATADOG_ENABLED="false" >> .env.production.local
-          echo NEXT_PUBLIC_DATADOG_CLIENT_TOKEN="" >> .env.production.local
-          echo NEXT_PUBLIC_DATADOG_APPLICATION_ID="" >> .env.production.local
-          echo NEXT_PUBLIC_DATADOG_SERVICE_NAME="" >> .env.production.local
-          echo NEXT_PUBLIC_DATADOG_ENVIRONMENT="" >> .env.production.local
-          echo NEXT_PUBLIC_TEST="123" >> .env.production.local
-
-          cat .env.production.local
+          # Format output into key/value per line into a .env.production.local file
+          for publicEnvVarsMapping in "${publicEnvVarsMappings[@]}"; do
+            name=$(echo "$publicEnvVarsMapping" | yq '.name' -)
+            value=$(echo "$publicEnvVarsMapping" | yq '.value' -)
+            echo "$name=\"$value\"" >> .env.production.local
+          done
 
           DOCKER_BUILDKIT=1 docker build . -t ${{ inputs.service_name }} --secret id=npmrc,src=./.npmrc --secret id=envproductionlocal,src=./.env.production.local
           if [ -z "${{ inputs.test_tag_suffix }}" ]; then
