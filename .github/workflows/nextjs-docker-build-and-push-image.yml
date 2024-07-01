@@ -203,7 +203,6 @@ jobs:
           buildargs=$(yq '[.spec.template.spec.containers[0].env[] | select(.name | test("NEXT_PUBLIC_.*"))] | .[] | (.name + "=\"" + .value + "\"")' $manifest_path)
 
           echo $buildargs > .env.production.local
-          echo "NEXT_PUBLIC_TEST=abc" >> .env.production.local
 
           cat .env.production.local
 
