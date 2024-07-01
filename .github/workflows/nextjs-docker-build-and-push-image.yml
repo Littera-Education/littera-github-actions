@@ -200,7 +200,7 @@ jobs:
 
           # Parse out all public variables required for build time & middleware
           manifest_path="config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml"
-          readarray publicEnvVarsMappings < <(yq -o=j -I=0 '.spec.template.spec.containers[0].env[] | select(.name | test("NEXT_PUBLIC_.*"))' $manifest_path )
+          readarray publicEnvVarsMappings < <(yq -o=j -I=0 '.spec.template.spec.containers[0].env[]' $manifest_path )
 
           # Format output into key/value per line into a .env.production.local file
           for publicEnvVarsMapping in "${publicEnvVarsMappings[@]}"; do
