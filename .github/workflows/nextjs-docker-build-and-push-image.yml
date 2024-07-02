@@ -35,7 +35,7 @@ on:
         default: "develop"
       git_tag:
         type: string
-        required: false
+        required: true
         default: "main"
 
     secrets:
