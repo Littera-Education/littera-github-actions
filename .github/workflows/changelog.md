@@ -1,3 +1,6 @@
+# v9.5.0 (07/02/2024)
+* `nextjs-docker-build-and-push-image.yml` created.
+
 # v9.4.0 (05/09/2024)
 * `eks-deploy-v2.yml` has migration specific stuff removed.
 
