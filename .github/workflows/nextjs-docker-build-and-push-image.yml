@@ -226,10 +226,10 @@ jobs:
             DOCKER_BUILDKIT=1 docker build . -t ${{ inputs.service_name }}:latest-${{ inputs.environment }} --secret id=npmrc,src=./.npmrc --secret id=envproductionlocal,src=./.env.production.local
             docker tag ${{ inputs.service_name }}:latest-${{ inputs.environment }} ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}
             docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}
-            echo "image_version=${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}" >> $GITHUB_OUTPUT
+            echo "image_version=${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}" >> $GITHUB_OUTPUT
           else
             DOCKER_BUILDKIT=1 docker build . -t ${{ inputs.service_name }}:latest-${{ inputs.environment }}-${{ inputs.test_tag_suffix }} --secret id=npmrc,src=./.npmrc --secret id=envproductionlocal,src=./.env.production.local
             docker tag ${{ inputs.service_name }}:latest-${{ inputs.environment }} ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}-${{ inputs.test_tag_suffix }}
             docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}-${{ inputs.test_tag_suffix }}
-            echo "image_version=${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}-${{ inputs.test_tag_suffix }}" >> $GITHUB_OUTPUT
+            echo "image_version=${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}-${{ inputs.test_tag_suffix }}" >> $GITHUB_OUTPUT
           fi
