@@ -1,5 +1,23 @@
-# v9.5.0 (07/02/2024)
+# v9.9.0 (07/02/2024)
 * `nextjs-docker-build-and-push-image.yml` created.
+
+# v9.8.0 (6/12/2024)
+* Add `deployable_service_names` to `export-vars` job. For details see [LDO-3329](https://littera.atlassian.net/browse/LDO-3329)
+
+# v9.7.0 (5/21/2024)
+* Add ECR password to maven deploy for spring built images. For details see [LDO-3340](https://littera.atlassian.net/browse/LDO-3340)
+
+# v9.6.2 (5/20/2024)
+* `npm-build-and-release.yml` bug fix for hotfix versioning and release-please action deprecation
+
+# v9.6.1 (5/20/2024)
+* `eks-deploy-v2.yml` bug fix
+
+# v9.6.0 (5/20/2024)
+* `eks-deploy-v2.yml`, if image is a snapshot, always do a rolling restart of the deployment
+
+# v9.5.0 (5/15/2024)
+* `maven-release` add `continue-on-error` when publishing GitHub Pages
 
 # v9.4.0 (05/09/2024)
 * `eks-deploy-v2.yml` has migration specific stuff removed.

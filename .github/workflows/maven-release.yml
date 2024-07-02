@@ -141,6 +141,7 @@ jobs:
       - name: Deploy to Github Pages
         uses: JamesIves/github-pages-deploy-action@v4.4.1
         if: steps.cache-github-pages.outputs.cache-hit == 'true'
+        continue-on-error: true
         with:
           branch: gh-pages
           target-folder: ${{ inputs.version }}
