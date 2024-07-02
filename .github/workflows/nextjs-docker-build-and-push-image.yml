@@ -33,6 +33,10 @@ on:
         type: string
         required: false
         default: "develop"
+      git_tag:
+        type: string
+        required: false
+        default: "main"
 
     secrets:
       nexus_username:
@@ -70,6 +74,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          ref: ${{ inputs.git_tag }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -146,6 +151,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          ref: ${{ inputs.git_tag }}
 
       - name: Checkout EKS Config Repo/'${{ inputs.eks_config_branch }}' branch
         uses: actions/checkout@v4
