@@ -48,7 +48,7 @@ on:
         description: local runner
         value: ${{ jobs.export-vars.outputs.local_runner }}
       namespace_prefix:
-          description: local runner
+          description: namespace prefix
           value: ${{ jobs.export-vars.outputs.namespace_prefix }}
       deployable_service_names:
         description: Deployable Service Names
