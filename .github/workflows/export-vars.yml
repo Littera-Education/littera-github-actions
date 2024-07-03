@@ -141,6 +141,11 @@ jobs:
           echo "local_runner=$local_runner"
           echo "local_runner=$local_runner" >> $GITHUB_OUTPUT
 
+          ### export namespace_prefix
+          namespace_prefix=$(eval "jq -r '.\"${service_name}\".namespace_prefix' eks-config/env/EKS_REPO_JSON.json")
+          echo "namespace_prefix=$namespace_prefix"
+          echo "namespace_prefix=$namespace_prefix" >> $GITHUB_OUTPUT
+
           ### export environment
           echo "environment=${{ inputs.environment }}"
           echo "environment=${{ inputs.environment }}" >> $GITHUB_OUTPUT

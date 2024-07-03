@@ -43,6 +43,10 @@ on:
         required: false
         type: string
         default: "self-hosted-runner-standard"
+      namespace_prefix:
+          required: false
+          type: string
+          default: "littera-services"
       github_oidc_role:
         required: true
         type: string
@@ -112,6 +116,7 @@ jobs:
           kubctl_download_url: ${{ inputs.kubctl_download_url }}
           cluster_name: ${{ inputs.cluster_name }}
           github_actions_deploy_timeout: ${{ inputs.github_actions_deploy_timeout }}
+          namespace_prefix: ${{ inputs.namespace_prefix }}
         run: |
           set -e
 
@@ -177,21 +182,21 @@ jobs:
               kubectl apply -f configmaps.yaml
               kubectl apply -f deployments.yaml
               if [[ $service_name == "littera-core-api" ]]; then
-                  kubectl rollout status deployment/littera-core-web deployment/littera-core-worker -n littera-services-$environment
+                  kubectl rollout status deployment/littera-core-web deployment/littera-core-worker -n $namespace_prefix-$environment
               else
-                  kubectl rollout status deployment $service_name -n littera-services-$environment
+                  kubectl rollout status deployment $service_name -n $namespace_prefix-$environment
               fi
 
           elif [[ $deployment_restart == false && $configmap_restart == true ]]; then
               echo "An explicit rolling restart will be initiated"
               kubectl apply -f configmaps.yaml
               if [[ $service_name == "littera-core-api" ]]; then
-                  kubectl rollout restart deployment littera-core-web -n littera-services-$environment
-                  kubectl rollout restart deployment littera-core-worker -n littera-services-$environment
-                  kubectl rollout status deployment/littera-core-web deployment/littera-core-worker -n littera-services-$environment
+                  kubectl rollout restart deployment littera-core-web -n $namespace_prefix-$environment
+                  kubectl rollout restart deployment littera-core-worker -n $namespace_prefix-$environment
+                  kubectl rollout status deployment/littera-core-web deployment/littera-core-worker -n $namespace_prefix-$environment
               else
-                  kubectl rollout restart deployment $service_name -n littera-services-$environment
-                  kubectl rollout status deployment $service_name -n littera-services-$environment
+                  kubectl rollout restart deployment $service_name -n $namespace_prefix-$environment
+                  kubectl rollout status deployment $service_name -n $namespace_prefix-$environment
               fi
           fi
 
