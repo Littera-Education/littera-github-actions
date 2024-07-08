@@ -47,6 +47,9 @@ on:
       local_runner:
         description: local runner
         value: ${{ jobs.export-vars.outputs.local_runner }}
+      namespace_prefix:
+          description: namespace prefix
+          value: ${{ jobs.export-vars.outputs.namespace_prefix }}
       deployable_service_names:
         description: Deployable Service Names
         value: ${{ jobs.export-vars.outputs.deployable_service_names }}
@@ -74,6 +77,7 @@ jobs:
       environment: ${{ steps.step_export_vars.outputs.environment }}
       github_actions_deploy_timeout: ${{ steps.step_export_vars.outputs.github_actions_deploy_timeout }}
       local_runner: ${{ steps.step_export_vars.outputs.local_runner }}
+      namespace_prefix: ${{ steps.step_export_vars.outputs.namespace_prefix }}
       deployable_service_names: ${{ steps.step_export_vars.outputs.deployable_service_names }}
 
     steps:
@@ -140,6 +144,11 @@ jobs:
           local_runner=$(eval "jq -r '.\"${service_name}\".local_runner' eks-config/env/EKS_REPO_JSON.json")
           echo "local_runner=$local_runner"
           echo "local_runner=$local_runner" >> $GITHUB_OUTPUT
+
+          ### export namespace_prefix
+          namespace_prefix=$(eval "jq -r '.\"${service_name}\".namespace_prefix' eks-config/env/EKS_REPO_JSON.json")
+          echo "namespace_prefix=$namespace_prefix"
+          echo "namespace_prefix=$namespace_prefix" >> $GITHUB_OUTPUT
 
           ### export environment
           echo "environment=${{ inputs.environment }}"

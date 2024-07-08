@@ -1,3 +1,6 @@
+# v9.10.0 (07/02/2024)
+* `namesspace_prefix` used in `eks-deploy-v2.yml`
+
 # v9.9.1 (07/02/2024)
 * Add `git_tag` to `nextjs-docker-build-and-push-image.yml`.
 
