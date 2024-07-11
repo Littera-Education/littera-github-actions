@@ -30,6 +30,10 @@ on:
         required: false
         type: string
         default: "33.4.0"
+      vercel_config_branch:
+        type: string
+        required: false
+        default: "develop"
 
     secrets:
       nexus_username:
@@ -60,7 +64,7 @@ jobs:
         with:
           repository: Littera-Education/terraform-root-vercel
           token: ${{ secrets.github_actions_token }}
-          ref: "develop"
+          ref: ${{ inputs.vercel_config_branch }}
           path: vercel-env-vars
           fetch-depth: 0
           submodules: true

@@ -1,3 +1,6 @@
+# v9.11.0 (07/11/2024)
+* `vercel_config_branch` used in `verce-deploy.yml`
+
 # v9.10.0 (07/02/2024)
 * `namesspace_prefix` used in `eks-deploy-v2.yml`
 
