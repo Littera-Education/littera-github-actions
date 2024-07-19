@@ -112,7 +112,7 @@ jobs:
         run: mv coverage/lcov.info coverage/lcov_${{matrix.shard}}.info
 
       - name: Upload coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: coverage-artifacts
           path: coverage/
