@@ -1,3 +1,6 @@
+# v9.12.0 (07/18/2024)
+* Update serverless workflows to use latest actions https://littera.atlassian.net/browse/LDO-2951
+
 # v9.11.0 (07/11/2024)
 * `vercel_config_branch` used in `verce-deploy.yml`
 
