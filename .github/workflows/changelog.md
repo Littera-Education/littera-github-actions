@@ -1,3 +1,6 @@
+# v9.13.0 (07/19/2024)
+* Update node/npm workflows to use latest actions https://littera.atlassian.net/browse/LDO-2949
+
 # v9.12.0 (07/18/2024)
 * Update serverless workflows to use latest actions https://littera.atlassian.net/browse/LDO-2951
 
