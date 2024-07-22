@@ -51,19 +51,19 @@ jobs:
       artifact_id: ${{ steps.get-project-info.outputs.ARTIFACTID }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
 
       - name: Maven Settings XML File
-        uses: whelk-io/maven-settings-xml-action@v21
+        uses: whelk-io/maven-settings-xml-action@v22
         with:
           repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
           plugin_repositories: '[{ "id": "litteranexus", "url": "${{ inputs.nexus_host_url }}", "releases": { "enabled": true }, "snapshots": { "enabled": true } }]'
@@ -106,7 +106,7 @@ jobs:
       
       - name: Cache github pages
         id: cache-github-pages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: target/docs
           key: ${{ steps.get-project-info.outputs.NAME }}-${{ steps.get-project-info.outputs.VERSION }}-github-pages
