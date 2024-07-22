@@ -1,3 +1,9 @@
+# v9.13.0 (07/19/2024)
+* Update node/npm workflows to use latest actions. Upload-artifact and download-artifact in .github/workflows/node-test-sharded.yml failed tests and was not updated to use @4. https://littera.atlassian.net/browse/LDO-2949
+
+# v9.12.0 (07/18/2024)
+* Update serverless workflows to use latest actions https://littera.atlassian.net/browse/LDO-2951
+
 # v9.11.0 (07/11/2024)
 * `vercel_config_branch` used in `verce-deploy.yml`
 
