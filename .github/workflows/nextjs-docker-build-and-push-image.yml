@@ -212,6 +212,7 @@ jobs:
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com
 
           # Write the .env.production.local file from the manifest for building the image
+          manifest_path="config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml"
           yq eval -o=props '.data.".env.production.local"' "$manifest_path" | sed -e '1d' -e '/^$/d' > .env.production.local
 
           if [ -z "${{ inputs.test_tag_suffix }}" ]; then
