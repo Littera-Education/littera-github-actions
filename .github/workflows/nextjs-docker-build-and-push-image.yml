@@ -211,22 +211,8 @@ jobs:
 
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com
 
-          # Parse out all public variables required for build time & middleware
-          manifest_path="config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml"
-          readarray publicEnvVarsMappings < <(yq -o=j -I=0 '.spec.template.spec.containers[0].env[]' $manifest_path )
-
-          # Format output into key/value per line into a .env.production.local file
-          for publicEnvVarsMapping in "${publicEnvVarsMappings[@]}"; do
-            # Checks for the existence of the "value" key, allowing us to write empty strings only if the key exists
-            # This also helps filter out writing secrets that utilize valueFrom
-            if echo "$publicEnvVarsMapping" | jq -e '.value' >/dev/null 2>&1; then
-              name=$(echo "$publicEnvVarsMapping" | yq '.name' -)
-              value=$(echo "$publicEnvVarsMapping" | yq '.value' -)
-              echo "$name=\"$value\"" >> .env.production.local
-            fi
-          done
-
-          cat .env.production.local
+          # Write the .env.production.local file from the manifest for building the image
+          yq eval -o=props '.data.".env.production.local"' "$manifest_path" | sed -e '1d' -e '/^$/d' > .env.production.local
 
           if [ -z "${{ inputs.test_tag_suffix }}" ]; then
             DOCKER_BUILDKIT=1 docker build . -t ${{ inputs.service_name }}:latest-${{ inputs.environment }} --secret id=npmrc,src=./.npmrc --secret id=envproductionlocal,src=./.env.production.local
