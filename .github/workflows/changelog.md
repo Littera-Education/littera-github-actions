@@ -1,3 +1,6 @@
+# v9.15.0 (07/29/2024)
+* `nextjs-docker-build-and-push-image` build .env.production.local from config block
+
 # v9.14.0 (07/22/2024)
 * Update java workflows to use latest actions. https://littera.atlassian.net/browse/LDO-2950
 
