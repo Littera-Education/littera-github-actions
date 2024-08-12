@@ -102,7 +102,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
         run: |
-          ./mvnw -ntp clean ${{ inputs.maven_goal }} sonar:sonar -Dsonar.qualitygate.wait=true -X
+          ./mvnw -ntp clean ${{ inputs.maven_goal }} sonar:sonar -Dsonar.qualitygate.wait=true -X sonar:sonar
       
       - name: Cache github pages
         id: cache-github-pages
