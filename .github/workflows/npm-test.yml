@@ -121,13 +121,15 @@ jobs:
         run: npm install -g sonar-scanner
   
       - name: SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.sonar_token }}
         run: |
           sonar-scanner \
             -Dsonar.projectVersion=${{ steps.get-project-info.outputs.VERSION }} \
             -Dsonar.projectKey=my-nodejs-project \
             -Dsonar.sources=. \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.sonar_token }}
+            -Dsonar.login=$SONAR_TOKEN
 
           # status=$?
 
