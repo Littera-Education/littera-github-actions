@@ -61,7 +61,7 @@ on:
 jobs:
   export-vars:
     name: Export Vars
-    runs-on: self-hosted-runner-standard
+    runs-on: self-hosted-runner-standard-v2
 
     permissions:
       id-token: write
