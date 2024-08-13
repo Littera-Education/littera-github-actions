@@ -52,7 +52,7 @@ jobs:
 
     steps:
       - name: Install git 
-      # (When Git 2.18 or higher is not in your PATH, actions/checkout@v4 falls back to the REST API to download the files)
+      # (When Git 2.18 or higher is not in your PATH, actions/checkout@v4 falls back to the REST API to download only the files and not .git)
         run: |
           sudo apt-get update && sudo apt-get install -y git
 
@@ -107,8 +107,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
         run: |
-          sudo apt-get update && sudo apt-get install -y tree
-          tree -a /home/runner/_work
           ./mvnw -ntp clean ${{ inputs.maven_goal }} sonar:sonar -Dsonar.qualitygate.wait=true
       
       - name: Cache github pages
