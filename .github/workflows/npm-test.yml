@@ -124,17 +124,20 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
         run: |
-          sonar-scanner \
-            -Dsonar.projectVersion=${{ steps.get-project-info.outputs.VERSION }} \
-            -Dsonar.projectKey=my-nodejs-project \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=https://sonarcloud.io
-
-          # status=$?
-
-          # if [ $status -eq 1 ]; then
-          #   echo "SonarQube scan failed with exit code 1. Continuing the workflow..."
-          # elif [ $status -ne 0 ]; then
-          #   echo "SonarQube scan failed with an unexpected exit code ($status). Stopping the workflow."
-          #   exit 1
-          # fi
+          node -e "
+          const scanner = require('sonarqube-scanner');
+          scanner(
+            {
+              serverUrl: 'https://sonarcloud.io',
+              token: process.env.SONAR_TOKEN,
+              options: {
+                'sonar.projectKey': 'your-project-key',
+                'sonar.organization': 'your-organization',
+                'sonar.sources': './src',
+                'sonar.javascript.lcov.reportPaths': 'coverage/lcov.info',
+                'sonar.projectVersion': require('./package.json').version,
+              },
+            },
+            () => process.exit()
+          );
+          "
