@@ -51,6 +51,10 @@ jobs:
       artifact_id: ${{ steps.get-project-info.outputs.ARTIFACTID }}
 
     steps:
+      - name: Install git
+        run: |
+          sudo apt-get update && sudo apt-get install -y git
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
