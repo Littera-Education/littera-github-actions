@@ -2,6 +2,8 @@
 * Changes to support github actions runner version '2.319.0'
 * support for docker token
 * installs missing utilities
+* changes verified for nestjs/eks, java/eks
+* changes not verfied for vercel and serverless except for `export-vercel-vars.yml` and `export-serverless-vars.yml`
 
 # v9.15.0 (07/29/2024)
 * `nextjs-docker-build-and-push-image` build .env.production.local from config block
