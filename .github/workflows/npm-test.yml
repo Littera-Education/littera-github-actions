@@ -107,37 +107,12 @@ jobs:
       - name: Check linting
         run: npm run lint
 
-      # - name: SonarQube Scan
-      #   uses: sonarsource/sonarqube-scan-action@v2
-      #   continue-on-error: true
-      #   with:
-      #     args: >
-      #       -Dsonar.projectVersion=${{ steps.get-project-info.outputs.VERSION }}
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.sonar_token }}
-      #     SONAR_HOST_URL: 'https://sonarcloud.io'
-
-      - name: Install SonarScanner
-        run: npm install -g sonarqube-scanner
-  
       - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v2
+        continue-on-error: true
+        with:
+          args: >
+            -Dsonar.projectVersion=${{ steps.get-project-info.outputs.VERSION }}
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
-        run: |
-          node -e "
-          const scanner = require('sonarqube-scanner');
-          scanner(
-            {
-              serverUrl: 'https://sonarcloud.io',
-              token: process.env.SONAR_TOKEN,
-              options: {
-                'sonar.projectKey': 'your-project-key',
-                'sonar.organization': 'your-organization',
-                'sonar.sources': './src',
-                'sonar.javascript.lcov.reportPaths': 'coverage/lcov.info',
-                'sonar.projectVersion': require('./package.json').version,
-              },
-            },
-            () => process.exit()
-          );
-          "
+          SONAR_HOST_URL: 'https://sonarcloud.io'
