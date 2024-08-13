@@ -1,3 +1,6 @@
+# v9.16.0 (08/12/2024)
+* Changes to support github actions runner version '2.319.0'
+
 # v9.15.0 (07/29/2024)
 * `nextjs-docker-build-and-push-image` build .env.production.local from config block
 
