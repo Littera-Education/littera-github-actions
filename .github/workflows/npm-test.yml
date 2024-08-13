@@ -109,7 +109,6 @@ jobs:
 
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@v2
-        continue-on-error: true
         with:
           args: >
             -Dsonar.projectVersion=${{ steps.get-project-info.outputs.VERSION }}
