@@ -59,6 +59,12 @@ jobs:
       contents: read
 
     steps:
+
+      - name: Install git, unzip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git unzip
+
       - name: Checkout Vercel Terraform
         uses: actions/checkout@v4
         with:
@@ -103,6 +109,12 @@ jobs:
     runs-on: ${{ inputs.local_runner }}
 
     steps:
+
+      - name: Install git
+        run: |
+          sudo apt-get update &&
+          sudo apt-get install -y git
+
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.git_tag }}
