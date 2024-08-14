@@ -33,7 +33,7 @@ on:
 jobs:
   export-vars:
     name: Export Vars
-    runs-on: self-hosted-runner-standard
+    runs-on: self-hosted-runner-standard-v2
 
     permissions:
       id-token: write
@@ -45,6 +45,10 @@ jobs:
       aws_role_arn: ${{ steps.step_export_vars.outputs.aws_role_arn }}
 
     steps:
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
       - uses: actions/checkout@v4
         with:
           repository: Littera-Education/littera-github-actions

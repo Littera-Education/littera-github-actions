@@ -66,6 +66,12 @@ jobs:
       id-token: write
 
     steps:
+
+      - name: Install curl, wget and unzip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl wget unzip
+
       - name: Get runner arch
         id: runner_arch
         run: |
@@ -96,6 +102,11 @@ jobs:
           ref: ${{ inputs.eks_config_branch }}
           path: config
           fetch-depth: 0
+
+      - name: Install wget, curl and unzip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget curl unzip
 
       - name: Install yq
         env:
