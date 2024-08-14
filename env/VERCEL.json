@@ -51,7 +51,7 @@
         "local_runner":  "self-hosted-runner-large",
         "testing_workflow": "npm_test",
         "package_manager": "npm",
-        "node_version": "16"
+        "node_version": "18"
     },
     "littera-toolkit": {
         "local_runner":  "self-hosted-runner-large",
