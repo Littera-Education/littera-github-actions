@@ -49,7 +49,7 @@
     },
     "littera-test-ui-application": {
         "local_runner":  "self-hosted-runner-large",
-        "testing_workflow": "sharded_test",
+        "testing_workflow": "npm_test",
         "package_manager": "npm",
         "node_version": "18"
     },

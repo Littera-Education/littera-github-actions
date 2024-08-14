@@ -1,6 +1,3 @@
-# v9.18.0 (08/14/2024)
-* `littera-test-ui-application` on `sharded-test`
-
 # v9.17.0 (08/14/2024)
 * npm-test has sonar method changed; no longer requries docker hub creds
 * additional util installs in node workflows
