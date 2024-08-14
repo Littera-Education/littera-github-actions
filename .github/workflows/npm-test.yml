@@ -122,7 +122,7 @@ jobs:
         run: npm run lint
 
       # - name: SonarQube Scan
-      #   uses: sonarsource/sonarqube-scan-action@v2
+      #   uses: sonarsource/sonarqube-scan-action@v3
       #   with:
       #     args: >
       #       -Dsonar.projectVersion=${{ steps.get-project-info.outputs.VERSION }}

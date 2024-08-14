@@ -60,9 +60,9 @@ jobs:
 
     steps:
 
-      - name: Install git
+      - name: Install git, unzip
         run: |
-          sudo apt-get update && sudo apt-get install -y git
+          sudo apt-get update && sudo apt-get install -y git unzip
 
       - name: Checkout Vercel Terraform
         uses: actions/checkout@v4
