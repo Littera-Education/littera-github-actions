@@ -1,78 +1,78 @@
 {
     "littera-account-ui": {
-        "local_runner":  "self-hosted-runner-standard",
+        "local_runner":  "self-hosted-runner-large",
         "testing_workflow": "npm_test",
         "package_manager": "npm",
         "node_version": "18"
     },
     "littera-auth0-actions": {
-        "local_runner":  "self-hosted-runner-standard",
+        "local_runner":  "self-hosted-runner-large",
         "testing_workflow": "npm_test",
         "package_manager": "npm",
         "node_version": "18"
     },
     "littera-core-ui": {
-        "local_runner":  "self-hosted-runner-standard",
+        "local_runner":  "self-hosted-runner-large",
         "testing_workflow": "sharded_test",
         "package_manager": "npm",
         "node_version": "18"
     },
     "littera-goboard": {
-        "local_runner":  "self-hosted-runner-standard",
+        "local_runner":  "self-hosted-runner-large",
         "testing_workflow": "npm_test",
         "package_manager": "npm",
         "node_version": "18"
     },
     "littera-edi": {
-        "local_runner":  "self-hosted-runner-standard",
+        "local_runner":  "self-hosted-runner-large",
         "testing_workflow": "npm_test",
         "package_manager": "npm",
         "node_version": "18"
     },
     "littera-shared-nodejs": {
-        "local_runner":  "self-hosted-runner-standard",
+        "local_runner":  "self-hosted-runner-large",
         "testing_workflow": "npm_test",
         "package_manager": "npm",
         "node_version": "18"
     },
     "littera-login": {
-        "local_runner":  "self-hosted-runner-standard",
+        "local_runner":  "self-hosted-runner-large",
         "testing_workflow": "npm_test",
         "package_manager": "yarn",
         "node_version": "16"
     },
     "littera-manage-ui": {
-        "local_runner":  "self-hosted-runner-standard",
+        "local_runner":  "self-hosted-runner-large",
         "testing_workflow": "npm_test",
         "package_manager": "npm",
         "node_version": "18"
     },
     "littera-test-ui-application": {
-        "local_runner":  "self-hosted-runner-standard",
+        "local_runner":  "self-hosted-runner-large",
         "testing_workflow": "npm_test",
         "package_manager": "npm",
         "node_version": "16"
     },
     "littera-toolkit": {
-        "local_runner":  "self-hosted-runner-standard",
+        "local_runner":  "self-hosted-runner-large",
         "testing_workflow": "npm_test",
         "package_manager": "npm",
         "node_version": "18"
     },
     "littera-utils": {
-        "local_runner":  "self-hosted-runner-standard",
+        "local_runner":  "self-hosted-runner-large",
         "testing_workflow": "npm_test",
         "package_manager": "npm",
         "node_version": "18"
     },
     "littera-virtual-classroom": {
-        "local_runner":  "self-hosted-runner-standard",
+        "local_runner":  "self-hosted-runner-large",
         "testing_workflow": "npm_test",
         "package_manager": "npm",
         "node_version": "18"
     },
     "littera-web-ui": {
-        "local_runner":  "self-hosted-runner-standard",
+        "local_runner":  "self-hosted-runner-large",
         "testing_workflow": "npm_test",
         "package_manager": "npm",
         "node_version": "18"
