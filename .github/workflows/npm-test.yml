@@ -129,3 +129,18 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
           SONAR_HOST_URL: 'https://sonarcloud.io'
+    
+
+  sonar_scan:
+    name: SonarQube Scan
+    needs: npm_tests
+    runs-on: ${{ inputs.local_runner }}
+    steps:
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v2
+        with:
+          args: >
+            -Dsonar.projectVersion=${{ needs.npm_tests.outputs.version }}
+        env:
+          SONAR_TOKEN: ${{ secrets.sonar_token }}
+          SONAR_HOST_URL: 'https://sonarcloud.io'
