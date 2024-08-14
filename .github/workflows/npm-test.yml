@@ -27,12 +27,7 @@ on:
         required: true
       sonar_token:
         required: true
-      # dockerhub_username:
-      #   required: false
-      # dockerhub_token:
-      #   required: false
       
-
     outputs:
       version:
         description: "artifact version"
