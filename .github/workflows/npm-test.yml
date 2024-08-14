@@ -57,15 +57,6 @@ jobs:
           sudo apt-get update &&
           sudo apt-get install -y git
 
-      # - name: Login to Docker Hub
-      #   uses: docker/login-action@v3
-      #   continue-on-error: true
-      #   with:
-      #     username: ${{ secrets.dockerhub_username }}
-      #     password: ${{ secrets.dockerhub_token }}
-      #     ecr: false
-      #     logout: true
-
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
@@ -126,15 +117,6 @@ jobs:
 
       - name: Check linting
         run: npm run lint
-
-      # - name: SonarQube Scan
-      #   uses: sonarsource/sonarqube-scan-action@v3
-      #   with:
-      #     args: >
-      #       -Dsonar.projectVersion=${{ steps.get-project-info.outputs.VERSION }}
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.sonar_token }}
-      #     SONAR_HOST_URL: 'https://sonarcloud.io'
 
       - name: Run Sonar Analysis
         env:
