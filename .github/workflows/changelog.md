@@ -1,3 +1,7 @@
+# v9.17.0 (08/14/2024)
+* npm-test has sonar method changed; no longer requries docker hub creds
+* additional util installs in node workflows
+
 # v9.16.1 (08/14/2024)
 * VERCEL.json points from `local-hosted-runner-standard` -> `local-host-runner-large`
 
