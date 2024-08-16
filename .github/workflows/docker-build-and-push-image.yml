@@ -34,7 +34,7 @@ on:
       local_runner:
         required: false
         type: string
-        default: "self-hosted-runner-standard"
+        default: "self-hosted-runner-standard-v2"
       github_oidc_role:
         required: true
         type: string
