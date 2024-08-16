@@ -24,7 +24,7 @@ on:
       local_runner:
         required: false
         type: string
-        default: "self-hosted-runner-standard"
+        default: "self-hosted-runner-standard-v2"
 
     secrets:
       nexus_username:

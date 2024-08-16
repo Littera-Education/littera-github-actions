@@ -21,7 +21,7 @@ on:
       local_runner:
         required: false
         type: string
-        default: "self-hosted-runner-standard"
+        default: "self-hosted-runner-standard-v2"
       max_old_space_size:
         required: false
         type: string
