@@ -40,10 +40,10 @@ jobs:
 
     steps:
 
-      - name: Install curl, wget, unzip, openssh-client, git
+      - name: Install curl, wget, unzip, openssh-client, git, rsync
         run: |
           sudo apt-get update
-          sudo apt-get install -y curl wget unzip openssh-client git
+          sudo apt-get install -y curl wget unzip openssh-client git rsync
   
       - uses: actions/checkout@v4
         with:
