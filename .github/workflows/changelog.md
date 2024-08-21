@@ -1,3 +1,6 @@
+# v9.20.0 (08/20/2024)
+* Updating to latest `webfactory/ssh-agent` version for node20 https://littera.atlassian.net/browse/LDO-3650
+
 # v9.19.0 (08/17/2024)
 * Install `rsync` in maven-release.yml
 
