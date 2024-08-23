@@ -12,7 +12,7 @@
         "node_version": "18"
     },
     "littera-core-ui": {
-        "local_runner":  "self-hosted-runner-large",
+        "local_runner":  "self-hosted-runner-xlarge",
         "testing_workflow": "sharded_test",
         "package_manager": "npm",
         "node_version": "18"
