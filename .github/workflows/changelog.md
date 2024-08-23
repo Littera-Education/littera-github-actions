@@ -1,3 +1,6 @@
+# v9.20.1 (08/23/2024)
+* core-ui's `node-test-sharded` incresed from 7 to 10 shards
+
 # v9.20.0 (08/20/2024)
 * Updating to latest `webfactory/ssh-agent` version for node20 https://littera.atlassian.net/browse/LDO-3650
 
