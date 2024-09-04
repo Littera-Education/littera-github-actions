@@ -1,3 +1,7 @@
+# v9.21.0 (09/04/2024)
+* Installing `build-essentials` which includes `make` for SO to use `npm-build-and-release.yml`
+* See details in LDO-3789
+
 # v9.20.1 (08/23/2024)
 * core-ui's `node-test-sharded` incresed from 7 to 10 shards
 * core-ui on `self-hosted-runner-xlarge` from `self-hosted-runner-large`
