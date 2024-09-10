@@ -129,6 +129,7 @@ jobs:
           else
             echo "WARN: Unable to get version from release-please, defaulting to package.json"
             version="$(npm pkg get version | xargs echo)-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
+            echo ${version}
           fi
 
           echo "version=$version" >> $GITHUB_OUTPUT
