@@ -85,15 +85,9 @@ jobs:
         with:
           node-version: ${{ inputs.node_version }}
 
-      - name: Extract branch name
-        id: extract_branch_name
-        run: |
-          echo "branch_name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-          echo "branch_name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-
       - name: Release Please
         id: release-please
-        if: steps.extract_branch_name.outputs.branch_name  == 'main'
+        if: inputs.git_tag  == 'main'
         uses: googleapis/release-please-action@v4
         with:
           release-type: node
@@ -103,7 +97,7 @@ jobs:
       - name: Get Release PR Title
         uses: actions/github-script@v7
         id: release-pr-title
-        if: steps.extract_branch_name.outputs.branch_name == 'main'
+        if: inputs.git_tag == 'main'
         with:
           script: |
             const prs = await github.rest.pulls.list({
@@ -126,7 +120,7 @@ jobs:
         run: |
           if [ "${{ steps.release-please.outputs.release_created }}" ]; then
             version="$(npm pkg get version | xargs echo)"
-          elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" ] && [ "${{ steps.extract_branch_name.outputs.branch_name }}" == "main" ]; then
+          elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" ] && [ "${{ inputs.git_tag }}" == "main" ]; then
             version="${{ steps.release-pr-title.outputs.result }}"
             echo $version
             versionparts=($version)
@@ -138,112 +132,3 @@ jobs:
           fi
 
           echo "version=$version" >> $GITHUB_OUTPUT
-
-  npm_docker_build:
-    name: NextJS Docker Build and Push
-    runs-on: ${{ inputs.local_runner }}
-    needs: [ release_versioning ]
-
-    outputs:
-      image_version: ${{ steps.tag-image.outputs.image_version }}
-
-    permissions:
-      id-token: write
-      contents: read
-
-    steps:
-      
-      - name: Install wget, curl, unzip
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y curl wget unzip
-  
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        continue-on-error: true
-        with:
-          username: ${{ secrets.dockerhub_username }}
-          password: ${{ secrets.dockerhub_token }}
-          ecr: false
-          logout: true
-
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-          ref: ${{ inputs.git_tag }}
-
-      - name: Checkout EKS Config Repo/'${{ inputs.eks_config_branch }}' branch
-        uses: actions/checkout@v4
-        with:
-          repository: Littera-Education/littera-eks-config
-          token: ${{ secrets.repo_token }}
-          ref: ${{ inputs.eks_config_branch }}
-          path: config
-          fetch-depth: 0
-
-      - name: Setup .npmrc for pulling & publishing to Nexus
-        run: |
-          FULL_REPO_AUTH="//${{ inputs.nexus_host_domain }}/repository/:_auth=${{ secrets.nexus_npm_login }}"
-          echo -e "\n" \
-            "registry=https://${{ inputs.nexus_host_domain }}/repository/npm-public\n" \
-            "$FULL_REPO_AUTH\n" \
-            "//${{ inputs.nexus_host_domain }}/repository/npm-local:_auth=${{ secrets.nexus_npm_login }}\n" \
-            "email=${{ secrets.nexus_username }}\n" \
-            "always-auth=true\n" \ >> .npmrc
-
-      - name: Get runner arch
-        id: runner_arch
-        run: |
-          arch_value=$(uname -m)
-          if [ "$arch_value" = "x86_64" ]; then
-            echo "runner_arch=amd64" >> $GITHUB_OUTPUT
-          elif [ "$arch_value" = "aarch64" ]; then
-            echo "runner_arch=arm64" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Setup aws cli
-        uses: unfor19/install-aws-cli-action@v1
-        with:
-          version: 2
-          arch: ${{ steps.runner_arch.outputs.runner_arch }}
-      
-      - name: Configure AWS Creds
-        uses: aws-actions/configure-aws-credentials@v4.0.2
-        with:
-          aws-region: us-east-1
-          role-to-assume: ${{ inputs.github_oidc_role }}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Install yq
-        env:
-          YQ_VERSION: v4.44.2
-        run: |
-          sudo wget https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 -O /usr/bin/yq
-          sudo chmod +x /usr/bin/yq
-      
-      - name: Build, tag, and push docker image to Amazon ECR
-        id: tag-image
-        run: |
-          set -e
-
-          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com
-
-          # Write the .env.production.local file from the manifest for building the image
-          manifest_path="config/${{ inputs.service_name }}/eks/eks-${{ inputs.environment }}-deployment.yaml"
-          yq eval -o=props '.data.".env.production.local"' "$manifest_path" | sed -e '1d' -e '/^$/d' > .env.production.local
-
-          cat .env.production.local
-
-          if [ -z "${{ inputs.test_tag_suffix }}" ]; then
-            DOCKER_BUILDKIT=1 docker build . -t ${{ inputs.service_name }}:latest-${{ inputs.environment }} --secret id=npmrc,src=./.npmrc --progress=plain
-            docker tag ${{ inputs.service_name }}:latest-${{ inputs.environment }} ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}
-            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}
-            echo "image_version=${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}" >> $GITHUB_OUTPUT
-          else
-            DOCKER_BUILDKIT=1 docker build . -t ${{ inputs.service_name }}:latest-${{ inputs.environment }}-${{ inputs.test_tag_suffix }} --secret id=npmrc,src=./.npmrc --progress=plain
-            docker tag ${{ inputs.service_name }}:latest-${{ inputs.environment }} ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}-${{ inputs.test_tag_suffix }}
-            docker push ${{ inputs.aws_account_id_ecr }}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.service_name }}:${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}-${{ inputs.test_tag_suffix }}
-            echo "image_version=${{ needs.release_versioning.outputs.version }}-${{ inputs.environment }}-${{ inputs.test_tag_suffix }}" >> $GITHUB_OUTPUT
-          fi
