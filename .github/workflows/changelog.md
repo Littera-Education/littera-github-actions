@@ -1,3 +1,6 @@
+# v9.22.0 (09/10/2024)
+* `nextjs-docker-build-and-push-image` to use `git_tag` to define branch name instead of calculating it
+
 # v9.21.0 (09/04/2024)
 * Installing `build-essentials` which includes `make` for SO to use `npm-build-and-release.yml`
 * See details in LDO-3789
