@@ -85,15 +85,9 @@ jobs:
         with:
           node-version: ${{ inputs.node_version }}
 
-      - name: Extract branch name
-        id: extract_branch_name
-        run: |
-          echo "branch_name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-          echo "branch_name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-
       - name: Release Please
         id: release-please
-        if: steps.extract_branch_name.outputs.branch_name  == 'main'
+        if: inputs.git_tag  == 'main'
         uses: googleapis/release-please-action@v4
         with:
           release-type: node
@@ -103,7 +97,7 @@ jobs:
       - name: Get Release PR Title
         uses: actions/github-script@v7
         id: release-pr-title
-        if: steps.extract_branch_name.outputs.branch_name == 'main'
+        if: inputs.git_tag == 'main'
         with:
           script: |
             const prs = await github.rest.pulls.list({
@@ -126,15 +120,16 @@ jobs:
         run: |
           if [ "${{ steps.release-please.outputs.release_created }}" ]; then
             version="$(npm pkg get version | xargs echo)"
-          elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" ] && [ "${{ steps.extract_branch_name.outputs.branch_name }}" == "main" ]; then
+          elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" ] && [ "${{ inputs.git_tag }}" == "main" ]; then
             version="${{ steps.release-pr-title.outputs.result }}"
-            echo $version
+            echo ${version}
             versionparts=($version)
             echo ${versionparts[-1]}
             version="${versionparts[-1]}-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
           else
             echo "WARN: Unable to get version from release-please, defaulting to package.json"
             version="$(npm pkg get version | xargs echo)-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
+            echo ${version}
           fi
 
           echo "version=$version" >> $GITHUB_OUTPUT
