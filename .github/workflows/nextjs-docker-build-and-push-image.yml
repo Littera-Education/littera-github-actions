@@ -122,7 +122,7 @@ jobs:
             version="$(npm pkg get version | xargs echo)"
           elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" ] && [ "${{ inputs.git_tag }}" == "main" ]; then
             version="${{ steps.release-pr-title.outputs.result }}"
-            echo $version
+            echo ${version}
             versionparts=($version)
             echo ${versionparts[-1]}
             version="${versionparts[-1]}-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
