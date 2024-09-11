@@ -1,3 +1,6 @@
+# v9.23.0 (09/11/2024)
+* `SERVERLESS.json` from `self-hosted-runner-standard` to `self-hosted-runner-standard-v2`
+
 # v9.22.0 (09/10/2024)
 * `nextjs-docker-build-and-push-image` to use `git_tag` to define branch name instead of calculating it
 
