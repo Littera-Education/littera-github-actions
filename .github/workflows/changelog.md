@@ -1,3 +1,6 @@
+# v9.23.1 (09/12/2024)
+* `SERVERLESS.json` from `self-hosted-runner-standard-v2` to `self-hosted-runner-large`
+
 # v9.23.0 (09/11/2024)
 * `SERVERLESS.json` from `self-hosted-runner-standard` to `self-hosted-runner-standard-v2`
 
