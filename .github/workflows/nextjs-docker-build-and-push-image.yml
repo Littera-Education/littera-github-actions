@@ -94,41 +94,17 @@ jobs:
           token: ${{ secrets.github_actions_token }}
           target-branch: ${{ github.ref_name }}
 
-      - name: Get Release PR Title
-        uses: actions/github-script@v7
-        id: release-pr-title
-        if: inputs.git_tag == 'main'
-        with:
-          script: |
-            const prs = await github.rest.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-            })
-
-            const releasepr = prs.data.filter(pr => pr.title.includes("chore(main): release"))
-            console.log(releasepr)
-
-            if(releasepr.length > 0) {
-              return releasepr.pop().title
-            }
-
-            console.log('No pending release prs found')
-          result-encoding: string
-
       - name: Get Deployable Version
         id: get-version
         run: |
-          if [ "${{ steps.release-please.outputs.release_created }}" ]; then
-            version="$(npm pkg get version | xargs echo)"
-          elif [ "${{ steps.release-pr-title.outputs.result }}" != "undefined" ] && [ "${{ inputs.git_tag }}" == "main" ]; then
-            version="${{ steps.release-pr-title.outputs.result }}"
+          pkgVersion="$(npm pkg get version | xargs echo)"
+          if [ "${{ inputs.git_tag }}" == "develop-snapshot" ]; then
+            echo "INFO: Deploying SNAPSHOT with version from package.json"
+            version="${pkgVersion}-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
             echo ${version}
-            versionparts=($version)
-            echo ${versionparts[-1]}
-            version="${versionparts[-1]}-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
           else
-            echo "WARN: Unable to get version from release-please, defaulting to package.json"
-            version="$(npm pkg get version | xargs echo)-SNAPSHOT-$(date +%Y-%m-%d-%H-%M-%S)"
+            echo "INFO: Deploying RELEASE with version from package.json"
+            version="${pkgVersion}-RELEASE-$(date +%Y-%m-%d-%H-%M-%S)"
             echo ${version}
           fi
 

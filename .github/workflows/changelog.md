@@ -1,3 +1,6 @@
+# v9.25.0 (09/16/2024)
+* Simplify `nextjs-docker-build-and-push-image` versioning to SNAPSHOT vs RELEASE
+
 # v9.24.0 (09/13/2024)
 * `iam_role` var in `eks-deploy-v2.yml` is made optional with default value of `""`
 * This is in preparation of it being removed here and from `export-vars.yml` _after_ being removed from calling workflows and _accompanying_ the deletion of `littera-eks-config/env/EKS_ROLES_JSON.json`
