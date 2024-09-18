@@ -1,3 +1,6 @@
+# v9.26.0 (09/16/2024)
+* Simplify `nextjs-docker-build-and-push-image` versioning to SNAPSHOT vs RELEASE
+
 # v9.25.0 (09/16/2024)
 * Simplify `nextjs-docker-build-and-push-image` versioning to SNAPSHOT vs RELEASE
 
