@@ -87,7 +87,7 @@ jobs:
 
       - name: Release Please
         id: release-please
-        if: inputs.git_tag  == 'main'
+        if: inputs.git_tag  == 'main' || startsWith('hotfix/', inputs.git_tag)
         uses: googleapis/release-please-action@v4
         with:
           release-type: node
