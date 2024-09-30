@@ -1,3 +1,6 @@
+# v9.28.0 (09/30/2024)
+* adding git to `serverless-deploy.yml`
+
 # v9.27.0 (09/24/2024)
 * `eks-deploy-v2.yml` is a bit more verbose to aid in debugging
 
