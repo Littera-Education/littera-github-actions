@@ -1,3 +1,6 @@
+# v9.27.0 (09/24/2024)
+* `eks-deploy-v2.yml` is a bit more verbose to aid in debugging
+
 # v9.26.0 (09/16/2024)
 * Simplify `nextjs-docker-build-and-push-image` versioning to SNAPSHOT vs RELEASE
 
