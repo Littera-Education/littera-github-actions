@@ -6,7 +6,7 @@ on:
       git_tag:
         required: true
         type: string
-        default: "develop"
+        default: "main"
       nexus_host_domain:
         required: true
         type: string
@@ -34,7 +34,7 @@ on:
 
 jobs:
   serverless-remove:
-    name: Remove ${{ inputs.git_tag }} to ${{ inputs.environment }}
+    name: Using serverless code in branch ${{ inputs.git_tag }} remove environment ${{ inputs.environment }}
     runs-on: ${{ inputs.local_runner }}
 
     steps:
