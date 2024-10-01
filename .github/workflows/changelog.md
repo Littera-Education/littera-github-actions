@@ -1,3 +1,6 @@
+# v9.29.0 (10/01/2024)
+* corrected `serverless-remove.yml`
+
 # v9.28.0 (09/30/2024)
 * adding git to `serverless-deploy.yml`
 
