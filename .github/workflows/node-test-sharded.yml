@@ -117,7 +117,7 @@ jobs:
         run: mv coverage/lcov.info coverage/lcov_${{matrix.shard}}.info
 
       - name: Upload coverage
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-artifacts
           path: coverage/
@@ -139,7 +139,7 @@ jobs:
         run: |
           echo "currentVersion=$(npm pkg get version | xargs echo)" >> $GITHUB_OUTPUT
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: coverage-artifacts
           path: coverage
