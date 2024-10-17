@@ -119,7 +119,7 @@ jobs:
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-artifacts-${{ github.job.id }} 
+          name: coverage-artifacts-${{ strategy.job-index }}
           path: coverage/
 
   report-coverage:
@@ -141,7 +141,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: coverage-artifacts
+          name: coverage-artifacts-${{ strategy.job-index }}
           path: coverage
 
       - name: Merge Code Coverage
