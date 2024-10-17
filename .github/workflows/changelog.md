@@ -1,3 +1,6 @@
+# v9.30.0 (10/01/2024)
+* update actions/upload-artifact and actions/download-artifact to v4
+
 # v9.29.0 (10/01/2024)
 * corrected `serverless-remove.yml`
 
